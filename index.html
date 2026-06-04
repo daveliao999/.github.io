@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>金石 FCN · 私行结构化产品智能推荐平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #00C805;
+    --brand-dark: #00A804;
+    --brand-soft: #E6FAE7;
+    --ink: #0F172A;
+    --ink-2: #334155;
+    --ink-3: #64748B;
+    --line: #E2E8F0;
+    --bg: #FFFFFF;
+    --bg-soft: #F8FAFC;
+    --danger: #EF4444;
+    --warn: #F59E0B;
+  }
+  html, body { font-family: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; color: var(--ink); }
+  .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; transition: all .2s ease; }
+  .card:hover { box-shadow: 0 12px 32px -8px rgba(15,23,42,0.12); transform: translateY(-2px); border-color: #CBD5E1; }
+  .btn-primary { background: var(--brand); color: #fff; font-weight: 600; padding: 10px 20px; border-radius: 999px; transition: all .15s; }
+  .btn-primary:hover { background: var(--brand-dark); }
+  .btn-ghost { color: var(--ink); font-weight: 500; padding: 10px 20px; border-radius: 999px; }
+  .btn-ghost:hover { background: var(--bg-soft); }
+  .pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .pill-green { background: var(--brand-soft); color: var(--brand-dark); }
+  .pill-gray { background: #F1F5F9; color: var(--ink-2); }
+  .pill-red { background: #FEE2E2; color: #B91C1C; }
+  .pill-amber { background: #FEF3C7; color: #92400E; }
+  .score-ring { background: conic-gradient(var(--brand) var(--p), #E2E8F0 0); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .score-ring-inner { background: #fff; border-radius: 50%; width: 78%; height: 78%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .nav-link { color: var(--ink-2); font-weight: 500; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all .15s; }
+  .nav-link:hover { color: var(--ink); background: var(--bg-soft); }
+  .nav-link.active { color: var(--brand-dark); background: var(--brand-soft); }
+  .ticker-tape { animation: scroll 60s linear infinite; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .gradient-hero { background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(0,200,5,0.08), transparent 60%), linear-gradient(180deg, #FAFFFA 0%, #FFFFFF 100%); }
+  .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+  .data-row:last-child { border-bottom: none; }
+  .data-label { color: var(--ink-3); }
+  .data-val { color: var(--ink); font-weight: 600; }
+  input[type="range"] { -webkit-appearance: none; height: 4px; background: var(--line); border-radius: 2px; outline: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--brand); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+  .check-chip { padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; cursor: pointer; user-select: none; transition: all .15s; }
+  .check-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .check-chip:not(.active):hover { border-color: var(--ink-2); }
+  .skeleton { background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .featured-banner { background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #064E1A 100%); }
+  .stat-up { color: var(--brand-dark); }
+  .stat-down { color: var(--danger); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+</style>
+</head>
+<body class="bg-white">
+
+<!-- =================== TOP TICKER =================== -->
+<div class="bg-slate-900 text-white text-xs overflow-hidden whitespace-nowrap py-2">
+  <div class="ticker-tape inline-block">
+    <span class="mx-6 num">AVGO <b class="text-green-400">$418.66</b> <span class="text-red-400">-12.64%</span></span>
+    <span class="mx-6 num">NVDA <b class="text-green-400">$142.30</b> <span class="text-green-400">+1.82%</span></span>
+    <span class="mx-6 num">TSLA <b class="text-green-400">$352.41</b> <span class="text-red-400">-0.74%</span></span>
+    <span class="mx-6 num">AAPL <b class="text-green-400">$228.55</b> <span class="text-green-400">+0.41%</span></span>
+    <span class="mx-6 num">META <b class="text-green-400">$715.20</b> <span class="text-green-400">+2.15%</span></span>
+    <span class="mx-6 num">9988.HK <b class="text-green-400">HK$112.40</b> <span class="text-green-400">+3.21%</span></span>
+    <span class="mx-6 num">700.HK <b class="text-green-400">HK$485.60</b> <span class="text-red-400">-0.92%</span></span>
+    <span class="mx-6 num">VIX <b class="text-green-400">14.82</b> <span class="text-red-400">-2.11%</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="mx-6 num">AVGO <b class="text-green-400">$418.66</b> <span class="text-red-400">-12.64%</span></span>
+    <span class="mx-6 num">NVDA <b class="text-green-400">$142.30</b> <span class="text-green-400">+1.82%</span></span>
+    <span class="mx-6 num">TSLA <b class="text-green-400">$352.41</b> <span class="text-red-400">-0.74%</span></span>
+    <span class="mx-6 num">AAPL <b class="text-green-400">$228.55</b> <span class="text-green-400">+0.41%</span></span>
+    <span class="mx-6 num">META <b class="text-green-400">$715.20</b> <span class="text-green-400">+2.15%</span></span>
+    <span class="mx-6 num">9988.HK <b class="text-green-400">HK$112.40</b> <span class="text-green-400">+3.21%</span></span>
+    <span class="mx-6 num">700.HK <b class="text-green-400">HK$485.60</b> <span class="text-red-400">-0.92%</span></span>
+    <span class="mx-6 num">VIX <b class="text-green-400">14.82</b> <span class="text-red-400">-2.11%</span></span>
+  </div>
+</div>
+
+<!-- =================== NAV =================== -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-10">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-bold text-lg">金</div>
+        <div class="leading-tight">
+          <div class="font-bold text-base">金石 FCN</div>
+          <div class="text-[10px] text-slate-500 tracking-widest">PRIVATE BANKING</div>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-1" id="nav-menu">
+        <div class="nav-link active" data-view="home">首页</div>
+        <div class="nav-link" data-view="screener">智能筛选</div>
+        <div class="nav-link" data-view="featured">产品部精选</div>
+        <div class="nav-link" data-view="research">市场研究</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="hidden md:flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        <span>搜索标的</span>
+      </button>
+      <button class="btn-ghost text-sm hidden md:block">登录</button>
+      <button class="btn-primary text-sm">预约客户经理</button>
+      <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 px-6 py-3 space-y-1">
+    <div class="nav-link active block" data-view="home">首页</div>
+    <div class="nav-link block" data-view="screener">智能筛选</div>
+    <div class="nav-link block" data-view="featured">产品部精选</div>
+    <div class="nav-link block" data-view="research">市场研究</div>
+  </div>
+</nav>
+
+<!-- =================== VIEW: HOME =================== -->
+<div id="view-home" class="view active">
+
+  <!-- HERO -->
+  <section class="gradient-hero">
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="pill pill-green mb-5"><span class="w-1.5 h-1.5 rounded-full bg-green-600 mr-2 animate-pulse"></span>本周 23 只新标的已更新</div>
+        <h1 class="font-serif-cn text-4xl md:text-6xl font-bold leading-tight mb-6">
+          以数据驱动的方式<br/>
+          构建您的 <span class="text-green-600">FCN 组合</span>
+        </h1>
+        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+          金石 FCN 基于多因子量化模型，每周从全球三大市场筛选最适合 FCN 结构的标的，结合产品部资深团队主观判断，为私行客户提供机构级结构化产品推荐。
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn-primary" onclick="navigate('screener')">开始智能筛选 →</button>
+          <button class="btn-ghost border border-slate-200" onclick="navigate('featured')">查看本周精选</button>
+        </div>
+        <div class="mt-12 grid grid-cols-3 gap-6">
+          <div>
+            <div class="text-3xl font-bold num">187+</div>
+            <div class="text-sm text-slate-500 mt-1">覆盖标的</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold num text-green-600">18.4%</div>
+            <div class="text-sm text-slate-500 mt-1">平均年化票息</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold num">¥38亿</div>
+            <div class="text-sm text-slate-500 mt-1">累计配置规模</div>
+          </div>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="card p-6 shadow-2xl">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-xs text-slate-500">本周综合评分 TOP 1</div>
+              <div class="font-bold text-lg mt-1">博通 <span class="text-slate-400 text-sm font-normal">AVGO.US</span></div>
+            </div>
+            <div class="score-ring w-16 h-16" style="--p: 312deg">
+              <div class="score-ring-inner">
+                <div class="text-lg font-bold num leading-none">8.7</div>
+                <div class="text-[9px] text-slate-400">SCORE</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-slate-500 mb-1">推荐结构</div>
+            <div class="flex items-end justify-between">
+              <div>
+                <div class="text-3xl font-bold text-green-600 num">22.5%</div>
+                <div class="text-xs text-slate-500">年化票息 p.a.</div>
+              </div>
+              <div class="text-right text-sm">
+                <div class="num">行权 95% / 敲入 70%</div>
+                <div class="text-slate-500 mt-1">期限 6 个月</div>
+              </div>
+            </div>
+          </div>
+          <canvas id="heroChart" height="80"></canvas>
+          <div class="mt-4 flex items-center gap-2 text-sm text-slate-600">
+            <i data-lucide="sparkles" class="w-4 h-4 text-green-600"></i>
+            <span>AI 半导体龙头，盘后回调后 IV 溢价显著</span>
+          </div>
+        </div>
+        <div class="absolute -top-6 -right-6 bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-medium shadow-xl">
+          <i data-lucide="trending-up" class="w-3 h-3 inline mr-1"></i>本周热门
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEEKLY HOT FCN CARDS -->
+  <section class="max-w-7xl mx-auto px-6 py-16">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">WEEKLY TOP PICKS</div>
+        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold">本周热门 FCN 推荐</h2>
+        <p class="text-slate-500 mt-2">多因子模型综合评分 ≥ 8.0 的标的</p>
+      </div>
+      <button class="hidden md:block text-sm text-slate-600 hover:text-slate-900 font-medium" onclick="navigate('screener')">查看全部 187 只 →</button>
+    </div>
+    <div id="hot-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section class="bg-slate-50 py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">METHODOLOGY</div>
+        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold mb-3">机构级多因子筛选模型</h2>
+        <p class="text-slate-500 max-w-2xl mx-auto">每周扫描全球 800+ 标的，结合波动率结构、基本面、技术面、流动性、IV 溢价五维度生成综合评分</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div class="card p-6">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="database" class="w-5 h-5 text-green-700"></i></div>
+          <div class="font-bold mb-2">数据采集</div>
+          <p class="text-sm text-slate-500 leading-relaxed">实时拉取美股、港股、A 股价格、期权链、基本面数据</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="cpu" class="w-5 h-5 text-green-700"></i></div>
+          <div class="font-bold mb-2">量化打分</div>
+          <p class="text-sm text-slate-500 leading-relaxed">五因子加权计算，输出 0-10 综合评分</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="users" class="w-5 h-5 text-green-700"></i></div>
+          <div class="font-bold mb-2">产品部审核</div>
+          <p class="text-sm text-slate-500 leading-relaxed">资深团队叠加主观判断，剔除事件性风险标的</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="target" class="w-5 h-5 text-green-700"></i></div>
+          <div class="font-bold mb-2">客户匹配</div>
+          <p class="text-sm text-slate-500 leading-relaxed">按风险偏好、收益目标个性化推荐</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST RESEARCH -->
+  <section class="max-w-7xl mx-auto px-6 py-20">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">RESEARCH</div>
+        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold">最新市场观点</h2>
+      </div>
+      <button class="hidden md:block text-sm text-slate-600 hover:text-slate-900 font-medium" onclick="navigate('research')">全部研究 →</button>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5" id="research-preview"></div>
+  </section>
+
+</div>
+
+<!-- =================== VIEW: SCREENER =================== -->
+<div id="view-screener" class="view">
+  <div class="bg-slate-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <h1 class="font-serif-cn text-3xl md:text-4xl font-bold mb-2">智能筛选</h1>
+      <p class="text-slate-500">根据您的偏好，从 187 只覆盖标的中找到最适合的 FCN 产品</p>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-6 py-10 grid lg:grid-cols-[280px_1fr] gap-8">
+    <!-- FILTERS -->
+    <aside class="space-y-8">
+      <div>
+        <div class="font-semibold mb-3 flex items-center justify-between">行业 <span class="text-xs text-slate-400 font-normal" id="filter-industry-count">已选 全部</span></div>
+        <div class="flex flex-wrap gap-2" id="filter-industry">
+          <div class="check-chip active" data-val="all">全部</div>
+          <div class="check-chip" data-val="AI半导体">AI 半导体</div>
+          <div class="check-chip" data-val="新能源">新能源</div>
+          <div class="check-chip" data-val="消费">消费</div>
+          <div class="check-chip" data-val="金融">金融</div>
+          <div class="check-chip" data-val="医药">医药</div>
+          <div class="check-chip" data-val="互联网">互联网</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="font-semibold mb-3">目标年化收益</div>
+        <div class="flex flex-wrap gap-2" id="filter-yield">
+          <div class="check-chip active" data-val="all">不限</div>
+          <div class="check-chip" data-val="10-15">10-15%</div>
+          <div class="check-chip" data-val="15-20">15-20%</div>
+          <div class="check-chip" data-val="20-25">20-25%</div>
+          <div class="check-chip" data-val="25+">25%+</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="font-semibold mb-3">标的市场</div>
+        <div class="flex flex-wrap gap-2" id="filter-market">
+          <div class="check-chip active" data-val="all">全部</div>
+          <div class="check-chip" data-val="US">美股</div>
+          <div class="check-chip" data-val="HK">港股</div>
+          <div class="check-chip" data-val="CN">A 股</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="font-semibold mb-3">最低综合评分 <span class="text-green-600 num" id="score-val">7.0</span></div>
+        <input type="range" min="5" max="10" step="0.1" value="7" class="w-full" id="filter-score">
+        <div class="flex justify-between text-xs text-slate-400 mt-2 num"><span>5.0</span><span>10.0</span></div>
+      </div>
+
+      <button class="text-sm text-slate-500 hover:text-slate-900 flex items-center gap-1" onclick="resetFilters()">
+        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 重置筛选
+      </button>
+    </aside>
+
+    <!-- RESULTS -->
+    <div>
+      <div class="flex items-center justify-between mb-5">
+        <div class="text-sm text-slate-600">共 <span class="font-bold text-slate-900" id="result-count">0</span> 个符合条件的标的</div>
+        <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white" id="sort-select">
+          <option value="score">按综合评分</option>
+          <option value="coupon">按票息</option>
+          <option value="vol">按隐含波动率</option>
+        </select>
+      </div>
+      <div id="screener-results" class="grid md:grid-cols-2 gap-5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== VIEW: FEATURED =================== -->
+<div id="view-featured" class="view">
+  <section class="featured-banner text-white">
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center"><i data-lucide="award" class="w-5 h-5"></i></div>
+        <div class="text-sm tracking-widest text-green-300">PRODUCT DESK SELECTION · 2026 第 23 周</div>
+      </div>
+      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold mb-4">产品部本周精选</h1>
+      <p class="text-slate-300 max-w-2xl text-lg leading-relaxed">由产品部资深团队从量化模型 TOP 30 标的中精选出 5 只，每只附详细推荐逻辑、市场观点与风险提示。本周主题：<span class="text-green-300 font-medium">AI 算力链回调机会</span></p>
+      <div class="mt-8 flex gap-6 text-sm">
+        <div><span class="text-slate-400">发布时间</span> <span class="ml-2 num">2026-06-03</span></div>
+        <div><span class="text-slate-400">下次更新</span> <span class="ml-2 num">2026-06-10</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="max-w-7xl mx-auto px-6 py-12 space-y-6" id="featured-list"></div>
+</div>
+
+<!-- =================== VIEW: RESEARCH =================== -->
+<div id="view-research" class="view">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-10">
+      <h1 class="font-serif-cn text-4xl font-bold mb-2">市场研究</h1>
+      <p class="text-slate-500">FCN 热点分析、结构化产品策略与宏观观点</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6" id="research-list"></div>
+  </div>
+</div>
+
+<!-- =================== FOOTER =================== -->
+<footer class="bg-slate-900 text-slate-400 mt-20">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8 text-sm">
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold">金</div>
+        <div class="text-white font-semibold">金石 FCN</div>
+      </div>
+      <p class="leading-relaxed">私行结构化产品智能推荐平台。仅向合资格投资者开放。</p>
+    </div>
+    <div>
+      <div class="text-white font-semibold mb-3">产品</div>
+      <div class="space-y-2">
+        <div class="hover:text-white cursor-pointer" onclick="navigate('screener')">智能筛选</div>
+        <div class="hover:text-white cursor-pointer" onclick="navigate('featured')">产品部精选</div>
+        <div class="hover:text-white cursor-pointer" onclick="navigate('research')">市场研究</div>
+      </div>
+    </div>
+    <div>
+      <div class="text-white font-semibold mb-3">关于</div>
+      <div class="space-y-2">
+        <div class="hover:text-white cursor-pointer">公司介绍</div>
+        <div class="hover:text-white cursor-pointer">投研团队</div>
+        <div class="hover:text-white cursor-pointer">联系我们</div>
+      </div>
+    </div>
+    <div>
+      <div class="text-white font-semibold mb-3">合规</div>
+      <div class="space-y-2">
+        <div class="hover:text-white cursor-pointer">风险披露</div>
+        <div class="hover:text-white cursor-pointer">隐私政策</div>
+        <div class="hover:text-white cursor-pointer">服务条款</div>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-6 py-6 text-xs leading-relaxed">
+      <p class="mb-2"><strong class="text-slate-300">重要风险披露：</strong>固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本网站内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
+      <p class="mt-4">© 2026 金石 FCN. All rights reserved. 本演示页面所有数据均为模拟数据，仅供产品设计展示用途。</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// =================== MOCK DATA ===================
+const stocks = [
+  { code: 'AVGO.US', name: '博通', industry: 'AI半导体', market: 'US', price: 418.66, chg: -12.64, coupon: 22.5, strike: 95, ki: 70, ko: 100, tenor: 6, score: 8.7, risk: '中', iv: 48.2, reason: 'AI 半导体龙头，盘后大幅回调后 IV 溢价显著扩大', tag: '高 IV' },
+  { code: 'NVDA.US', name: '英伟达', industry: 'AI半导体', market: 'US', price: 142.30, chg: 1.82, coupon: 19.8, strike: 95, ki: 72, ko: 103, tenor: 6, score: 8.5, risk: '中', iv: 42.1, reason: 'AI 算力核心，技术面突破上行通道', tag: 'TOP PICK' },
+  { code: 'TSLA.US', name: '特斯拉', industry: '新能源', market: 'US', price: 352.41, chg: -0.74, coupon: 28.5, strike: 90, ki: 65, ko: 100, tenor: 6, score: 8.2, risk: '高', iv: 58.4, reason: 'Robotaxi 催化与高 IV 提供超额票息空间', tag: '高收益' },
+  { code: 'META.US', name: 'Meta', industry: '互联网', market: 'US', price: 715.20, chg: 2.15, coupon: 16.5, strike: 95, ki: 75, ko: 102, tenor: 6, score: 8.4, risk: '低', iv: 32.6, reason: '广告基本面稳健，与 Broadcom AI 芯片合作', tag: '稳健' },
+  { code: 'AAPL.US', name: '苹果', industry: '消费', market: 'US', price: 228.55, chg: 0.41, coupon: 13.2, strike: 95, ki: 78, ko: 102, tenor: 9, score: 8.1, risk: '低', iv: 26.8, reason: '低波蓝筹，适合保守型客户配置底仓', tag: '保守' },
+  { code: '9988.HK', name: '阿里巴巴', industry: '互联网', market: 'HK', price: 112.40, chg: 3.21, coupon: 21.0, strike: 92, ki: 70, ko: 100, tenor: 6, score: 8.3, risk: '中', iv: 44.5, reason: '云业务估值修复，AI 投入预期改善', tag: '估值修复' },
+  { code: '700.HK', name: '腾讯控股', industry: '互联网', market: 'HK', price: 485.60, chg: -0.92, coupon: 15.8, strike: 95, ki: 75, ko: 102, tenor: 6, score: 8.0, risk: '低', iv: 30.2, reason: '游戏业务复苏，回购支撑股价', tag: '稳健' },
+  { code: 'JPM.US', name: '摩根大通', industry: '金融', market: 'US', price: 245.30, chg: 0.62, coupon: 12.8, strike: 95, ki: 80, ko: 102, tenor: 9, score: 7.9, risk: '低', iv: 22.4, reason: '银行业龙头，息差环境受益', tag: '稳健' },
+  { code: 'LLY.US', name: '礼来', industry: '医药', market: 'US', price: 812.45, chg: 1.24, coupon: 17.5, strike: 92, ki: 72, ko: 100, tenor: 6, score: 8.1, risk: '中', iv: 36.8, reason: 'GLP-1 龙头，新适应症催化', tag: '成长' },
+  { code: 'BYD.HK', name: '比亚迪股份', industry: '新能源', market: 'HK', price: 385.20, chg: 2.85, coupon: 24.0, strike: 90, ki: 68, ko: 100, tenor: 6, score: 7.8, risk: '中', iv: 50.2, reason: '海外销量超预期，技术路线领先', tag: '高收益' },
+  { code: '600519.CN', name: '贵州茅台', industry: '消费', market: 'CN', price: 1485.00, chg: -0.32, coupon: 14.5, strike: 92, ki: 75, ko: 100, tenor: 9, score: 7.7, risk: '低', iv: 24.6, reason: '估值进入历史低位区间', tag: '低估' },
+  { code: 'AMD.US', name: 'AMD', industry: 'AI半导体', market: 'US', price: 165.80, chg: 0.85, coupon: 25.5, strike: 90, ki: 68, ko: 100, tenor: 6, score: 7.6, risk: '中', iv: 52.4, reason: 'MI400 系列即将量产，份额提升预期', tag: '高 IV' },
+];
+
+const featuredPicks = [
+  { ...stocks[0], thesis: '博通 Q2 财报后盘后下跌 12.6%，本质是预期差修正而非基本面恶化。FY27 AI 营收 >1000 亿美元路径清晰，回调后 IV 溢价显著，是构建 FCN 的极佳时机。建议 6 个月期、行权 95%、敲入 70% 结构，可实现 22.5% 年化票息。', risks: '若 AI 资本开支周期出现拐点，标的可能进一步下行。建议控制单一标的仓位 ≤ 5%。' },
+  { ...stocks[1], thesis: '英伟达 Blackwell Ultra 进入量产爬坡期，下一代 Rubin 平台路线图清晰。技术面突破前期整理区间，量价配合良好。当前 IV 处于历史 40 分位，溢价合理。', risks: '关注 7 月 AI 资本开支指引与中国市场出口管制进展。' },
+  { ...stocks[3], thesis: 'Meta 与 Broadcom 合作开发自研 AI 芯片，长期算力成本下降利好。广告业务保持高个位数增长，估值修复仍有空间。低波属性适合作为组合中的稳健仓位。', risks: '监管风险与 Reality Labs 持续亏损。' },
+  { ...stocks[5], thesis: '阿里云业务在 AI 推理需求驱动下重回增长，云业务估值有显著修复空间。港股 IV 整体高于美股同业，FCN 收益更具吸引力。', risks: '中美科技博弈与电商竞争格局变化。' },
+  { ...stocks[8], thesis: '礼来 GLP-1 龙头地位稳固，Mounjaro/Zepbound 销售持续超预期。新适应症（阿尔茨海默症、肝病）临床数据将陆续读出，构成正向催化。', risks: '竞品 Novo Nordisk 新一代产品上市可能带来份额压力。' },
+];
+
+const research = [
+  { title: '【FCN 热点分析】博通 Q2 财报后回调，AI 半导体仍是结构化首选', cat: '热点分析', author: '产品部', date: '2026-06-04', readTime: '8 分钟', tag: 'AI 半导体' },
+  { title: 'FCN 入门：固定票息票据的收益与风险结构详解', cat: '产品教育', author: '投研团队', date: '2026-06-02', readTime: '12 分钟', tag: '基础教育' },
+  { title: '2026 年中策略：高 IV 环境下的 FCN 配置思路', cat: '策略观点', author: '首席策略师', date: '2026-05-30', readTime: '15 分钟', tag: '宏观策略' },
+  { title: '港股互联网板块 IV 溢价收敛，配置窗口仍存', cat: '行业观察', author: '研究部', date: '2026-05-28', readTime: '6 分钟', tag: '互联网' },
+  { title: 'GLP-1 板块基本面与期权定价的非对称机会', cat: '行业观察', author: '医药团队', date: '2026-05-26', readTime: '10 分钟', tag: '医药' },
+  { title: '如何用 FCN 在震荡市中实现 15%+ 年化收益', cat: '产品教育', author: '产品部', date: '2026-05-24', readTime: '9 分钟', tag: '策略教学' },
+];
+
+// =================== ROUTING ===================
+function navigate(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.view === view);
+  });
+  document.getElementById('mobile-menu').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('.nav-link').forEach(l => {
+  l.addEventListener('click', () => navigate(l.dataset.view));
+});
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+}
+
+// =================== CARD RENDERER ===================
+function riskPill(r) {
+  if (r === '低') return '<span class="pill pill-green">低风险</span>';
+  if (r === '中') return '<span class="pill pill-amber">中风险</span>';
+  return '<span class="pill pill-red">高风险</span>';
+}
+function tagPill(t) {
+  return `<span class="pill pill-gray">${t}</span>`;
+}
+function scoreDeg(s) { return Math.round((s / 10) * 360); }
+function marketLabel(m) { return m === 'US' ? '美股' : m === 'HK' ? '港股' : 'A股'; }
+function priceCcy(m) { return m === 'US' ? '$' : m === 'HK' ? 'HK$' : '¥'; }
+
+function stockCard(s) {
+  const chgClass = s.chg >= 0 ? 'stat-up' : 'stat-down';
+  const chgSign = s.chg >= 0 ? '+' : '';
+  return `
+    <div class="card p-5 cursor-pointer">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-bold text-lg">${s.name}</span>
+            ${tagPill(s.tag)}
+          </div>
+          <div class="text-sm text-slate-500 num">${s.code} · ${marketLabel(s.market)} · ${s.industry}</div>
+        </div>
+        <div class="score-ring w-14 h-14" style="--p: ${scoreDeg(s.score)}deg">
+          <div class="score-ring-inner">
+            <div class="text-base font-bold num leading-none">${s.score}</div>
+            <div class="text-[8px] text-slate-400">SCORE</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-baseline gap-3 mb-4">
+        <div class="text-xl font-bold num">${priceCcy(s.market)}${s.price.toLocaleString()}</div>
+        <div class="text-sm num ${chgClass}">${chgSign}${s.chg}%</div>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-4 mb-3">
+        <div class="flex items-end justify-between mb-3">
+          <div>
+            <div class="text-[11px] text-slate-500">年化票息</div>
+            <div class="text-2xl font-bold text-green-600 num">${s.coupon}%</div>
+          </div>
+          <div class="text-right text-xs text-slate-500 num leading-relaxed">
+            <div>行权 <span class="text-slate-900 font-semibold">${s.strike}%</span> / 敲入 <span class="text-slate-900 font-semibold">${s.ki}%</span></div>
+            <div>敲出 <span class="text-slate-900 font-semibold">${s.ko}%</span> / 期限 <span class="text-slate-900 font-semibold">${s.tenor}M</span></div>
+          </div>
+        </div>
+        <div class="text-xs text-slate-600 leading-relaxed border-t border-slate-200 pt-3">
+          <i data-lucide="lightbulb" class="w-3 h-3 inline text-amber-500"></i> ${s.reason}
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        ${riskPill(s.risk)}
+        <div class="text-xs text-slate-500 num">IV <b class="text-slate-900">${s.iv}%</b></div>
+      </div>
+    </div>
+  `;
+}
+
+// =================== RENDER HOME ===================
+function renderHome() {
+  const hot = [...stocks].sort((a,b) => b.score - a.score).slice(0, 6);
+  document.getElementById('hot-grid').innerHTML = hot.map(stockCard).join('');
+
+  document.getElementById('research-preview').innerHTML = research.slice(0, 3).map(r => `
+    <div class="card p-6 cursor-pointer">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="pill pill-green">${r.cat}</span>
+        <span class="text-xs text-slate-400">${r.readTime}</span>
+      </div>
+      <h3 class="font-bold text-lg leading-snug mb-4 font-serif-cn">${r.title}</h3>
+      <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4">
+        <span>${r.author}</span>
+        <span class="num">${r.date}</span>
+      </div>
+    </div>
+  `).join('');
+
+  lucide.createIcons();
+
+  // hero chart
+  const ctx = document.getElementById('heroChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 30}, (_, i) => i),
+        datasets: [{
+          data: [480, 478, 482, 485, 479, 481, 483, 488, 491, 489, 486, 490, 493, 495, 492, 488, 485, 487, 484, 481, 478, 476, 479, 481, 479, 477, 479, 481, 479, 419],
+          borderColor: '#00C805',
+          backgroundColor: 'rgba(0,200,5,0.08)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        maintainAspectRatio: false,
+      }
+    });
+  }
+}
+
+// =================== SCREENER ===================
+let filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
+let sortBy = 'score';
+
+function setupFilters() {
+  document.querySelectorAll('#filter-industry .check-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-industry .check-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      filters.industry = chip.dataset.val;
+      renderScreener();
+    });
+  });
+  document.querySelectorAll('#filter-yield .check-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-yield .check-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      filters.yield = chip.dataset.val;
+      renderScreener();
+    });
+  });
+  document.querySelectorAll('#filter-market .check-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-market .check-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      filters.market = chip.dataset.val;
+      renderScreener();
+    });
+  });
+  document.getElementById('filter-score').addEventListener('input', (e) => {
+    filters.score = parseFloat(e.target.value);
+    document.getElementById('score-val').textContent = filters.score.toFixed(1);
+    renderScreener();
+  });
+  document.getElementById('sort-select').addEventListener('change', (e) => {
+    sortBy = e.target.value;
+    renderScreener();
+  });
+}
+
+function resetFilters() {
+  filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
+  document.querySelectorAll('.check-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.check-chip[data-val="all"]').forEach(c => c.classList.add('active'));
+  document.getElementById('filter-score').value = 7;
+  document.getElementById('score-val').textContent = '7.0';
+  renderScreener();
+}
+
+function renderScreener() {
+  let list = stocks.filter(s => {
+    if (filters.industry !== 'all' && s.industry !== filters.industry) return false;
+    if (filters.market !== 'all' && s.market !== filters.market) return false;
+    if (s.score < filters.score) return false;
+    if (filters.yield !== 'all') {
+      if (filters.yield === '10-15' && (s.coupon < 10 || s.coupon >= 15)) return false;
+      if (filters.yield === '15-20' && (s.coupon < 15 || s.coupon >= 20)) return false;
+      if (filters.yield === '20-25' && (s.coupon < 20 || s.coupon >= 25)) return false;
+      if (filters.yield === '25+' && s.coupon < 25) return false;
+    }
+    return true;
+  });
+  list.sort((a, b) => {
+    if (sortBy === 'coupon') return b.coupon - a.coupon;
+    if (sortBy === 'vol') return b.iv - a.iv;
+    return b.score - a.score;
+  });
+  document.getElementById('result-count').textContent = list.length;
+  document.getElementById('screener-results').innerHTML = list.length
+    ? list.map(stockCard).join('')
+    : `<div class="md:col-span-2 text-center py-16 text-slate-400"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3"></i><div>没有符合条件的标的，请放宽筛选条件</div></div>`;
+  lucide.createIcons();
+}
+
+// =================== FEATURED ===================
+function renderFeatured() {
+  document.getElementById('featured-list').innerHTML = featuredPicks.map((s, i) => `
+    <div class="card p-8">
+      <div class="grid md:grid-cols-[1fr_320px] gap-8">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold num">${String(i+1).padStart(2,'0')}</div>
+            <span class="pill pill-green">${s.industry}</span>
+            ${riskPill(s.risk)}
+            ${tagPill(s.tag)}
+          </div>
+          <h2 class="font-serif-cn text-2xl font-bold mb-1">${s.name} <span class="text-slate-400 text-base font-normal num">${s.code}</span></h2>
+          <div class="text-sm text-slate-500 mb-5 num">${priceCcy(s.market)}${s.price.toLocaleString()} · ${s.chg >= 0 ? '+' : ''}${s.chg}% · IV ${s.iv}%</div>
+          <div class="mb-5">
+            <div class="text-xs text-green-600 font-semibold mb-2 tracking-wider">推荐逻辑</div>
+            <p class="text-slate-700 leading-relaxed text-[15px]">${s.thesis}</p>
+          </div>
+          <div>
+            <div class="text-xs text-amber-600 font-semibold mb-2 tracking-wider">风险提示</div>
+            <p class="text-slate-600 leading-relaxed text-sm">${s.risks}</p>
+          </div>
+        </div>
+        <div class="bg-slate-50 rounded-2xl p-6 self-start">
+          <div class="text-xs text-slate-500 mb-1">推荐 FCN 结构</div>
+          <div class="text-3xl font-bold text-green-600 num mb-1">${s.coupon}%</div>
+          <div class="text-xs text-slate-500 mb-5">年化票息 p.a.</div>
+          <div class="data-row"><span class="data-label">行权价</span><span class="data-val num">${s.strike}%</span></div>
+          <div class="data-row"><span class="data-label">敲入价</span><span class="data-val num">${s.ki}%</span></div>
+          <div class="data-row"><span class="data-label">敲出价</span><span class="data-val num">${s.ko}%</span></div>
+          <div class="data-row"><span class="data-label">期限</span><span class="data-val num">${s.tenor} 个月</span></div>
+          <div class="data-row"><span class="data-label">综合评分</span><span class="data-val num text-green-600">${s.score} / 10</span></div>
+          <button class="btn-primary w-full mt-5 text-sm">咨询客户经理</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+// =================== RESEARCH ===================
+function renderResearch() {
+  document.getElementById('research-list').innerHTML = research.map(r => `
+    <div class="card p-6 cursor-pointer">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="pill pill-green">${r.cat}</span>
+        <span class="pill pill-gray">${r.tag}</span>
+      </div>
+      <h3 class="font-bold text-lg leading-snug mb-6 font-serif-cn">${r.title}</h3>
+      <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4">
+        <div class="flex items-center gap-3">
+          <span>${r.author}</span>
+          <span>·</span>
+          <span class="num">${r.readTime}</span>
+        </div>
+        <span class="num">${r.date}</span>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+// =================== INIT ===================
+document.addEventListener('DOMContentLoaded', () => {
+  renderHome();
+  setupFilters();
+  renderScreener();
+  renderFeatured();
+  renderResearch();
+  lucide.createIcons();
+});
+</script>
+
+</body>
+</html>
