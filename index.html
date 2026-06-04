@@ -3,127 +3,259 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>金石 FCN · 私行结构化产品智能推荐平台</title>
+<title>金石 FCN · Private Banking Terminal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --brand: #00C805;
-    --brand-dark: #00A804;
-    --brand-soft: #E6FAE7;
-    --ink: #0F172A;
-    --ink-2: #334155;
-    --ink-3: #64748B;
-    --line: #E2E8F0;
-    --bg: #FFFFFF;
-    --bg-soft: #F8FAFC;
-    --danger: #EF4444;
-    --warn: #F59E0B;
+    --bg: #0A0A0B;
+    --bg-2: #111113;
+    --bg-3: #18181B;
+    --line: #27272A;
+    --line-2: #3F3F46;
+    --ink: #FAFAFA;
+    --ink-2: #A1A1AA;
+    --ink-3: #71717A;
+    --gold: #C9A86A;
+    --gold-2: #E6CC8F;
+    --gold-soft: rgba(201, 168, 106, 0.12);
+    --green: #00C805;
+    --green-soft: rgba(0, 200, 5, 0.10);
+    --red: #F43F5E;
   }
-  html, body { font-family: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; color: var(--ink); }
+  * { -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, 'PingFang SC', sans-serif;
+    font-feature-settings: "ss01", "cv11";
+  }
+  .font-display { font-family: 'Fraunces', 'Noto Serif SC', serif; font-optical-sizing: auto; letter-spacing: -0.02em; }
   .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
   .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; transition: all .2s ease; }
-  .card:hover { box-shadow: 0 12px 32px -8px rgba(15,23,42,0.12); transform: translateY(-2px); border-color: #CBD5E1; }
-  .btn-primary { background: var(--brand); color: #fff; font-weight: 600; padding: 10px 20px; border-radius: 999px; transition: all .15s; }
-  .btn-primary:hover { background: var(--brand-dark); }
-  .btn-ghost { color: var(--ink); font-weight: 500; padding: 10px 20px; border-radius: 999px; }
-  .btn-ghost:hover { background: var(--bg-soft); }
-  .pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-  .pill-green { background: var(--brand-soft); color: var(--brand-dark); }
-  .pill-gray { background: #F1F5F9; color: var(--ink-2); }
-  .pill-red { background: #FEE2E2; color: #B91C1C; }
-  .pill-amber { background: #FEF3C7; color: #92400E; }
-  .score-ring { background: conic-gradient(var(--brand) var(--p), #E2E8F0 0); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .score-ring-inner { background: #fff; border-radius: 50%; width: 78%; height: 78%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .nav-link { color: var(--ink-2); font-weight: 500; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all .15s; }
-  .nav-link:hover { color: var(--ink); background: var(--bg-soft); }
-  .nav-link.active { color: var(--brand-dark); background: var(--brand-soft); }
-  .ticker-tape { animation: scroll 60s linear infinite; }
-  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .gradient-hero { background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(0,200,5,0.08), transparent 60%), linear-gradient(180deg, #FAFFFA 0%, #FFFFFF 100%); }
-  .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
-  .data-row:last-child { border-bottom: none; }
-  .data-label { color: var(--ink-3); }
-  .data-val { color: var(--ink); font-weight: 600; }
-  input[type="range"] { -webkit-appearance: none; height: 4px; background: var(--line); border-radius: 2px; outline: none; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--brand); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-  .check-chip { padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; cursor: pointer; user-select: none; transition: all .15s; }
-  .check-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .check-chip:not(.active):hover { border-color: var(--ink-2); }
-  .skeleton { background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .text-gold { color: var(--gold); }
+  .text-gold-2 { color: var(--gold-2); }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .bg-bg-2 { background: var(--bg-2); }
+  .bg-bg-3 { background: var(--bg-3); }
+  .border-line { border-color: var(--line); }
+  .border-line-2 { border-color: var(--line-2); }
+
+  /* Buttons */
+  .btn-gold {
+    background: var(--gold); color: #0A0A0B; font-weight: 500;
+    padding: 10px 22px; border-radius: 999px; font-size: 13px;
+    letter-spacing: 0.02em; transition: all .2s ease;
+  }
+  .btn-gold:hover { background: var(--gold-2); transform: translateY(-1px); }
+  .btn-outline {
+    border: 1px solid var(--line-2); color: var(--ink);
+    padding: 10px 22px; border-radius: 999px; font-size: 13px;
+    background: transparent; transition: all .2s ease;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-ghost { color: var(--ink-2); padding: 8px 14px; font-size: 13px; transition: color .15s; }
+  .btn-ghost:hover { color: var(--ink); }
+
+  /* Pills */
+  .pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+  .pill-gold { background: var(--gold-soft); color: var(--gold-2); border: 1px solid rgba(201,168,106,0.25); }
+  .pill-green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,200,5,0.25); }
+  .pill-red { background: rgba(244,63,94,0.10); color: var(--red); border: 1px solid rgba(244,63,94,0.25); }
+  .pill-dim { background: var(--bg-3); color: var(--ink-2); border: 1px solid var(--line); }
+
+  /* Card */
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%), var(--bg-2);
+    border: 1px solid var(--line); border-radius: 14px;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .card-hover:hover {
+    border-color: rgba(201,168,106,0.4);
+    background: linear-gradient(180deg, rgba(201,168,106,0.04) 0%, rgba(255,255,255,0) 100%), var(--bg-2);
+    transform: translateY(-2px);
+  }
+
+  /* Nav */
+  .nav-link {
+    color: var(--ink-2); font-size: 14px; font-weight: 400;
+    padding: 8px 14px; cursor: pointer; position: relative; transition: color .15s;
+  }
+  .nav-link:hover { color: var(--ink); }
+  .nav-link.active { color: var(--ink); }
+  .nav-link.active::after {
+    content: ''; position: absolute; bottom: -22px; left: 14px; right: 14px;
+    height: 1px; background: var(--gold);
+  }
+
+  /* Sections */
+  .section-label {
+    font-size: 11px; letter-spacing: 0.2em; color: var(--gold);
+    text-transform: uppercase; font-weight: 500;
+  }
+  .divider { border-top: 1px solid var(--line); }
+
+  /* Inputs */
+  input[type="range"] {
+    -webkit-appearance: none; height: 2px;
+    background: var(--line-2); border-radius: 2px; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px;
+    background: var(--gold); border-radius: 50%; cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(201,168,106,0.15);
+  }
+  .check-chip {
+    padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 12px; cursor: pointer; user-select: none; transition: all .15s;
+    color: var(--ink-2); background: var(--bg-2);
+  }
+  .check-chip.active { background: var(--gold); color: #0A0A0B; border-color: var(--gold); }
+  .check-chip:not(.active):hover { border-color: var(--gold); color: var(--gold); }
+
+  select {
+    background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 8px; padding: 8px 32px 8px 12px; font-size: 13px;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+
+  /* View routing */
   .view { display: none; }
-  .view.active { display: block; animation: fadeIn .3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .featured-banner { background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #064E1A 100%); }
-  .stat-up { color: var(--brand-dark); }
-  .stat-down { color: var(--danger); }
+  .view.active { display: block; animation: fadeIn .35s cubic-bezier(.4,0,.2,1); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Ticker */
+  .ticker-tape { animation: scroll 80s linear infinite; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Score */
+  .score-display {
+    font-family: 'Fraunces', serif; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    text-align: left; font-size: 11px; font-weight: 500;
+    color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+  }
+  .data-table td {
+    padding: 16px; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .data-table tr.data-row-hover:hover { background: rgba(201,168,106,0.04); cursor: pointer; }
+
+  /* Vol surface canvas wrapper */
+  .vol-canvas-wrap {
+    position: relative; width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, rgba(201,168,106,0.06) 0%, transparent 70%);
+  }
+
+  /* Scrollbar */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+  /* Hero text reveal */
+  .hero-title { line-height: 0.95; letter-spacing: -0.03em; }
+
+  /* Grain overlay for luxe texture */
+  .grain::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.78 0 0 0 0 0.66 0 0 0 0 0.42 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Sparkline canvas */
+  .spark { width: 100%; height: 32px; display: block; }
+
+  /* Subtle glow */
+  .glow-gold { box-shadow: 0 0 40px -10px rgba(201,168,106,0.3); }
 </style>
 </head>
-<body class="bg-white">
+<body>
 
 <!-- =================== TOP TICKER =================== -->
-<div class="bg-slate-900 text-white text-xs overflow-hidden whitespace-nowrap py-2">
-  <div class="ticker-tape inline-block">
-    <span class="mx-6 num">AVGO <b class="text-green-400">$418.66</b> <span class="text-red-400">-12.64%</span></span>
-    <span class="mx-6 num">NVDA <b class="text-green-400">$142.30</b> <span class="text-green-400">+1.82%</span></span>
-    <span class="mx-6 num">TSLA <b class="text-green-400">$352.41</b> <span class="text-red-400">-0.74%</span></span>
-    <span class="mx-6 num">AAPL <b class="text-green-400">$228.55</b> <span class="text-green-400">+0.41%</span></span>
-    <span class="mx-6 num">META <b class="text-green-400">$715.20</b> <span class="text-green-400">+2.15%</span></span>
-    <span class="mx-6 num">9988.HK <b class="text-green-400">HK$112.40</b> <span class="text-green-400">+3.21%</span></span>
-    <span class="mx-6 num">700.HK <b class="text-green-400">HK$485.60</b> <span class="text-red-400">-0.92%</span></span>
-    <span class="mx-6 num">VIX <b class="text-green-400">14.82</b> <span class="text-red-400">-2.11%</span></span>
-    <!-- duplicate for seamless loop -->
-    <span class="mx-6 num">AVGO <b class="text-green-400">$418.66</b> <span class="text-red-400">-12.64%</span></span>
-    <span class="mx-6 num">NVDA <b class="text-green-400">$142.30</b> <span class="text-green-400">+1.82%</span></span>
-    <span class="mx-6 num">TSLA <b class="text-green-400">$352.41</b> <span class="text-red-400">-0.74%</span></span>
-    <span class="mx-6 num">AAPL <b class="text-green-400">$228.55</b> <span class="text-green-400">+0.41%</span></span>
-    <span class="mx-6 num">META <b class="text-green-400">$715.20</b> <span class="text-green-400">+2.15%</span></span>
-    <span class="mx-6 num">9988.HK <b class="text-green-400">HK$112.40</b> <span class="text-green-400">+3.21%</span></span>
-    <span class="mx-6 num">700.HK <b class="text-green-400">HK$485.60</b> <span class="text-red-400">-0.92%</span></span>
-    <span class="mx-6 num">VIX <b class="text-green-400">14.82</b> <span class="text-red-400">-2.11%</span></span>
+<div class="border-b border-line bg-bg-2 overflow-hidden">
+  <div class="text-xs num py-2 whitespace-nowrap">
+    <div class="ticker-tape inline-block">
+      <span class="mx-5"><span class="text-ink-3">AVGO</span> <span class="text-gold">418.66</span> <span class="text-red">-12.64%</span></span>
+      <span class="mx-5"><span class="text-ink-3">NVDA</span> <span class="text-gold">142.30</span> <span class="text-green">+1.82%</span></span>
+      <span class="mx-5"><span class="text-ink-3">TSLA</span> <span class="text-gold">352.41</span> <span class="text-red">-0.74%</span></span>
+      <span class="mx-5"><span class="text-ink-3">META</span> <span class="text-gold">715.20</span> <span class="text-green">+2.15%</span></span>
+      <span class="mx-5"><span class="text-ink-3">AAPL</span> <span class="text-gold">228.55</span> <span class="text-green">+0.41%</span></span>
+      <span class="mx-5"><span class="text-ink-3">9988.HK</span> <span class="text-gold">112.40</span> <span class="text-green">+3.21%</span></span>
+      <span class="mx-5"><span class="text-ink-3">700.HK</span> <span class="text-gold">485.60</span> <span class="text-red">-0.92%</span></span>
+      <span class="mx-5"><span class="text-ink-3">BABA</span> <span class="text-gold">114.20</span> <span class="text-green">+3.15%</span></span>
+      <span class="mx-5"><span class="text-ink-3">LLY</span> <span class="text-gold">812.45</span> <span class="text-green">+1.24%</span></span>
+      <span class="mx-5"><span class="text-ink-3">VIX</span> <span class="text-gold">14.82</span> <span class="text-red">-2.11%</span></span>
+      <span class="mx-5"><span class="text-ink-3">SPX</span> <span class="text-gold">6,142.30</span> <span class="text-green">+0.38%</span></span>
+      <span class="mx-5"><span class="text-ink-3">USDCNH</span> <span class="text-gold">7.1842</span> <span class="text-red">-0.12%</span></span>
+      <!-- duplicate -->
+      <span class="mx-5"><span class="text-ink-3">AVGO</span> <span class="text-gold">418.66</span> <span class="text-red">-12.64%</span></span>
+      <span class="mx-5"><span class="text-ink-3">NVDA</span> <span class="text-gold">142.30</span> <span class="text-green">+1.82%</span></span>
+      <span class="mx-5"><span class="text-ink-3">TSLA</span> <span class="text-gold">352.41</span> <span class="text-red">-0.74%</span></span>
+      <span class="mx-5"><span class="text-ink-3">META</span> <span class="text-gold">715.20</span> <span class="text-green">+2.15%</span></span>
+      <span class="mx-5"><span class="text-ink-3">AAPL</span> <span class="text-gold">228.55</span> <span class="text-green">+0.41%</span></span>
+      <span class="mx-5"><span class="text-ink-3">9988.HK</span> <span class="text-gold">112.40</span> <span class="text-green">+3.21%</span></span>
+      <span class="mx-5"><span class="text-ink-3">700.HK</span> <span class="text-gold">485.60</span> <span class="text-red">-0.92%</span></span>
+      <span class="mx-5"><span class="text-ink-3">BABA</span> <span class="text-gold">114.20</span> <span class="text-green">+3.15%</span></span>
+      <span class="mx-5"><span class="text-ink-3">LLY</span> <span class="text-gold">812.45</span> <span class="text-green">+1.24%</span></span>
+      <span class="mx-5"><span class="text-ink-3">VIX</span> <span class="text-gold">14.82</span> <span class="text-red">-2.11%</span></span>
+      <span class="mx-5"><span class="text-ink-3">SPX</span> <span class="text-gold">6,142.30</span> <span class="text-green">+0.38%</span></span>
+      <span class="mx-5"><span class="text-ink-3">USDCNH</span> <span class="text-gold">7.1842</span> <span class="text-red">-0.12%</span></span>
+    </div>
   </div>
 </div>
 
 <!-- =================== NAV =================== -->
-<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
-  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-10">
-      <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-bold text-lg">金</div>
-        <div class="leading-tight">
-          <div class="font-bold text-base">金石 FCN</div>
-          <div class="text-[10px] text-slate-500 tracking-widest">PRIVATE BANKING</div>
+<nav class="sticky top-0 z-50 bg-bg-2/80 backdrop-blur-xl border-b border-line">
+  <div class="max-w-[1400px] mx-auto px-8 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-12">
+      <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigate('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2 L20 7 L20 17 L12 22 L4 17 L4 7 Z" stroke="#C9A86A" stroke-width="1.2"/>
+          <path d="M12 2 L12 22 M4 7 L20 17 M20 7 L4 17" stroke="#C9A86A" stroke-width="0.6" opacity="0.4"/>
+        </svg>
+        <div class="leading-none">
+          <div class="font-display text-[15px] font-medium">金石 FCN</div>
+          <div class="text-[9px] text-ink-3 tracking-[0.2em] mt-0.5">PRIVATE TERMINAL</div>
         </div>
       </div>
       <div class="hidden md:flex items-center gap-1" id="nav-menu">
-        <div class="nav-link active" data-view="home">首页</div>
-        <div class="nav-link" data-view="screener">智能筛选</div>
-        <div class="nav-link" data-view="featured">产品部精选</div>
-        <div class="nav-link" data-view="research">市场研究</div>
+        <div class="nav-link active" data-view="home">Overview</div>
+        <div class="nav-link" data-view="screener">Screener</div>
+        <div class="nav-link" data-view="featured">Curated</div>
+        <div class="nav-link" data-view="research">Research</div>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <button class="hidden md:flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900">
-        <i data-lucide="search" class="w-4 h-4"></i>
-        <span>搜索标的</span>
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost hidden md:flex items-center gap-2">
+        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+        <span>Search</span>
+        <span class="font-mono text-[10px] text-ink-3 border border-line px-1.5 py-0.5 rounded ml-2">⌘K</span>
       </button>
-      <button class="btn-ghost text-sm hidden md:block">登录</button>
-      <button class="btn-primary text-sm">预约客户经理</button>
+      <button class="btn-ghost hidden md:block">Sign in</button>
+      <button class="btn-gold">Get Access</button>
       <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
     </div>
   </div>
-  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 px-6 py-3 space-y-1">
-    <div class="nav-link active block" data-view="home">首页</div>
-    <div class="nav-link block" data-view="screener">智能筛选</div>
-    <div class="nav-link block" data-view="featured">产品部精选</div>
-    <div class="nav-link block" data-view="research">市场研究</div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-8 py-3 space-y-1">
+    <div class="nav-link block py-2" data-view="home">Overview</div>
+    <div class="nav-link block py-2" data-view="screener">Screener</div>
+    <div class="nav-link block py-2" data-view="featured">Curated</div>
+    <div class="nav-link block py-2" data-view="research">Research</div>
   </div>
 </nav>
 
@@ -131,151 +263,160 @@
 <div id="view-home" class="view active">
 
   <!-- HERO -->
-  <section class="gradient-hero">
-    <div class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <div class="pill pill-green mb-5"><span class="w-1.5 h-1.5 rounded-full bg-green-600 mr-2 animate-pulse"></span>本周 23 只新标的已更新</div>
-        <h1 class="font-serif-cn text-4xl md:text-6xl font-bold leading-tight mb-6">
-          以数据驱动的方式<br/>
-          构建您的 <span class="text-green-600">FCN 组合</span>
+  <section class="relative overflow-hidden grain border-b border-line">
+    <div class="max-w-[1400px] mx-auto px-8 pt-20 pb-24 grid lg:grid-cols-[1fr_1.1fr] gap-16 items-center relative">
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+          <span class="section-label">2026 · Week 23 · Updated</span>
+        </div>
+        <h1 class="font-display hero-title text-[64px] md:text-[88px] font-medium mb-8">
+          <span class="text-ink">Engineered</span><br/>
+          <span class="text-gold italic">yield</span>,<br/>
+          <span class="text-ink">for the few.</span>
         </h1>
-        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-          金石 FCN 基于多因子量化模型，每周从全球三大市场筛选最适合 FCN 结构的标的，结合产品部资深团队主观判断，为私行客户提供机构级结构化产品推荐。
+        <p class="text-ink-2 text-[15px] leading-relaxed max-w-md mb-10">
+          基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。专为合资格私行客户构建。
         </p>
-        <div class="flex flex-wrap gap-3">
-          <button class="btn-primary" onclick="navigate('screener')">开始智能筛选 →</button>
-          <button class="btn-ghost border border-slate-200" onclick="navigate('featured')">查看本周精选</button>
+        <div class="flex flex-wrap gap-3 mb-16">
+          <button class="btn-gold" onclick="navigate('screener')">Explore Screener →</button>
+          <button class="btn-outline" onclick="navigate('featured')">This Week's Picks</button>
         </div>
-        <div class="mt-12 grid grid-cols-3 gap-6">
+        <div class="grid grid-cols-3 gap-8 max-w-md border-t border-line pt-8">
           <div>
-            <div class="text-3xl font-bold num">187+</div>
-            <div class="text-sm text-slate-500 mt-1">覆盖标的</div>
+            <div class="font-display text-3xl text-gold num">187</div>
+            <div class="text-[11px] text-ink-3 mt-1 tracking-wider uppercase">Coverage</div>
           </div>
           <div>
-            <div class="text-3xl font-bold num text-green-600">18.4%</div>
-            <div class="text-sm text-slate-500 mt-1">平均年化票息</div>
+            <div class="font-display text-3xl text-gold num">18.4<span class="text-base">%</span></div>
+            <div class="text-[11px] text-ink-3 mt-1 tracking-wider uppercase">Avg Coupon</div>
           </div>
           <div>
-            <div class="text-3xl font-bold num">¥38亿</div>
-            <div class="text-sm text-slate-500 mt-1">累计配置规模</div>
+            <div class="font-display text-3xl text-gold num">¥3.8<span class="text-base">B</span></div>
+            <div class="text-[11px] text-ink-3 mt-1 tracking-wider uppercase">AUM</div>
           </div>
         </div>
       </div>
-      <div class="relative">
-        <div class="card p-6 shadow-2xl">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <div class="text-xs text-slate-500">本周综合评分 TOP 1</div>
-              <div class="font-bold text-lg mt-1">博通 <span class="text-slate-400 text-sm font-normal">AVGO.US</span></div>
-            </div>
-            <div class="score-ring w-16 h-16" style="--p: 312deg">
-              <div class="score-ring-inner">
-                <div class="text-lg font-bold num leading-none">8.7</div>
-                <div class="text-[9px] text-slate-400">SCORE</div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-slate-50 rounded-xl p-4 mb-4">
-            <div class="text-xs text-slate-500 mb-1">推荐结构</div>
-            <div class="flex items-end justify-between">
-              <div>
-                <div class="text-3xl font-bold text-green-600 num">22.5%</div>
-                <div class="text-xs text-slate-500">年化票息 p.a.</div>
-              </div>
-              <div class="text-right text-sm">
-                <div class="num">行权 95% / 敲入 70%</div>
-                <div class="text-slate-500 mt-1">期限 6 个月</div>
-              </div>
-            </div>
-          </div>
-          <canvas id="heroChart" height="80"></canvas>
-          <div class="mt-4 flex items-center gap-2 text-sm text-slate-600">
-            <i data-lucide="sparkles" class="w-4 h-4 text-green-600"></i>
-            <span>AI 半导体龙头，盘后回调后 IV 溢价显著</span>
-          </div>
+
+      <!-- VOLATILITY SURFACE CANVAS -->
+      <div class="relative h-[480px] vol-canvas-wrap">
+        <canvas id="volSurface" class="w-full h-full"></canvas>
+        <div class="absolute top-6 left-6 text-[10px] tracking-[0.25em] text-ink-3 uppercase">IMPLIED VOLATILITY SURFACE</div>
+        <div class="absolute top-6 right-6 text-[10px] text-ink-3 font-mono">LIVE · {{TIME}}</div>
+        <div class="absolute bottom-6 left-6">
+          <div class="text-[10px] tracking-[0.2em] text-ink-3 uppercase mb-1">Featured</div>
+          <div class="font-display text-2xl">AVGO <span class="text-gold">·</span> 22.5%</div>
+          <div class="text-[11px] text-ink-3 mt-1">6M · 95% Strike · 70% KI</div>
         </div>
-        <div class="absolute -top-6 -right-6 bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-medium shadow-xl">
-          <i data-lucide="trending-up" class="w-3 h-3 inline mr-1"></i>本周热门
+        <div class="absolute bottom-6 right-6 text-right">
+          <div class="text-[10px] tracking-[0.2em] text-ink-3 uppercase mb-1">Score</div>
+          <div class="font-display text-2xl text-gold">8.7</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- WEEKLY HOT FCN CARDS -->
-  <section class="max-w-7xl mx-auto px-6 py-16">
-    <div class="flex items-end justify-between mb-8">
+  <!-- TOP PICKS TABLE -->
+  <section class="max-w-[1400px] mx-auto px-8 py-20">
+    <div class="flex items-end justify-between mb-10">
       <div>
-        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">WEEKLY TOP PICKS</div>
-        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold">本周热门 FCN 推荐</h2>
-        <p class="text-slate-500 mt-2">多因子模型综合评分 ≥ 8.0 的标的</p>
+        <div class="section-label mb-3">This Week · Top Ranked</div>
+        <h2 class="font-display text-4xl font-medium">本周高分标的</h2>
       </div>
-      <button class="hidden md:block text-sm text-slate-600 hover:text-slate-900 font-medium" onclick="navigate('screener')">查看全部 187 只 →</button>
+      <button class="btn-ghost flex items-center gap-2" onclick="navigate('screener')">
+        View all 187 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
     </div>
-    <div id="hot-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+    <div class="card overflow-hidden">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="w-12">#</th>
+            <th>标的</th>
+            <th>市场</th>
+            <th>行业</th>
+            <th class="text-right">现价</th>
+            <th>30D</th>
+            <th class="text-right">票息 p.a.</th>
+            <th class="text-right">IV</th>
+            <th class="text-right">Score</th>
+          </tr>
+        </thead>
+        <tbody id="top-table-body"></tbody>
+      </table>
+    </div>
   </section>
 
-  <!-- METHODOLOGY -->
-  <section class="bg-slate-50 py-20">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-12">
-        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">METHODOLOGY</div>
-        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold mb-3">机构级多因子筛选模型</h2>
-        <p class="text-slate-500 max-w-2xl mx-auto">每周扫描全球 800+ 标的，结合波动率结构、基本面、技术面、流动性、IV 溢价五维度生成综合评分</p>
+  <!-- METHODOLOGY STRIP -->
+  <section class="border-t border-b border-line bg-bg-2">
+    <div class="max-w-[1400px] mx-auto px-8 py-20 grid md:grid-cols-2 gap-16 items-center">
+      <div>
+        <div class="section-label mb-4">Methodology</div>
+        <h2 class="font-display text-4xl font-medium mb-6 leading-tight">机构级<br/><span class="text-gold italic">多因子模型</span></h2>
+        <p class="text-ink-2 leading-relaxed mb-8 max-w-md">
+          每周扫描全球 800+ 标的，结合波动率结构、基本面、技术面、流动性与 IV 溢价五维度，输出 0-10 综合评分。产品部资深团队叠加主观判断，剔除事件性风险标的。
+        </p>
+        <button class="btn-outline">Read whitepaper →</button>
       </div>
-      <div class="grid md:grid-cols-4 gap-5">
-        <div class="card p-6">
-          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="database" class="w-5 h-5 text-green-700"></i></div>
-          <div class="font-bold mb-2">数据采集</div>
-          <p class="text-sm text-slate-500 leading-relaxed">实时拉取美股、港股、A 股价格、期权链、基本面数据</p>
+      <div class="grid grid-cols-2 gap-px bg-line">
+        <div class="bg-bg-2 p-8">
+          <div class="font-display text-4xl text-gold mb-2 num">01</div>
+          <div class="font-medium mb-2">数据采集</div>
+          <p class="text-xs text-ink-3 leading-relaxed">实时拉取美股、港股、A 股的价格、期权链与基本面</p>
         </div>
-        <div class="card p-6">
-          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="cpu" class="w-5 h-5 text-green-700"></i></div>
-          <div class="font-bold mb-2">量化打分</div>
-          <p class="text-sm text-slate-500 leading-relaxed">五因子加权计算，输出 0-10 综合评分</p>
+        <div class="bg-bg-2 p-8">
+          <div class="font-display text-4xl text-gold mb-2 num">02</div>
+          <div class="font-medium mb-2">量化打分</div>
+          <p class="text-xs text-ink-3 leading-relaxed">五因子加权计算，输出 0-10 综合评分</p>
         </div>
-        <div class="card p-6">
-          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="users" class="w-5 h-5 text-green-700"></i></div>
-          <div class="font-bold mb-2">产品部审核</div>
-          <p class="text-sm text-slate-500 leading-relaxed">资深团队叠加主观判断，剔除事件性风险标的</p>
+        <div class="bg-bg-2 p-8">
+          <div class="font-display text-4xl text-gold mb-2 num">03</div>
+          <div class="font-medium mb-2">人工审核</div>
+          <p class="text-xs text-ink-3 leading-relaxed">资深团队叠加主观判断，剔除事件性风险</p>
         </div>
-        <div class="card p-6">
-          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4"><i data-lucide="target" class="w-5 h-5 text-green-700"></i></div>
-          <div class="font-bold mb-2">客户匹配</div>
-          <p class="text-sm text-slate-500 leading-relaxed">按风险偏好、收益目标个性化推荐</p>
+        <div class="bg-bg-2 p-8">
+          <div class="font-display text-4xl text-gold mb-2 num">04</div>
+          <div class="font-medium mb-2">客户匹配</div>
+          <p class="text-xs text-ink-3 leading-relaxed">按风险偏好、收益目标个性化推荐</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- LATEST RESEARCH -->
-  <section class="max-w-7xl mx-auto px-6 py-20">
-    <div class="flex items-end justify-between mb-8">
+  <section class="max-w-[1400px] mx-auto px-8 py-20">
+    <div class="flex items-end justify-between mb-10">
       <div>
-        <div class="text-sm text-green-600 font-semibold mb-2 tracking-wider">RESEARCH</div>
-        <h2 class="font-serif-cn text-3xl md:text-4xl font-bold">最新市场观点</h2>
+        <div class="section-label mb-3">Research</div>
+        <h2 class="font-display text-4xl font-medium">最新观点</h2>
       </div>
-      <button class="hidden md:block text-sm text-slate-600 hover:text-slate-900 font-medium" onclick="navigate('research')">全部研究 →</button>
+      <button class="btn-ghost flex items-center gap-2" onclick="navigate('research')">
+        All research <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
     </div>
-    <div class="grid md:grid-cols-3 gap-5" id="research-preview"></div>
+    <div class="grid md:grid-cols-3 gap-px bg-line border border-line" id="research-preview"></div>
   </section>
 
 </div>
 
 <!-- =================== VIEW: SCREENER =================== -->
 <div id="view-screener" class="view">
-  <div class="bg-slate-50 border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-6 py-10">
-      <h1 class="font-serif-cn text-3xl md:text-4xl font-bold mb-2">智能筛选</h1>
-      <p class="text-slate-500">根据您的偏好，从 187 只覆盖标的中找到最适合的 FCN 产品</p>
+  <section class="border-b border-line">
+    <div class="max-w-[1400px] mx-auto px-8 py-12">
+      <div class="section-label mb-3">Screener</div>
+      <h1 class="font-display text-5xl font-medium mb-3">智能筛选</h1>
+      <p class="text-ink-2">根据您的偏好，从 187 只覆盖标的中找到最适合的 FCN 产品</p>
     </div>
-  </div>
-  <div class="max-w-7xl mx-auto px-6 py-10 grid lg:grid-cols-[280px_1fr] gap-8">
+  </section>
+
+  <div class="max-w-[1400px] mx-auto px-8 py-10 grid lg:grid-cols-[260px_1fr] gap-12">
     <!-- FILTERS -->
-    <aside class="space-y-8">
+    <aside class="space-y-10">
       <div>
-        <div class="font-semibold mb-3 flex items-center justify-between">行业 <span class="text-xs text-slate-400 font-normal" id="filter-industry-count">已选 全部</span></div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">行业 SECTOR</div>
         <div class="flex flex-wrap gap-2" id="filter-industry">
-          <div class="check-chip active" data-val="all">全部</div>
+          <div class="check-chip active" data-val="all">All</div>
           <div class="check-chip" data-val="AI半导体">AI 半导体</div>
           <div class="check-chip" data-val="新能源">新能源</div>
           <div class="check-chip" data-val="消费">消费</div>
@@ -284,123 +425,145 @@
           <div class="check-chip" data-val="互联网">互联网</div>
         </div>
       </div>
-
       <div>
-        <div class="font-semibold mb-3">目标年化收益</div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">目标年化 COUPON</div>
         <div class="flex flex-wrap gap-2" id="filter-yield">
-          <div class="check-chip active" data-val="all">不限</div>
-          <div class="check-chip" data-val="10-15">10-15%</div>
-          <div class="check-chip" data-val="15-20">15-20%</div>
-          <div class="check-chip" data-val="20-25">20-25%</div>
+          <div class="check-chip active" data-val="all">All</div>
+          <div class="check-chip" data-val="10-15">10–15%</div>
+          <div class="check-chip" data-val="15-20">15–20%</div>
+          <div class="check-chip" data-val="20-25">20–25%</div>
           <div class="check-chip" data-val="25+">25%+</div>
         </div>
       </div>
-
       <div>
-        <div class="font-semibold mb-3">标的市场</div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">市场 MARKET</div>
         <div class="flex flex-wrap gap-2" id="filter-market">
-          <div class="check-chip active" data-val="all">全部</div>
+          <div class="check-chip active" data-val="all">All</div>
           <div class="check-chip" data-val="US">美股</div>
           <div class="check-chip" data-val="HK">港股</div>
           <div class="check-chip" data-val="CN">A 股</div>
         </div>
       </div>
-
       <div>
-        <div class="font-semibold mb-3">最低综合评分 <span class="text-green-600 num" id="score-val">7.0</span></div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase">最低评分</div>
+          <div class="font-display text-lg text-gold num" id="score-val">7.0</div>
+        </div>
         <input type="range" min="5" max="10" step="0.1" value="7" class="w-full" id="filter-score">
-        <div class="flex justify-between text-xs text-slate-400 mt-2 num"><span>5.0</span><span>10.0</span></div>
+        <div class="flex justify-between text-[10px] text-ink-3 mt-2 num"><span>5.0</span><span>10.0</span></div>
       </div>
-
-      <button class="text-sm text-slate-500 hover:text-slate-900 flex items-center gap-1" onclick="resetFilters()">
-        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 重置筛选
+      <button class="text-xs text-ink-3 hover:text-gold flex items-center gap-1.5 transition-colors" onclick="resetFilters()">
+        <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset filters
       </button>
     </aside>
 
     <!-- RESULTS -->
     <div>
-      <div class="flex items-center justify-between mb-5">
-        <div class="text-sm text-slate-600">共 <span class="font-bold text-slate-900" id="result-count">0</span> 个符合条件的标的</div>
-        <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white" id="sort-select">
-          <option value="score">按综合评分</option>
-          <option value="coupon">按票息</option>
-          <option value="vol">按隐含波动率</option>
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-line">
+        <div class="text-sm text-ink-2"><span class="text-ink font-medium num" id="result-count">0</span> 个标的符合条件</div>
+        <select id="sort-select">
+          <option value="score">Sort · Score</option>
+          <option value="coupon">Sort · Coupon</option>
+          <option value="vol">Sort · IV</option>
         </select>
       </div>
-      <div id="screener-results" class="grid md:grid-cols-2 gap-5"></div>
+      <div class="card overflow-hidden">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>标的</th>
+              <th>行业</th>
+              <th class="text-right">现价</th>
+              <th>30D</th>
+              <th class="text-right">票息</th>
+              <th class="text-right">行权 / 敲入</th>
+              <th class="text-right">IV</th>
+              <th class="text-right">Score</th>
+            </tr>
+          </thead>
+          <tbody id="screener-results"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- =================== VIEW: FEATURED =================== -->
 <div id="view-featured" class="view">
-  <section class="featured-banner text-white">
-    <div class="max-w-7xl mx-auto px-6 py-16">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center"><i data-lucide="award" class="w-5 h-5"></i></div>
-        <div class="text-sm tracking-widest text-green-300">PRODUCT DESK SELECTION · 2026 第 23 周</div>
-      </div>
-      <h1 class="font-serif-cn text-4xl md:text-5xl font-bold mb-4">产品部本周精选</h1>
-      <p class="text-slate-300 max-w-2xl text-lg leading-relaxed">由产品部资深团队从量化模型 TOP 30 标的中精选出 5 只，每只附详细推荐逻辑、市场观点与风险提示。本周主题：<span class="text-green-300 font-medium">AI 算力链回调机会</span></p>
-      <div class="mt-8 flex gap-6 text-sm">
-        <div><span class="text-slate-400">发布时间</span> <span class="ml-2 num">2026-06-03</span></div>
-        <div><span class="text-slate-400">下次更新</span> <span class="ml-2 num">2026-06-10</span></div>
+  <section class="border-b border-line grain relative">
+    <div class="max-w-[1400px] mx-auto px-8 py-20 relative">
+      <div class="section-label mb-4">Product Desk · Week 23, 2026</div>
+      <h1 class="font-display text-5xl md:text-6xl font-medium mb-6 leading-tight">
+        Curated by<br/><span class="text-gold italic">our desk.</span>
+      </h1>
+      <p class="text-ink-2 max-w-xl leading-relaxed mb-10">
+        由产品部资深团队从量化模型 TOP 30 中精选 5 只，每只附详细推荐逻辑、市场观点与风险提示。
+      </p>
+      <div class="flex flex-wrap gap-8 text-sm border-t border-line pt-6">
+        <div><span class="text-ink-3">主题</span> <span class="ml-3 text-gold">AI 算力链回调机会</span></div>
+        <div><span class="text-ink-3">发布</span> <span class="ml-3 num">2026.06.03</span></div>
+        <div><span class="text-ink-3">下次更新</span> <span class="ml-3 num">2026.06.10</span></div>
       </div>
     </div>
   </section>
-  <div class="max-w-7xl mx-auto px-6 py-12 space-y-6" id="featured-list"></div>
+  <div class="max-w-[1400px] mx-auto px-8 py-12 space-y-px bg-line border-x border-b border-line" id="featured-list"></div>
 </div>
 
 <!-- =================== VIEW: RESEARCH =================== -->
 <div id="view-research" class="view">
-  <div class="max-w-7xl mx-auto px-6 py-12">
-    <div class="mb-10">
-      <h1 class="font-serif-cn text-4xl font-bold mb-2">市场研究</h1>
-      <p class="text-slate-500">FCN 热点分析、结构化产品策略与宏观观点</p>
+  <section class="border-b border-line">
+    <div class="max-w-[1400px] mx-auto px-8 py-16">
+      <div class="section-label mb-3">Research</div>
+      <h1 class="font-display text-5xl font-medium">市场研究</h1>
+      <p class="text-ink-2 mt-3">FCN 热点分析、结构化产品策略与宏观观点</p>
     </div>
-    <div class="grid md:grid-cols-3 gap-6" id="research-list"></div>
+  </section>
+  <div class="max-w-[1400px] mx-auto px-8 py-12">
+    <div class="grid md:grid-cols-3 gap-px bg-line border border-line" id="research-list"></div>
   </div>
 </div>
 
 <!-- =================== FOOTER =================== -->
-<footer class="bg-slate-900 text-slate-400 mt-20">
-  <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8 text-sm">
-    <div>
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold">金</div>
-        <div class="text-white font-semibold">金石 FCN</div>
+<footer class="border-t border-line mt-12">
+  <div class="max-w-[1400px] mx-auto px-8 py-16 grid md:grid-cols-4 gap-12 text-sm">
+    <div class="md:col-span-1">
+      <div class="flex items-center gap-2.5 mb-5">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2 L20 7 L20 17 L12 22 L4 17 L4 7 Z" stroke="#C9A86A" stroke-width="1.2"/>
+        </svg>
+        <div class="font-display font-medium">金石 FCN</div>
       </div>
-      <p class="leading-relaxed">私行结构化产品智能推荐平台。仅向合资格投资者开放。</p>
+      <p class="text-ink-3 leading-relaxed text-xs">私行结构化产品智能推荐平台。仅向合资格投资者开放。</p>
     </div>
     <div>
-      <div class="text-white font-semibold mb-3">产品</div>
-      <div class="space-y-2">
-        <div class="hover:text-white cursor-pointer" onclick="navigate('screener')">智能筛选</div>
-        <div class="hover:text-white cursor-pointer" onclick="navigate('featured')">产品部精选</div>
-        <div class="hover:text-white cursor-pointer" onclick="navigate('research')">市场研究</div>
-      </div>
-    </div>
-    <div>
-      <div class="text-white font-semibold mb-3">关于</div>
-      <div class="space-y-2">
-        <div class="hover:text-white cursor-pointer">公司介绍</div>
-        <div class="hover:text-white cursor-pointer">投研团队</div>
-        <div class="hover:text-white cursor-pointer">联系我们</div>
+      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">Platform</div>
+      <div class="space-y-2.5 text-ink-2">
+        <div class="hover:text-gold cursor-pointer transition-colors" onclick="navigate('screener')">Screener</div>
+        <div class="hover:text-gold cursor-pointer transition-colors" onclick="navigate('featured')">Curated Picks</div>
+        <div class="hover:text-gold cursor-pointer transition-colors" onclick="navigate('research')">Research</div>
       </div>
     </div>
     <div>
-      <div class="text-white font-semibold mb-3">合规</div>
-      <div class="space-y-2">
-        <div class="hover:text-white cursor-pointer">风险披露</div>
-        <div class="hover:text-white cursor-pointer">隐私政策</div>
-        <div class="hover:text-white cursor-pointer">服务条款</div>
+      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">Company</div>
+      <div class="space-y-2.5 text-ink-2">
+        <div class="hover:text-gold cursor-pointer transition-colors">About</div>
+        <div class="hover:text-gold cursor-pointer transition-colors">Investment Team</div>
+        <div class="hover:text-gold cursor-pointer transition-colors">Contact</div>
+      </div>
+    </div>
+    <div>
+      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">Legal</div>
+      <div class="space-y-2.5 text-ink-2">
+        <div class="hover:text-gold cursor-pointer transition-colors">Risk Disclosure</div>
+        <div class="hover:text-gold cursor-pointer transition-colors">Privacy</div>
+        <div class="hover:text-gold cursor-pointer transition-colors">Terms</div>
       </div>
     </div>
   </div>
-  <div class="border-t border-slate-800">
-    <div class="max-w-7xl mx-auto px-6 py-6 text-xs leading-relaxed">
-      <p class="mb-2"><strong class="text-slate-300">重要风险披露：</strong>固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本网站内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
-      <p class="mt-4">© 2026 金石 FCN. All rights reserved. 本演示页面所有数据均为模拟数据，仅供产品设计展示用途。</p>
+  <div class="border-t border-line">
+    <div class="max-w-[1400px] mx-auto px-8 py-6 text-[11px] text-ink-3 leading-relaxed">
+      <p><strong class="text-ink-2">Important Risk Disclosure ·</strong> 固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本平台内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
+      <p class="mt-3">© 2026 Goldstone FCN · All rights reserved · 本演示页面所有数据均为模拟数据，仅供产品设计展示用途。</p>
     </div>
   </div>
 </footer>
@@ -409,7 +572,7 @@
 // =================== MOCK DATA ===================
 const stocks = [
   { code: 'AVGO.US', name: '博通', industry: 'AI半导体', market: 'US', price: 418.66, chg: -12.64, coupon: 22.5, strike: 95, ki: 70, ko: 100, tenor: 6, score: 8.7, risk: '中', iv: 48.2, reason: 'AI 半导体龙头，盘后大幅回调后 IV 溢价显著扩大', tag: '高 IV' },
-  { code: 'NVDA.US', name: '英伟达', industry: 'AI半导体', market: 'US', price: 142.30, chg: 1.82, coupon: 19.8, strike: 95, ki: 72, ko: 103, tenor: 6, score: 8.5, risk: '中', iv: 42.1, reason: 'AI 算力核心，技术面突破上行通道', tag: 'TOP PICK' },
+  { code: 'NVDA.US', name: '英伟达', industry: 'AI半导体', market: 'US', price: 142.30, chg: 1.82, coupon: 19.8, strike: 95, ki: 72, ko: 103, tenor: 6, score: 8.5, risk: '中', iv: 42.1, reason: 'AI 算力核心，技术面突破上行通道', tag: 'TOP' },
   { code: 'TSLA.US', name: '特斯拉', industry: '新能源', market: 'US', price: 352.41, chg: -0.74, coupon: 28.5, strike: 90, ki: 65, ko: 100, tenor: 6, score: 8.2, risk: '高', iv: 58.4, reason: 'Robotaxi 催化与高 IV 提供超额票息空间', tag: '高收益' },
   { code: 'META.US', name: 'Meta', industry: '互联网', market: 'US', price: 715.20, chg: 2.15, coupon: 16.5, strike: 95, ki: 75, ko: 102, tenor: 6, score: 8.4, risk: '低', iv: 32.6, reason: '广告基本面稳健，与 Broadcom AI 芯片合作', tag: '稳健' },
   { code: 'AAPL.US', name: '苹果', industry: '消费', market: 'US', price: 228.55, chg: 0.41, coupon: 13.2, strike: 95, ki: 78, ko: 102, tenor: 9, score: 8.1, risk: '低', iv: 26.8, reason: '低波蓝筹，适合保守型客户配置底仓', tag: '保守' },
@@ -423,7 +586,7 @@ const stocks = [
 ];
 
 const featuredPicks = [
-  { ...stocks[0], thesis: '博通 Q2 财报后盘后下跌 12.6%，本质是预期差修正而非基本面恶化。FY27 AI 营收 >1000 亿美元路径清晰，回调后 IV 溢价显著，是构建 FCN 的极佳时机。建议 6 个月期、行权 95%、敲入 70% 结构，可实现 22.5% 年化票息。', risks: '若 AI 资本开支周期出现拐点，标的可能进一步下行。建议控制单一标的仓位 ≤ 5%。' },
+  { ...stocks[0], thesis: '博通 Q2 财报后盘后下跌 12.6%，本质是预期差修正而非基本面恶化。FY27 AI 营收逾千亿美元路径清晰，回调后 IV 溢价显著扩大，是构建 FCN 的极佳时机。建议 6 个月期、行权 95%、敲入 70% 结构，可实现 22.5% 年化票息。', risks: '若 AI 资本开支周期出现拐点，标的可能进一步下行。建议控制单一标的仓位 ≤ 5%。' },
   { ...stocks[1], thesis: '英伟达 Blackwell Ultra 进入量产爬坡期，下一代 Rubin 平台路线图清晰。技术面突破前期整理区间，量价配合良好。当前 IV 处于历史 40 分位，溢价合理。', risks: '关注 7 月 AI 资本开支指引与中国市场出口管制进展。' },
   { ...stocks[3], thesis: 'Meta 与 Broadcom 合作开发自研 AI 芯片，长期算力成本下降利好。广告业务保持高个位数增长，估值修复仍有空间。低波属性适合作为组合中的稳健仓位。', risks: '监管风险与 Reality Labs 持续亏损。' },
   { ...stocks[5], thesis: '阿里云业务在 AI 推理需求驱动下重回增长，云业务估值有显著修复空间。港股 IV 整体高于美股同业，FCN 收益更具吸引力。', risks: '中美科技博弈与电商竞争格局变化。' },
@@ -431,136 +594,96 @@ const featuredPicks = [
 ];
 
 const research = [
-  { title: '【FCN 热点分析】博通 Q2 财报后回调，AI 半导体仍是结构化首选', cat: '热点分析', author: '产品部', date: '2026-06-04', readTime: '8 分钟', tag: 'AI 半导体' },
-  { title: 'FCN 入门：固定票息票据的收益与风险结构详解', cat: '产品教育', author: '投研团队', date: '2026-06-02', readTime: '12 分钟', tag: '基础教育' },
-  { title: '2026 年中策略：高 IV 环境下的 FCN 配置思路', cat: '策略观点', author: '首席策略师', date: '2026-05-30', readTime: '15 分钟', tag: '宏观策略' },
-  { title: '港股互联网板块 IV 溢价收敛，配置窗口仍存', cat: '行业观察', author: '研究部', date: '2026-05-28', readTime: '6 分钟', tag: '互联网' },
-  { title: 'GLP-1 板块基本面与期权定价的非对称机会', cat: '行业观察', author: '医药团队', date: '2026-05-26', readTime: '10 分钟', tag: '医药' },
-  { title: '如何用 FCN 在震荡市中实现 15%+ 年化收益', cat: '产品教育', author: '产品部', date: '2026-05-24', readTime: '9 分钟', tag: '策略教学' },
+  { title: '博通 Q2 财报后回调，AI 半导体仍是结构化首选', cat: '热点分析', author: '产品部', date: '2026.06.04', readTime: '8 min', tag: 'AI 半导体' },
+  { title: '固定票息票据的收益与风险结构详解', cat: '产品教育', author: '投研团队', date: '2026.06.02', readTime: '12 min', tag: '基础' },
+  { title: '2026 年中策略：高 IV 环境下的 FCN 配置思路', cat: '策略观点', author: '首席策略师', date: '2026.05.30', readTime: '15 min', tag: '宏观' },
+  { title: '港股互联网板块 IV 溢价收敛，配置窗口仍存', cat: '行业观察', author: '研究部', date: '2026.05.28', readTime: '6 min', tag: '互联网' },
+  { title: 'GLP-1 板块基本面与期权定价的非对称机会', cat: '行业观察', author: '医药团队', date: '2026.05.26', readTime: '10 min', tag: '医药' },
+  { title: '如何用 FCN 在震荡市中实现 15%+ 年化收益', cat: '产品教育', author: '产品部', date: '2026.05.24', readTime: '9 min', tag: '策略' },
 ];
 
 // =================== ROUTING ===================
 function navigate(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l => {
-    l.classList.toggle('active', l.dataset.view === view);
-  });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === view));
   document.getElementById('mobile-menu').classList.add('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-document.querySelectorAll('.nav-link').forEach(l => {
-  l.addEventListener('click', () => navigate(l.dataset.view));
-});
-function toggleMobileMenu() {
-  document.getElementById('mobile-menu').classList.toggle('hidden');
+document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navigate(l.dataset.view)));
+function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+
+// =================== HELPERS ===================
+const marketLabel = m => ({ US: '美股', HK: '港股', CN: 'A股' }[m]);
+const priceCcy = m => ({ US: '$', HK: 'HK$', CN: '¥' }[m]);
+const sign = c => c >= 0 ? '+' : '';
+const chgClass = c => c >= 0 ? 'text-green' : 'text-red';
+const riskPill = r => r === '低' ? '<span class="pill pill-green">低风险</span>' :
+                      r === '中' ? '<span class="pill pill-gold">中风险</span>' :
+                                   '<span class="pill pill-red">高风险</span>';
+
+function sparklinePath(seed) {
+  // deterministic pseudo-random sparkline
+  let pts = [];
+  let v = 50;
+  let s = seed;
+  for (let i = 0; i < 30; i++) {
+    s = (s * 9301 + 49297) % 233280;
+    v += (s / 233280 - 0.5) * 12;
+    v = Math.max(20, Math.min(80, v));
+    pts.push(v);
+  }
+  const w = 100, h = 32;
+  const stepX = w / (pts.length - 1);
+  let d = `M 0 ${h - pts[0] * h / 100}`;
+  for (let i = 1; i < pts.length; i++) {
+    d += ` L ${i * stepX} ${h - pts[i] * h / 100}`;
+  }
+  const last = pts[pts.length - 1];
+  const first = pts[0];
+  const color = last >= first ? '#00C805' : '#F43F5E';
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <path d="${d}" stroke="${color}" stroke-width="1.2" fill="none" opacity="0.9"/>
+  </svg>`;
 }
 
-// =================== CARD RENDERER ===================
-function riskPill(r) {
-  if (r === '低') return '<span class="pill pill-green">低风险</span>';
-  if (r === '中') return '<span class="pill pill-amber">中风险</span>';
-  return '<span class="pill pill-red">高风险</span>';
-}
-function tagPill(t) {
-  return `<span class="pill pill-gray">${t}</span>`;
-}
-function scoreDeg(s) { return Math.round((s / 10) * 360); }
-function marketLabel(m) { return m === 'US' ? '美股' : m === 'HK' ? '港股' : 'A股'; }
-function priceCcy(m) { return m === 'US' ? '$' : m === 'HK' ? 'HK$' : '¥'; }
-
-function stockCard(s) {
-  const chgClass = s.chg >= 0 ? 'stat-up' : 'stat-down';
-  const chgSign = s.chg >= 0 ? '+' : '';
-  return `
-    <div class="card p-5 cursor-pointer">
-      <div class="flex items-start justify-between mb-4">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-bold text-lg">${s.name}</span>
-            ${tagPill(s.tag)}
-          </div>
-          <div class="text-sm text-slate-500 num">${s.code} · ${marketLabel(s.market)} · ${s.industry}</div>
-        </div>
-        <div class="score-ring w-14 h-14" style="--p: ${scoreDeg(s.score)}deg">
-          <div class="score-ring-inner">
-            <div class="text-base font-bold num leading-none">${s.score}</div>
-            <div class="text-[8px] text-slate-400">SCORE</div>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-baseline gap-3 mb-4">
-        <div class="text-xl font-bold num">${priceCcy(s.market)}${s.price.toLocaleString()}</div>
-        <div class="text-sm num ${chgClass}">${chgSign}${s.chg}%</div>
-      </div>
-      <div class="bg-slate-50 rounded-xl p-4 mb-3">
-        <div class="flex items-end justify-between mb-3">
-          <div>
-            <div class="text-[11px] text-slate-500">年化票息</div>
-            <div class="text-2xl font-bold text-green-600 num">${s.coupon}%</div>
-          </div>
-          <div class="text-right text-xs text-slate-500 num leading-relaxed">
-            <div>行权 <span class="text-slate-900 font-semibold">${s.strike}%</span> / 敲入 <span class="text-slate-900 font-semibold">${s.ki}%</span></div>
-            <div>敲出 <span class="text-slate-900 font-semibold">${s.ko}%</span> / 期限 <span class="text-slate-900 font-semibold">${s.tenor}M</span></div>
-          </div>
-        </div>
-        <div class="text-xs text-slate-600 leading-relaxed border-t border-slate-200 pt-3">
-          <i data-lucide="lightbulb" class="w-3 h-3 inline text-amber-500"></i> ${s.reason}
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        ${riskPill(s.risk)}
-        <div class="text-xs text-slate-500 num">IV <b class="text-slate-900">${s.iv}%</b></div>
-      </div>
-    </div>
-  `;
+// =================== HOME · TOP TABLE ===================
+function renderTopTable() {
+  const top = [...stocks].sort((a, b) => b.score - a.score).slice(0, 8);
+  document.getElementById('top-table-body').innerHTML = top.map((s, i) => `
+    <tr class="data-row-hover">
+      <td class="text-ink-3 num">${String(i+1).padStart(2,'0')}</td>
+      <td>
+        <div class="font-medium">${s.name}</div>
+        <div class="text-[11px] text-ink-3 num">${s.code}</div>
+      </td>
+      <td><span class="pill pill-dim">${marketLabel(s.market)}</span></td>
+      <td class="text-ink-2 text-[13px]">${s.industry}</td>
+      <td class="text-right num">${priceCcy(s.market)}${s.price.toLocaleString()}</td>
+      <td class="w-28">${sparklinePath(s.code.charCodeAt(0) * s.code.charCodeAt(1))}</td>
+      <td class="text-right num text-gold font-medium">${s.coupon}%</td>
+      <td class="text-right num text-ink-2">${s.iv}%</td>
+      <td class="text-right">
+        <span class="score-display text-lg ${s.score >= 8.3 ? 'text-gold' : 'text-ink'}">${s.score}</span>
+      </td>
+    </tr>
+  `).join('');
 }
 
-// =================== RENDER HOME ===================
-function renderHome() {
-  const hot = [...stocks].sort((a,b) => b.score - a.score).slice(0, 6);
-  document.getElementById('hot-grid').innerHTML = hot.map(stockCard).join('');
-
+// =================== HOME · RESEARCH PREVIEW ===================
+function renderResearchPreview() {
   document.getElementById('research-preview').innerHTML = research.slice(0, 3).map(r => `
-    <div class="card p-6 cursor-pointer">
-      <div class="flex items-center gap-2 mb-4">
-        <span class="pill pill-green">${r.cat}</span>
-        <span class="text-xs text-slate-400">${r.readTime}</span>
+    <div class="bg-bg-2 p-8 card-hover cursor-pointer transition-all">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="pill pill-gold">${r.cat}</span>
       </div>
-      <h3 class="font-bold text-lg leading-snug mb-4 font-serif-cn">${r.title}</h3>
-      <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4">
-        <span>${r.author}</span>
+      <h3 class="font-display text-xl leading-snug mb-8 font-medium">${r.title}</h3>
+      <div class="flex items-center justify-between text-[11px] text-ink-3 pt-6 border-t border-line">
+        <span>${r.author} · ${r.readTime}</span>
         <span class="num">${r.date}</span>
       </div>
     </div>
   `).join('');
-
-  lucide.createIcons();
-
-  // hero chart
-  const ctx = document.getElementById('heroChart');
-  if (ctx) {
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: Array.from({length: 30}, (_, i) => i),
-        datasets: [{
-          data: [480, 478, 482, 485, 479, 481, 483, 488, 491, 489, 486, 490, 493, 495, 492, 488, 485, 487, 484, 481, 478, 476, 479, 481, 479, 477, 479, 481, 479, 419],
-          borderColor: '#00C805',
-          backgroundColor: 'rgba(0,200,5,0.08)',
-          fill: true,
-          tension: 0.3,
-          borderWidth: 2,
-          pointRadius: 0,
-        }]
-      },
-      options: {
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        scales: { x: { display: false }, y: { display: false } },
-        maintainAspectRatio: false,
-      }
-    });
-  }
 }
 
 // =================== SCREENER ===================
@@ -568,36 +691,25 @@ let filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
 let sortBy = 'score';
 
 function setupFilters() {
-  document.querySelectorAll('#filter-industry .check-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#filter-industry .check-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      filters.industry = chip.dataset.val;
-      renderScreener();
+  const wire = (id, key) => {
+    document.querySelectorAll(`#${id} .check-chip`).forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll(`#${id} .check-chip`).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        filters[key] = chip.dataset.val;
+        renderScreener();
+      });
     });
-  });
-  document.querySelectorAll('#filter-yield .check-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#filter-yield .check-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      filters.yield = chip.dataset.val;
-      renderScreener();
-    });
-  });
-  document.querySelectorAll('#filter-market .check-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#filter-market .check-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      filters.market = chip.dataset.val;
-      renderScreener();
-    });
-  });
-  document.getElementById('filter-score').addEventListener('input', (e) => {
+  };
+  wire('filter-industry', 'industry');
+  wire('filter-yield', 'yield');
+  wire('filter-market', 'market');
+  document.getElementById('filter-score').addEventListener('input', e => {
     filters.score = parseFloat(e.target.value);
     document.getElementById('score-val').textContent = filters.score.toFixed(1);
     renderScreener();
   });
-  document.getElementById('sort-select').addEventListener('change', (e) => {
+  document.getElementById('sort-select').addEventListener('change', e => {
     sortBy = e.target.value;
     renderScreener();
   });
@@ -625,88 +737,209 @@ function renderScreener() {
     }
     return true;
   });
-  list.sort((a, b) => {
-    if (sortBy === 'coupon') return b.coupon - a.coupon;
-    if (sortBy === 'vol') return b.iv - a.iv;
-    return b.score - a.score;
-  });
+  list.sort((a, b) => sortBy === 'coupon' ? b.coupon - a.coupon : sortBy === 'vol' ? b.iv - a.iv : b.score - a.score);
   document.getElementById('result-count').textContent = list.length;
-  document.getElementById('screener-results').innerHTML = list.length
-    ? list.map(stockCard).join('')
-    : `<div class="md:col-span-2 text-center py-16 text-slate-400"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3"></i><div>没有符合条件的标的，请放宽筛选条件</div></div>`;
-  lucide.createIcons();
+  document.getElementById('screener-results').innerHTML = list.length ? list.map(s => `
+    <tr class="data-row-hover">
+      <td>
+        <div class="font-medium">${s.name} <span class="text-ink-3 text-[11px] font-normal num ml-1">${s.code}</span></div>
+        <div class="text-[11px] text-ink-3 mt-0.5">${marketLabel(s.market)} · ${s.tag}</div>
+      </td>
+      <td class="text-ink-2 text-[13px]">${s.industry}</td>
+      <td class="text-right num">${priceCcy(s.market)}${s.price.toLocaleString()}</td>
+      <td class="w-28">${sparklinePath(s.code.charCodeAt(0) * s.code.charCodeAt(1))}</td>
+      <td class="text-right num text-gold font-medium">${s.coupon}%</td>
+      <td class="text-right num text-ink-2 text-[12px]">${s.strike}% / ${s.ki}%</td>
+      <td class="text-right num text-ink-2">${s.iv}%</td>
+      <td class="text-right">
+        <span class="score-display text-lg ${s.score >= 8.3 ? 'text-gold' : 'text-ink'}">${s.score}</span>
+      </td>
+    </tr>
+  `).join('') : `
+    <tr><td colspan="8" class="text-center py-20 text-ink-3">
+      <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-3 opacity-50"></i>
+      <div>没有符合条件的标的，请放宽筛选条件</div>
+    </td></tr>
+  `;
+  if (window.lucide) lucide.createIcons();
 }
 
 // =================== FEATURED ===================
 function renderFeatured() {
   document.getElementById('featured-list').innerHTML = featuredPicks.map((s, i) => `
-    <div class="card p-8">
-      <div class="grid md:grid-cols-[1fr_320px] gap-8">
-        <div>
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold num">${String(i+1).padStart(2,'0')}</div>
-            <span class="pill pill-green">${s.industry}</span>
-            ${riskPill(s.risk)}
-            ${tagPill(s.tag)}
-          </div>
-          <h2 class="font-serif-cn text-2xl font-bold mb-1">${s.name} <span class="text-slate-400 text-base font-normal num">${s.code}</span></h2>
-          <div class="text-sm text-slate-500 mb-5 num">${priceCcy(s.market)}${s.price.toLocaleString()} · ${s.chg >= 0 ? '+' : ''}${s.chg}% · IV ${s.iv}%</div>
-          <div class="mb-5">
-            <div class="text-xs text-green-600 font-semibold mb-2 tracking-wider">推荐逻辑</div>
-            <p class="text-slate-700 leading-relaxed text-[15px]">${s.thesis}</p>
-          </div>
-          <div>
-            <div class="text-xs text-amber-600 font-semibold mb-2 tracking-wider">风险提示</div>
-            <p class="text-slate-600 leading-relaxed text-sm">${s.risks}</p>
-          </div>
+    <div class="bg-bg p-10 grid lg:grid-cols-[1fr_320px] gap-10">
+      <div>
+        <div class="flex items-center gap-3 mb-5">
+          <div class="font-display text-3xl text-gold num">${String(i+1).padStart(2,'0')}</div>
+          <div class="h-px flex-1 bg-line"></div>
+          <span class="pill pill-dim">${s.industry}</span>
+          ${riskPill(s.risk)}
         </div>
-        <div class="bg-slate-50 rounded-2xl p-6 self-start">
-          <div class="text-xs text-slate-500 mb-1">推荐 FCN 结构</div>
-          <div class="text-3xl font-bold text-green-600 num mb-1">${s.coupon}%</div>
-          <div class="text-xs text-slate-500 mb-5">年化票息 p.a.</div>
-          <div class="data-row"><span class="data-label">行权价</span><span class="data-val num">${s.strike}%</span></div>
-          <div class="data-row"><span class="data-label">敲入价</span><span class="data-val num">${s.ki}%</span></div>
-          <div class="data-row"><span class="data-label">敲出价</span><span class="data-val num">${s.ko}%</span></div>
-          <div class="data-row"><span class="data-label">期限</span><span class="data-val num">${s.tenor} 个月</span></div>
-          <div class="data-row"><span class="data-label">综合评分</span><span class="data-val num text-green-600">${s.score} / 10</span></div>
-          <button class="btn-primary w-full mt-5 text-sm">咨询客户经理</button>
+        <h2 class="font-display text-3xl font-medium mb-2">${s.name} <span class="text-ink-3 text-base font-normal num ml-2">${s.code}</span></h2>
+        <div class="text-sm text-ink-3 mb-6 num">
+          ${priceCcy(s.market)}${s.price.toLocaleString()}
+          <span class="${chgClass(s.chg)} ml-2">${sign(s.chg)}${s.chg}%</span>
+          <span class="ml-4">IV ${s.iv}%</span>
+        </div>
+        <div class="mb-6">
+          <div class="section-label mb-3">推荐逻辑</div>
+          <p class="text-ink leading-relaxed text-[15px]">${s.thesis}</p>
+        </div>
+        <div>
+          <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-3 opacity-80">风险提示</div>
+          <p class="text-ink-2 leading-relaxed text-sm">${s.risks}</p>
+        </div>
+      </div>
+      <div class="border border-line rounded-xl p-7 self-start bg-bg-2">
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-2">Coupon p.a.</div>
+        <div class="font-display text-5xl text-gold num mb-1">${s.coupon}<span class="text-xl">%</span></div>
+        <div class="text-[11px] text-ink-3 mb-7">推荐 FCN 结构</div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between"><span class="text-ink-3">行权价 Strike</span><span class="num font-medium">${s.strike}%</span></div>
+          <div class="flex justify-between"><span class="text-ink-3">敲入价 KI</span><span class="num font-medium">${s.ki}%</span></div>
+          <div class="flex justify-between"><span class="text-ink-3">敲出价 KO</span><span class="num font-medium">${s.ko}%</span></div>
+          <div class="flex justify-between"><span class="text-ink-3">期限 Tenor</span><span class="num font-medium">${s.tenor}M</span></div>
+          <div class="flex justify-between pt-3 border-t border-line"><span class="text-ink-3">综合评分</span><span class="num font-medium text-gold">${s.score} / 10</span></div>
         </div>
       </div>
     </div>
   `).join('');
-  lucide.createIcons();
 }
 
 // =================== RESEARCH ===================
 function renderResearch() {
   document.getElementById('research-list').innerHTML = research.map(r => `
-    <div class="card p-6 cursor-pointer">
-      <div class="flex items-center gap-2 mb-4">
-        <span class="pill pill-green">${r.cat}</span>
-        <span class="pill pill-gray">${r.tag}</span>
+    <div class="bg-bg-2 p-8 card-hover cursor-pointer transition-all">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="pill pill-gold">${r.cat}</span>
+        <span class="pill pill-dim">${r.tag}</span>
       </div>
-      <h3 class="font-bold text-lg leading-snug mb-6 font-serif-cn">${r.title}</h3>
-      <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4">
-        <div class="flex items-center gap-3">
-          <span>${r.author}</span>
-          <span>·</span>
-          <span class="num">${r.readTime}</span>
-        </div>
+      <h3 class="font-display text-xl leading-snug mb-10 font-medium">${r.title}</h3>
+      <div class="flex items-center justify-between text-[11px] text-ink-3 pt-6 border-t border-line">
+        <span>${r.author} · ${r.readTime}</span>
         <span class="num">${r.date}</span>
       </div>
     </div>
   `).join('');
-  lucide.createIcons();
+}
+
+// =================== VOLATILITY SURFACE CANVAS ===================
+function drawVolSurface() {
+  const canvas = document.getElementById('volSurface');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  // Vol surface: rows of mountain-like curves, each row offset by depth
+  const rows = 22;
+  const cols = 48;
+  const cellW = w / cols;
+  const rowH = h / (rows + 4);
+
+  let time = (Date.now() / 4000) % (Math.PI * 2);
+
+  for (let r = rows; r >= 0; r--) {
+    const depth = r / rows; // 0 (front) -> 1 (back)
+    const y0 = h * 0.78 - r * rowH * 0.55;
+    const alpha = 0.15 + (1 - depth) * 0.55;
+    const offset = depth * 30;
+
+    ctx.beginPath();
+    for (let c = 0; c <= cols; c++) {
+      const x = c * cellW + (depth * cellW * 1.5);
+      // height function: a "skew smile" with center peak
+      const u = (c / cols - 0.5) * 4;
+      const heightBase = Math.exp(-u * u * 0.5) * 1.0; // gaussian
+      const skew = Math.sin(u * 0.8 + time + r * 0.15) * 0.3;
+      const noise = Math.sin(c * 0.4 + r * 0.7 + time * 0.5) * 0.1;
+      const peakHeight = (heightBase + skew + noise) * (45 + (1 - depth) * 30);
+      const y = y0 - peakHeight;
+      if (c === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    // gradient stroke
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, `rgba(201, 168, 106, ${alpha * 0.3})`);
+    grad.addColorStop(0.5, `rgba(230, 204, 143, ${alpha})`);
+    grad.addColorStop(1, `rgba(201, 168, 106, ${alpha * 0.3})`);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 0.8 + (1 - depth) * 0.7;
+    ctx.stroke();
+  }
+
+  // Highlight ridge at front
+  ctx.beginPath();
+  for (let c = 0; c <= cols; c++) {
+    const u = (c / cols - 0.5) * 4;
+    const heightBase = Math.exp(-u * u * 0.5);
+    const skew = Math.sin(u * 0.8 + time) * 0.3;
+    const peakHeight = (heightBase + skew) * 75;
+    const x = c * cellW;
+    const y = h * 0.78 - peakHeight;
+    if (c === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#E6CC8F';
+  ctx.lineWidth = 1.6;
+  ctx.shadowColor = 'rgba(230, 204, 143, 0.6)';
+  ctx.shadowBlur = 10;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // axes / grid hints
+  ctx.strokeStyle = 'rgba(161, 161, 170, 0.08)';
+  ctx.lineWidth = 0.5;
+  for (let c = 0; c <= cols; c += 8) {
+    const x = c * cellW;
+    ctx.beginPath();
+    ctx.moveTo(x, h * 0.78);
+    ctx.lineTo(x + rows * cellW * 1.5 * 0.5, h * 0.78 - rows * rowH * 0.55);
+    ctx.stroke();
+  }
+}
+
+let volAnimating = false;
+function startVolAnimation() {
+  if (volAnimating) return;
+  volAnimating = true;
+  function loop() {
+    drawVolSurface();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// =================== TIME ===================
+function updateTime() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.querySelectorAll('.live-time').forEach(el => el.textContent = t);
+  // also patch hero
+  const heroTimeEls = document.querySelectorAll('.absolute.top-6.right-6');
+  heroTimeEls.forEach(el => {
+    if (el.textContent.includes('LIVE')) el.textContent = 'LIVE · ' + t;
+  });
 }
 
 // =================== INIT ===================
 document.addEventListener('DOMContentLoaded', () => {
-  renderHome();
+  renderTopTable();
+  renderResearchPreview();
   setupFilters();
   renderScreener();
   renderFeatured();
   renderResearch();
   lucide.createIcons();
+  startVolAnimation();
+  updateTime();
+  setInterval(updateTime, 1000);
+  window.addEventListener('resize', () => drawVolSurface());
 });
 </script>
 
