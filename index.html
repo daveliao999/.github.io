@@ -111,51 +111,15 @@
 
   .stock-row-link { cursor: pointer; }
 
-  /* Floating admin button */
   .admin-fab { position: fixed; bottom: 24px; right: 24px; z-index: 50; padding: 10px 16px; background: var(--gold); color: #000; border-radius: 999px; font-size: 12px; font-weight: 600; box-shadow: 0 8px 24px rgba(201,168,106,0.3); display: flex; align-items: center; gap: 6px; cursor: pointer; }
   .admin-fab:hover { background: var(--gold-2); }
 
-  /* Featured page banner */
   .featured-banner { position: relative; overflow: hidden; }
 </style>
 </head>
 <body>
 
 <!-- =================== NAV =================== -->
-<nav class="sticky top-0 z-40 bg-bg-2/80 backdrop-blur-xl border-b border-line">
-  <div class="max-w-[1400px] mx-auto px-8 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-12">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('screener')">
-        <div class="olive-mark w-9 h-9">
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C9A86A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C9A86A" stroke-width="1" stroke-linecap="round" fill="none"/>
-          </svg>
-        </div>
-        <div class="leading-none">
-          <div class="font-script text-[20px] text-gold-2" style="line-height: 1;">Olive</div>
-          <div class="text-[9px] text-ink-3 tracking-[0.22em] mt-1">资产管理</div>
-        </div>
-      </div>
-      <div class="hidden md:flex items-center gap-1">
-        <div class="nav-link active" data-view="screener">标的筛选</div>
-        <div class="nav-link" data-view="featured">本周精选</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <button class="btn-ghost hidden md:flex items-center gap-2">
-        <i data-lucide="search" class="w-3.5 h-3.5"></i>
-        <span>搜索</span>
-      </button>
-      <button class="btn-ghost hidden md:block">登录</button>
-      <button class="btn-gold">申请访问</button>
-      <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
-    </div>
-  </div>
-  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-8 py-3 space-y-1">
-    <div class="nav-link block py-2" data-view="screener">标的筛选</div>
-    <div class="nav-link block py-2" data-view="featured">本周精选</div>
-  </div>
 <nav class="sticky top-0 z-40 bg-bg-2/80 backdrop-blur-xl border-b border-line">
   <div class="max-w-[1400px] mx-auto px-8 h-16 grid grid-cols-3 items-center">
     <!-- LEFT: Logo -->
@@ -174,16 +138,44 @@
       </div>
     </div>
 
-    <!-- CENTER: Navigation (绝对居中) -->
+    <!-- CENTER: Navigation -->
     <div class="hidden md:flex items-center justify-center gap-8">
       <div class="nav-link active" data-view="screener">标的筛选</div>
       <div class="nav-link" data-view="featured">本周精选</div>
     </div>
 
-    <!-- RIGHT: 留白保持对称（移动端汉堡菜单） -->
+    <!-- RIGHT: 留白对称（移动端汉堡菜单） -->
     <div class="flex items-center justify-end">
       <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
     </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-8 py-3 space-y-1">
+    <div class="nav-link block py-2" data-view="screener">标的筛选</div>
+    <div class="nav-link block py-2" data-view="featured">本周精选</div>
+  </div>
+</nav>
+
+<!-- =================== VIEW: SCREENER (HOMEPAGE) =================== -->
+<div id="view-screener" class="view active">
+  <section class="border-b border-line grain relative">
+    <div class="max-w-[1400px] mx-auto px-8 py-10 relative">
+      <div class="section-label mb-3">FCN 标的筛选</div>
+      <h1 class="font-display text-4xl md:text-5xl font-medium mb-3">
+        本周<span class="text-gold italic">推荐标的</span>
+      </h1>
+      <p class="text-ink-2 max-w-2xl">基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。</p>
+    </div>
+  </section>
+
+  <div class="max-w-[1400px] mx-auto px-8 py-10 grid lg:grid-cols-[260px_1fr] gap-12">
+    <aside class="space-y-10">
+      <div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">行业</div>
+        <div class="flex flex-wrap gap-2" id="filter-industry"></div>
+      </div>
+      <div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">目标年化票息</div>
+        <div class="flex flex-wrap gap-2" id="filter-yield">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="10-15">10–15%</div>
           <div class="check-chip" data-val="15-20">15–20%</div>
@@ -366,21 +358,16 @@
   </div>
 </div>
 
-<!-- ADMIN FAB (only shown in admin mode) -->
 <div id="admin-fab" class="admin-fab" style="display:none" onclick="openAdminModal()">
   <i data-lucide="settings" class="w-4 h-4"></i> 数据后台
 </div>
 
 <script src="data.js"></script>
 <script>
-// ============================================================
-// STATE
-// ============================================================
-let DATA = JSON.parse(JSON.stringify(window.OLIVE_DATA)); // working copy
+let DATA = JSON.parse(JSON.stringify(window.OLIVE_DATA));
 let isAdmin = false;
 let currentEditCode = null;
 
-// load from localStorage if exists (admin's unsaved changes)
 const LS_KEY = 'olive_admin_draft';
 function loadDraft() {
   const draft = localStorage.getItem(LS_KEY);
@@ -389,14 +376,9 @@ function loadDraft() {
   }
   return false;
 }
-function saveDraft() {
-  if (isAdmin) localStorage.setItem(LS_KEY, JSON.stringify(DATA));
-}
+function saveDraft() { if (isAdmin) localStorage.setItem(LS_KEY, JSON.stringify(DATA)); }
 function clearDraft() { localStorage.removeItem(LS_KEY); }
 
-// ============================================================
-// ROUTING
-// ============================================================
 function navigate(view, param) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
@@ -409,9 +391,6 @@ function navigate(view, param) {
 document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navigate(l.dataset.view)));
 function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
 
-// ============================================================
-// HELPERS
-// ============================================================
 const marketLabel = m => ({ US: '美股', HK: '港股', CN: 'A股' }[m] || m);
 const riskPill = r => r === '低' ? '<span class="pill pill-green">低风险</span>' :
                       r === '中' ? '<span class="pill pill-gold">中风险</span>' :
@@ -420,11 +399,8 @@ const riskPill = r => r === '低' ? '<span class="pill pill-green">低风险</sp
 const ALL_INDUSTRIES = ['AI半导体', '新能源', '消费', '金融', '医药', '互联网'];
 const ALL_RISKS = ['低', '中', '高'];
 const ALL_KI_TYPES = ['欧式敲入', '美式敲入'];
-const ALL_MARKETS = [{v:'US',l:'美股'},{v:'HK',l:'港股'},{v:'CN','l':'A股'}];
+const ALL_MARKETS = [{v:'US',l:'美股'},{v:'HK',l:'港股'},{v:'CN',l:'A股'}];
 
-// ============================================================
-// SCREENER
-// ============================================================
 let filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
 let sortBy = 'score';
 
@@ -491,7 +467,6 @@ function renderScreener() {
     return true;
   });
   list.sort((a, b) => sortBy === 'coupon' ? b.coupon - a.coupon : b.score - a.score);
-
   document.getElementById('result-count').textContent = list.length;
 
   if (!list.length) {
@@ -503,7 +478,6 @@ function renderScreener() {
     lucide.createIcons();
     return;
   }
-
   document.getElementById('screener-results').innerHTML = list.map(s => stockListCard(s)).join('');
   document.querySelectorAll('.stock-row-link').forEach(el => {
     el.addEventListener('click', () => navigate('detail', el.dataset.code));
@@ -515,7 +489,6 @@ function stockListCard(s) {
   const highlights = (s.highlights || []).slice(0, 3).map(h =>
     `<div class="highlight-bullet text-[13px] text-ink-2 leading-relaxed">${h}</div>`
   ).join('');
-
   return `
     <div class="stock-row-link border border-line rounded-xl p-6 hover:border-gold/40 hover:bg-bg-2 transition-all" data-code="${s.code}">
       <div class="grid lg:grid-cols-[1fr_auto] gap-6 items-start">
@@ -561,9 +534,6 @@ function stockListCard(s) {
   `;
 }
 
-// ============================================================
-// FEATURED
-// ============================================================
 function renderFeatured() {
   document.getElementById('featured-meta-week').textContent = '产品部精选 · ' + DATA.meta.week;
   document.getElementById('featured-theme').textContent = DATA.meta.theme;
@@ -627,17 +597,12 @@ function renderFeatured() {
       navigate('detail', el.dataset.code);
     });
   });
-
   lucide.createIcons();
 }
 
-// ============================================================
-// DETAIL
-// ============================================================
 function renderDetail(code) {
   const s = DATA.stocks.find(x => x.code === code);
   if (!s) { navigate('screener'); return; }
-
   document.getElementById('detail-content').innerHTML = `
     <div class="mb-8">
       <div class="flex items-center gap-3 mb-4 flex-wrap">
@@ -649,7 +614,6 @@ function renderDetail(code) {
       <h1 class="font-display text-5xl font-medium mb-2">${s.name}</h1>
       <div class="text-ink-3 num text-lg">${s.code}</div>
     </div>
-
     <div class="grid lg:grid-cols-[1fr_320px] gap-10 mb-12">
       <div>
         <div class="border border-line rounded-xl p-8 bg-bg-2 mb-8">
@@ -658,23 +622,15 @@ function renderDetail(code) {
             ${(s.highlights || []).map(h => `<div class="highlight-bullet text-ink leading-relaxed text-[15px]">${h}</div>`).join('')}
           </div>
         </div>
-
         <div class="mb-10">
           <div class="section-label mb-4">详细投资逻辑</div>
           <div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${s.thesis || ''}</div>
         </div>
-
         <div class="border-l-2 border-red pl-5 py-2">
           <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-3">风险提示</div>
           <p class="text-ink-2 leading-relaxed text-sm">${s.risks || ''}</p>
         </div>
-
-        <!-- Video placeholder for future -->
-        <!-- <div class="mt-10 border border-line rounded-xl aspect-video bg-bg-2 flex items-center justify-center text-ink-3">
-          <i data-lucide="play-circle" class="w-12 h-12"></i>
-        </div> -->
       </div>
-
       <aside class="self-start lg:sticky lg:top-24">
         <div class="border border-line rounded-xl p-7 bg-bg-2">
           <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-2">推荐 FCN 结构</div>
@@ -696,9 +652,6 @@ function renderDetail(code) {
   lucide.createIcons();
 }
 
-// ============================================================
-// ADMIN: LOGIN
-// ============================================================
 const ADMIN_PASSWORD = 'olive2026';
 
 function checkAdminMode() {
@@ -729,24 +682,18 @@ function closeLoginModal() {
   document.getElementById('login-modal').classList.remove('active');
   document.getElementById('admin-password').value = '';
   document.getElementById('login-error').classList.add('hidden');
-  // remove admin=1 from URL
   const url = new URL(window.location.href);
   url.searchParams.delete('admin');
   window.history.replaceState({}, '', url);
 }
 
-// ============================================================
-// ADMIN: PANEL
-// ============================================================
 let currentAdminTab = 'stocks';
 
 function openAdminModal() {
   document.getElementById('admin-modal').classList.add('active');
   renderAdminTab();
 }
-function closeAdminModal() {
-  document.getElementById('admin-modal').classList.remove('active');
-}
+function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
 
 document.querySelectorAll('.admin-tab').forEach(t => {
   t.addEventListener('click', () => {
@@ -780,22 +727,12 @@ function renderAdminStocks(body) {
     <div class="border border-line rounded-lg overflow-hidden">
       <table class="data-table">
         <thead>
-          <tr>
-            <th>标的</th>
-            <th>市场</th>
-            <th>行业</th>
-            <th class="text-right">票息</th>
-            <th class="text-right">评分</th>
-            <th class="text-right">操作</th>
-          </tr>
+          <tr><th>标的</th><th>市场</th><th>行业</th><th class="text-right">票息</th><th class="text-right">评分</th><th class="text-right">操作</th></tr>
         </thead>
         <tbody>
           ${DATA.stocks.map(s => `
             <tr>
-              <td>
-                <div class="font-medium">${s.name}</div>
-                <div class="text-[11px] text-ink-3 num">${s.code}</div>
-              </td>
+              <td><div class="font-medium">${s.name}</div><div class="text-[11px] text-ink-3 num">${s.code}</div></td>
               <td>${marketLabel(s.market)}</td>
               <td class="text-[13px] text-ink-2">${s.industry}</td>
               <td class="text-right num text-gold">${s.coupon}%</td>
@@ -815,26 +752,14 @@ function renderAdminStocks(body) {
 function renderAdminFeatured(body) {
   body.innerHTML = `
     <div class="space-y-6">
-      <div>
-        <div class="admin-label mb-2">本周编号</div>
-        <input type="text" id="meta-week" value="${DATA.meta.week}" onchange="updateMeta('week', this.value)">
-      </div>
-      <div>
-        <div class="admin-label mb-2">本周主题</div>
-        <input type="text" id="meta-theme" value="${DATA.meta.theme}" onchange="updateMeta('theme', this.value)">
-      </div>
+      <div><div class="admin-label mb-2">本周编号</div><input type="text" id="meta-week" value="${DATA.meta.week}" onchange="updateMeta('week', this.value)"></div>
+      <div><div class="admin-label mb-2">本周主题</div><input type="text" id="meta-theme" value="${DATA.meta.theme}" onchange="updateMeta('theme', this.value)"></div>
       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <div class="admin-label mb-2">发布日期</div>
-          <input type="text" id="meta-publishDate" value="${DATA.meta.publishDate}" onchange="updateMeta('publishDate', this.value)">
-        </div>
-        <div>
-          <div class="admin-label mb-2">下次更新</div>
-          <input type="text" id="meta-nextUpdate" value="${DATA.meta.nextUpdate}" onchange="updateMeta('nextUpdate', this.value)">
-        </div>
+        <div><div class="admin-label mb-2">发布日期</div><input type="text" id="meta-publishDate" value="${DATA.meta.publishDate}" onchange="updateMeta('publishDate', this.value)"></div>
+        <div><div class="admin-label mb-2">下次更新</div><input type="text" id="meta-nextUpdate" value="${DATA.meta.nextUpdate}" onchange="updateMeta('nextUpdate', this.value)"></div>
       </div>
       <div>
-        <div class="admin-label mb-3">精选标的（拖动排序 / 勾选启用）</div>
+        <div class="admin-label mb-3">精选标的（勾选启用 / 上下调整顺序）</div>
         <div class="space-y-2" id="featured-checklist">
           ${DATA.stocks.map(s => {
             const idx = DATA.meta.featuredIds.indexOf(s.code);
@@ -843,14 +768,8 @@ function renderAdminFeatured(body) {
               <label class="flex items-center gap-3 p-3 border border-line rounded-lg cursor-pointer hover:border-gold/40">
                 <input type="checkbox" ${isFeatured ? 'checked' : ''} onchange="toggleFeatured('${s.code}', this.checked)" class="w-4 h-4 accent-gold">
                 <div class="font-display text-base w-10 num text-gold">${isFeatured ? String(idx+1).padStart(2,'0') : '—'}</div>
-                <div class="flex-1">
-                  <div class="font-medium">${s.name} <span class="text-ink-3 text-xs ml-1 num">${s.code}</span></div>
-                  <div class="text-xs text-ink-3">${s.industry} · ${marketLabel(s.market)}</div>
-                </div>
-                ${isFeatured ? `
-                  <button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', -1)"><i data-lucide="arrow-up" class="w-3 h-3"></i></button>
-                  <button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', 1)"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>
-                ` : ''}
+                <div class="flex-1"><div class="font-medium">${s.name} <span class="text-ink-3 text-xs ml-1 num">${s.code}</span></div><div class="text-xs text-ink-3">${s.industry} · ${marketLabel(s.market)}</div></div>
+                ${isFeatured ? `<button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', -1)"><i data-lucide="arrow-up" class="w-3 h-3"></i></button><button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', 1)"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>` : ''}
               </label>
             `;
           }).join('')}
@@ -863,68 +782,26 @@ function renderAdminFeatured(body) {
 
 function renderAdminHelp(body) {
   body.innerHTML = `
-    <div class="prose-invert space-y-5 text-[14px] text-ink-2 leading-relaxed">
+    <div class="space-y-5 text-[14px] text-ink-2 leading-relaxed">
       <h3 class="font-display text-xl text-ink mb-2">使用流程</h3>
       <div class="border border-line rounded-lg p-5 space-y-4">
-        <div class="flex gap-4">
-          <div class="font-display text-2xl text-gold num shrink-0">01</div>
-          <div>
-            <div class="text-ink font-medium mb-1">在浏览器中编辑数据</div>
-            <p>在「标的管理」中新增、删除、修改标的；在「本周精选」中选择本周推荐的 5 只标的并排序。</p>
-            <p class="text-[12px] text-ink-3 mt-2">编辑过程会自动保存到浏览器本地，刷新不丢失。</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="font-display text-2xl text-gold num shrink-0">02</div>
-          <div>
-            <div class="text-ink font-medium mb-1">导出 data.js 文件</div>
-            <p>点击顶部「导出 data.js」按钮，浏览器会下载一个 data.js 文件。</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="font-display text-2xl text-gold num shrink-0">03</div>
-          <div>
-            <div class="text-ink font-medium mb-1">替换项目中的 data.js</div>
-            <p>把下载的 data.js 覆盖到项目目录的同名文件。</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="font-display text-2xl text-gold num shrink-0">04</div>
-          <div>
-            <div class="text-ink font-medium mb-1">推送到 GitHub</div>
-            <p>在终端执行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">git add data.js && git commit -m "更新本周标的" && git push</code></p>
-            <p class="text-[12px] text-ink-3 mt-2">GitHub Pages 通常 1-2 分钟后自动更新网站。</p>
-          </div>
-        </div>
+        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">01</div><div><div class="text-ink font-medium mb-1">在浏览器中编辑数据</div><p>在「标的管理」中新增、删除、修改标的；在「本周精选」中选择本周推荐的标的并排序。</p><p class="text-[12px] text-ink-3 mt-2">编辑过程会自动保存到浏览器本地，刷新不丢失。</p></div></div>
+        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">02</div><div><div class="text-ink font-medium mb-1">导出 data.js 文件</div><p>点击顶部「导出 data.js」按钮，浏览器会下载一个 data.js 文件。</p></div></div>
+        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">03</div><div><div class="text-ink font-medium mb-1">替换项目中的 data.js</div><p>把下载的 data.js 覆盖到项目目录的同名文件。</p></div></div>
+        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">04</div><div><div class="text-ink font-medium mb-1">推送到 GitHub</div><p>执行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">git add data.js && git commit -m "更新本周标的" && git push</code></p><p class="text-[12px] text-ink-3 mt-2">GitHub Pages 通常 1-2 分钟后自动更新。</p></div></div>
       </div>
-      <div class="border border-gold/30 bg-gold/5 rounded-lg p-5">
-        <div class="flex items-start gap-3">
-          <i data-lucide="info" class="w-5 h-5 text-gold mt-0.5"></i>
-          <div>
-            <div class="text-gold-2 font-medium mb-1">重要</div>
-            <p class="text-sm">只有「导出 data.js 并推送到 GitHub」之后，客户访问的网站才会看到新数据。仅在浏览器中编辑不会影响线上版本。</p>
-          </div>
-        </div>
-      </div>
-      <div class="text-xs text-ink-3 pt-4 border-t border-line">
-        <p>后台密码：<code class="font-mono text-ink-2">olive2026</code>（如需修改，请编辑 index.html 中的 <code class="font-mono">ADMIN_PASSWORD</code> 变量）</p>
-      </div>
+      <div class="border border-gold/30 bg-gold/5 rounded-lg p-5"><div class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-gold mt-0.5"></i><div><div class="text-gold-2 font-medium mb-1">重要</div><p class="text-sm">只有「导出 data.js 并推送到 GitHub」之后，客户访问的网站才会看到新数据。</p></div></div></div>
+      <div class="text-xs text-ink-3 pt-4 border-t border-line"><p>后台密码：<code class="font-mono text-ink-2">olive2026</code>（修改请编辑 index.html 中的 <code class="font-mono">ADMIN_PASSWORD</code>）</p></div>
     </div>
   `;
   lucide.createIcons();
 }
 
-function updateMeta(key, val) {
-  DATA.meta[key] = val;
-  saveDraft();
-}
+function updateMeta(key, val) { DATA.meta[key] = val; saveDraft(); }
 
 function toggleFeatured(code, checked) {
-  if (checked) {
-    if (!DATA.meta.featuredIds.includes(code)) DATA.meta.featuredIds.push(code);
-  } else {
-    DATA.meta.featuredIds = DATA.meta.featuredIds.filter(c => c !== code);
-  }
+  if (checked) { if (!DATA.meta.featuredIds.includes(code)) DATA.meta.featuredIds.push(code); }
+  else { DATA.meta.featuredIds = DATA.meta.featuredIds.filter(c => c !== code); }
   saveDraft();
   renderAdminFeatured(document.getElementById('admin-body'));
 }
@@ -939,169 +816,79 @@ function moveFeatured(code, dir) {
   renderAdminFeatured(document.getElementById('admin-body'));
 }
 
-// ============================================================
-// ADMIN: STOCK EDIT
-// ============================================================
 function openStockEdit(code) {
   currentEditCode = code;
   const isNew = !code;
-  const s = isNew ? {
-    code: '', name: '', industry: 'AI半导体', market: 'US',
-    coupon: 18, strike: 80, ki: 70, kiType: '欧式敲入', tenor: 6,
-    score: 8.0, risk: '中', tag: '', highlights: ['', '', ''],
-    thesis: '', risks: ''
-  } : DATA.stocks.find(x => x.code === code);
-
+  const s = isNew ? { code: '', name: '', industry: 'AI半导体', market: 'US', coupon: 18, strike: 80, ki: 70, kiType: '欧式敲入', tenor: 6, score: 8.0, risk: '中', tag: '', highlights: ['', '', ''], thesis: '', risks: '' } : DATA.stocks.find(x => x.code === code);
   document.getElementById('stock-edit-title').textContent = isNew ? '新增标的' : `编辑 · ${s.name}`;
-
   const h = s.highlights || ['', '', ''];
   while (h.length < 3) h.push('');
-
   document.getElementById('stock-edit-body').innerHTML = `
     <div class="space-y-5">
       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <div class="admin-label mb-2">股票代码</div>
-          <input type="text" id="f-code" value="${s.code}" placeholder="AVGO.US">
-        </div>
-        <div>
-          <div class="admin-label mb-2">中文名称</div>
-          <input type="text" id="f-name" value="${s.name}" placeholder="博通">
-        </div>
+        <div><div class="admin-label mb-2">股票代码</div><input type="text" id="f-code" value="${s.code}" placeholder="AVGO.US"></div>
+        <div><div class="admin-label mb-2">中文名称</div><input type="text" id="f-name" value="${s.name}" placeholder="博通"></div>
       </div>
       <div class="grid grid-cols-3 gap-4">
-        <div>
-          <div class="admin-label mb-2">行业</div>
-          <select id="f-industry">
-            ${ALL_INDUSTRIES.map(i => `<option value="${i}" ${s.industry === i ? 'selected' : ''}>${i}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <div class="admin-label mb-2">市场</div>
-          <select id="f-market">
-            ${ALL_MARKETS.map(m => `<option value="${m.v}" ${s.market === m.v ? 'selected' : ''}>${m.l}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <div class="admin-label mb-2">风险等级</div>
-          <select id="f-risk">
-            ${ALL_RISKS.map(r => `<option value="${r}" ${s.risk === r ? 'selected' : ''}>${r}风险</option>`).join('')}
-          </select>
-        </div>
+        <div><div class="admin-label mb-2">行业</div><select id="f-industry">${ALL_INDUSTRIES.map(i => `<option value="${i}" ${s.industry === i ? 'selected' : ''}>${i}</option>`).join('')}</select></div>
+        <div><div class="admin-label mb-2">市场</div><select id="f-market">${ALL_MARKETS.map(m => `<option value="${m.v}" ${s.market === m.v ? 'selected' : ''}>${m.l}</option>`).join('')}</select></div>
+        <div><div class="admin-label mb-2">风险等级</div><select id="f-risk">${ALL_RISKS.map(r => `<option value="${r}" ${s.risk === r ? 'selected' : ''}>${r}风险</option>`).join('')}</select></div>
       </div>
-
       <div class="border-t border-line pt-5">
         <div class="text-xs text-gold tracking-wider uppercase mb-4">FCN 结构参数</div>
         <div class="grid grid-cols-4 gap-4">
-          <div>
-            <div class="admin-label mb-2">年化票息 %</div>
-            <input type="number" step="0.1" id="f-coupon" value="${s.coupon}">
-          </div>
-          <div>
-            <div class="admin-label mb-2">行权价 %</div>
-            <input type="number" id="f-strike" value="${s.strike}">
-          </div>
-          <div>
-            <div class="admin-label mb-2">敲入价 %</div>
-            <input type="number" id="f-ki" value="${s.ki}">
-          </div>
-          <div>
-            <div class="admin-label mb-2">期限（月）</div>
-            <input type="number" id="f-tenor" value="${s.tenor}">
-          </div>
+          <div><div class="admin-label mb-2">年化票息 %</div><input type="number" step="0.1" id="f-coupon" value="${s.coupon}"></div>
+          <div><div class="admin-label mb-2">行权价 %</div><input type="number" id="f-strike" value="${s.strike}"></div>
+          <div><div class="admin-label mb-2">敲入价 %</div><input type="number" id="f-ki" value="${s.ki}"></div>
+          <div><div class="admin-label mb-2">期限（月）</div><input type="number" id="f-tenor" value="${s.tenor}"></div>
         </div>
         <div class="grid grid-cols-2 gap-4 mt-4">
-          <div>
-            <div class="admin-label mb-2">敲入类型</div>
-            <select id="f-kiType">
-              ${ALL_KI_TYPES.map(k => `<option value="${k}" ${s.kiType === k ? 'selected' : ''}>${k}</option>`).join('')}
-            </select>
-          </div>
-          <div>
-            <div class="admin-label mb-2">综合评分 (0-10)</div>
-            <input type="number" step="0.1" min="0" max="10" id="f-score" value="${s.score}">
-          </div>
+          <div><div class="admin-label mb-2">敲入类型</div><select id="f-kiType">${ALL_KI_TYPES.map(k => `<option value="${k}" ${s.kiType === k ? 'selected' : ''}>${k}</option>`).join('')}</select></div>
+          <div><div class="admin-label mb-2">综合评分 (0-10)</div><input type="number" step="0.1" min="0" max="10" id="f-score" value="${s.score}"></div>
         </div>
       </div>
-
-      <div>
-        <div class="admin-label mb-2">标签（如：高 IV、稳健，可留空）</div>
-        <input type="text" id="f-tag" value="${s.tag || ''}" placeholder="高 IV">
-      </div>
-
+      <div><div class="admin-label mb-2">标签（如：高 IV、稳健，可留空）</div><input type="text" id="f-tag" value="${s.tag || ''}" placeholder="高 IV"></div>
       <div class="border-t border-line pt-5">
-        <div class="text-xs text-gold tracking-wider uppercase mb-4">投资亮点（1-3 条，列表中显示）</div>
+        <div class="text-xs text-gold tracking-wider uppercase mb-4">投资亮点（1-3 条）</div>
         <div class="space-y-3">
           <input type="text" id="f-h1" value="${h[0] || ''}" placeholder="亮点 1">
           <input type="text" id="f-h2" value="${h[1] || ''}" placeholder="亮点 2">
           <input type="text" id="f-h3" value="${h[2] || ''}" placeholder="亮点 3">
         </div>
       </div>
-
-      <div>
-        <div class="admin-label mb-2">详细投资逻辑（详情页显示，可换行）</div>
-        <textarea id="f-thesis" rows="6">${s.thesis || ''}</textarea>
-      </div>
-
-      <div>
-        <div class="admin-label mb-2">风险提示</div>
-        <textarea id="f-risks" rows="3">${s.risks || ''}</textarea>
-      </div>
+      <div><div class="admin-label mb-2">详细投资逻辑（详情页显示，可换行）</div><textarea id="f-thesis" rows="6">${s.thesis || ''}</textarea></div>
+      <div><div class="admin-label mb-2">风险提示</div><textarea id="f-risks" rows="3">${s.risks || ''}</textarea></div>
     </div>
   `;
-
   document.getElementById('stock-edit-modal').classList.add('active');
 }
 
-function closeStockEditModal() {
-  document.getElementById('stock-edit-modal').classList.remove('active');
-  currentEditCode = null;
-}
+function closeStockEditModal() { document.getElementById('stock-edit-modal').classList.remove('active'); currentEditCode = null; }
 
 function saveStock() {
   const v = id => document.getElementById(id).value;
   const n = id => parseFloat(document.getElementById(id).value) || 0;
   const h = [v('f-h1'), v('f-h2'), v('f-h3')].filter(x => x.trim());
-
   const newStock = {
-    code: v('f-code').trim(),
-    name: v('f-name').trim(),
-    industry: v('f-industry'),
-    market: v('f-market'),
-    coupon: n('f-coupon'),
-    strike: n('f-strike'),
-    ki: n('f-ki'),
-    kiType: v('f-kiType'),
-    tenor: n('f-tenor'),
-    score: n('f-score'),
-    risk: v('f-risk'),
-    tag: v('f-tag').trim(),
-    highlights: h,
-    thesis: v('f-thesis').trim(),
-    risks: v('f-risks').trim()
+    code: v('f-code').trim(), name: v('f-name').trim(),
+    industry: v('f-industry'), market: v('f-market'),
+    coupon: n('f-coupon'), strike: n('f-strike'), ki: n('f-ki'),
+    kiType: v('f-kiType'), tenor: n('f-tenor'), score: n('f-score'),
+    risk: v('f-risk'), tag: v('f-tag').trim(),
+    highlights: h, thesis: v('f-thesis').trim(), risks: v('f-risks').trim()
   };
-
-  if (!newStock.code || !newStock.name) {
-    alert('股票代码和名称为必填');
-    return;
-  }
-
+  if (!newStock.code || !newStock.name) { alert('股票代码和名称为必填'); return; }
   if (currentEditCode) {
     const idx = DATA.stocks.findIndex(x => x.code === currentEditCode);
-    // if code changed, update featuredIds too
     if (currentEditCode !== newStock.code) {
       const fi = DATA.meta.featuredIds.indexOf(currentEditCode);
       if (fi !== -1) DATA.meta.featuredIds[fi] = newStock.code;
     }
     DATA.stocks[idx] = newStock;
   } else {
-    if (DATA.stocks.some(x => x.code === newStock.code)) {
-      alert('已存在相同代码的标的');
-      return;
-    }
+    if (DATA.stocks.some(x => x.code === newStock.code)) { alert('已存在相同代码的标的'); return; }
     DATA.stocks.push(newStock);
   }
-
   saveDraft();
   closeStockEditModal();
   renderAdminTab();
@@ -1118,9 +905,6 @@ function deleteStock(code) {
   renderScreener();
 }
 
-// ============================================================
-// ADMIN: EXPORT
-// ============================================================
 function exportData() {
   const header = `// ============================================================
 // Olive Asset Management · FCN 数据文件
@@ -1130,23 +914,15 @@ function exportData() {
 
 window.OLIVE_DATA = `;
   const content = header + JSON.stringify(DATA, null, 2) + ';\n';
-
   const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.js';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = 'data.js';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-
   alert('data.js 已下载。请将该文件覆盖到项目目录后推送到 GitHub。');
 }
 
-// ============================================================
-// INIT
-// ============================================================
 document.addEventListener('DOMContentLoaded', () => {
   setupFilters();
   renderScreener();
