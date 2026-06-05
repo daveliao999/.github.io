@@ -156,29 +156,34 @@
     <div class="nav-link block py-2" data-view="screener">标的筛选</div>
     <div class="nav-link block py-2" data-view="featured">本周精选</div>
   </div>
-</nav>
-
-<!-- =================== VIEW: SCREENER (HOMEPAGE) =================== -->
-<div id="view-screener" class="view active">
-  <section class="border-b border-line grain relative">
-    <div class="max-w-[1400px] mx-auto px-8 py-10 relative">
-      <div class="section-label mb-3">FCN 标的筛选</div>
-      <h1 class="font-display text-4xl md:text-5xl font-medium mb-3">
-        本周<span class="text-gold italic">推荐标的</span>
-      </h1>
-      <p class="text-ink-2 max-w-2xl">基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。</p>
-    </div>
-  </section>
-
-  <div class="max-w-[1400px] mx-auto px-8 py-10 grid lg:grid-cols-[260px_1fr] gap-12">
-    <aside class="space-y-10">
-      <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">行业</div>
-        <div class="flex flex-wrap gap-2" id="filter-industry"></div>
+<nav class="sticky top-0 z-40 bg-bg-2/80 backdrop-blur-xl border-b border-line">
+  <div class="max-w-[1400px] mx-auto px-8 h-16 grid grid-cols-3 items-center">
+    <!-- LEFT: Logo -->
+    <div class="flex items-center">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('screener')">
+        <div class="olive-mark w-9 h-9">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C9A86A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C9A86A" stroke-width="1" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="leading-none">
+          <div class="font-script text-[20px] text-gold-2" style="line-height: 1;">Olive</div>
+          <div class="text-[9px] text-ink-3 tracking-[0.22em] mt-1">资产管理</div>
+        </div>
       </div>
-      <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">目标年化票息</div>
-        <div class="flex flex-wrap gap-2" id="filter-yield">
+    </div>
+
+    <!-- CENTER: Navigation (绝对居中) -->
+    <div class="hidden md:flex items-center justify-center gap-8">
+      <div class="nav-link active" data-view="screener">标的筛选</div>
+      <div class="nav-link" data-view="featured">本周精选</div>
+    </div>
+
+    <!-- RIGHT: 留白保持对称（移动端汉堡菜单） -->
+    <div class="flex items-center justify-end">
+      <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    </div>
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="10-15">10–15%</div>
           <div class="check-chip" data-val="15-20">15–20%</div>
