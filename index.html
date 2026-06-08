@@ -9,120 +9,167 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0A0A0B; --bg-2: #111113; --bg-3: #18181B;
-    --line: #27272A; --line-2: #3F3F46;
-    --ink: #FAFAFA; --ink-2: #A1A1AA; --ink-3: #71717A;
-    --gold: #C9A86A; --gold-2: #E6CC8F;
-    --gold-soft: rgba(201, 168, 106, 0.12);
-    --green: #00C805; --green-soft: rgba(0, 200, 5, 0.10);
-    --red: #F43F5E;
+    --bg:#0A0A0B; --bg-2:#111113; --bg-3:#18181B;
+    --line:#27272A; --line-2:#3F3F46;
+    --ink:#FAFAFA; --ink-2:#A1A1AA; --ink-3:#71717A;
+    --gold:#C9A86A; --gold-2:#E6CC8F;
+    --gold-soft:rgba(201,168,106,0.12);
+    --green:#00C805; --green-soft:rgba(0,200,5,0.10);
+    --red:#F43F5E;
   }
-  * { -webkit-font-smoothing: antialiased; }
-  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
-  .font-display { font-family: 'Fraunces', 'Noto Serif SC', serif; letter-spacing: -0.02em; }
-  .font-serif-cn { font-family: 'Noto Serif SC', serif; }
-  .font-mono { font-family: 'JetBrains Mono', monospace; }
-  .font-script { font-family: 'Great Vibes', cursive; }
-  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
-  .text-gold { color: var(--gold); }
-  .text-gold-2 { color: var(--gold-2); }
-  .text-green { color: var(--green); }
-  .text-red { color: var(--red); }
-  .bg-bg { background: var(--bg); }
-  .bg-bg-2 { background: var(--bg-2); }
-  .bg-bg-3 { background: var(--bg-3); }
-  .border-line { border-color: var(--line); }
+  *{-webkit-font-smoothing:antialiased;box-sizing:border-box;}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter','PingFang SC','Microsoft YaHei',sans-serif;margin:0;}
+  .font-display{font-family:'Fraunces','Noto Serif SC',serif;letter-spacing:-0.02em;}
+  .font-serif-cn{font-family:'Noto Serif SC',serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+  .font-script{font-family:'Great Vibes',cursive;}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  .text-gold{color:var(--gold);} .text-gold-2{color:var(--gold-2);}
+  .text-green{color:var(--green);} .text-red{color:var(--red);}
+  .bg-bg{background:var(--bg);} .bg-bg-2{background:var(--bg-2);} .bg-bg-3{background:var(--bg-3);}
+  .border-line{border-color:var(--line);}
 
-  .btn-gold { background: var(--gold); color: #0A0A0B; font-weight: 500; padding: 10px 22px; border-radius: 999px; font-size: 13px; transition: all .2s; }
-  .btn-gold:hover { background: var(--gold-2); transform: translateY(-1px); }
-  .btn-outline { border: 1px solid var(--line-2); color: var(--ink); padding: 10px 22px; border-radius: 999px; font-size: 13px; background: transparent; transition: all .2s; }
-  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-  .btn-ghost { color: var(--ink-2); padding: 8px 14px; font-size: 13px; transition: color .15s; }
-  .btn-ghost:hover { color: var(--ink); }
-  .btn-danger { background: rgba(244,63,94,0.12); color: var(--red); border: 1px solid rgba(244,63,94,0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; transition: all .15s; }
-  .btn-danger:hover { background: rgba(244,63,94,0.2); }
+  /* ── Buttons ── */
+  .btn-gold{background:var(--gold);color:#0A0A0B;font-weight:600;padding:10px 22px;border-radius:999px;font-size:13px;transition:all .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;}
+  .btn-gold:hover{background:var(--gold-2);transform:translateY(-1px);box-shadow:0 8px 20px rgba(201,168,106,0.25);}
+  .btn-outline{border:1px solid var(--line-2);color:var(--ink);padding:10px 22px;border-radius:999px;font-size:13px;background:transparent;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;}
+  .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+  .btn-ghost{color:var(--ink-2);padding:8px 14px;font-size:13px;transition:color .15s;background:transparent;border:none;cursor:pointer;display:inline-flex;align-items:center;}
+  .btn-ghost:hover{color:var(--ink);}
+  .btn-danger{background:rgba(244,63,94,0.12);color:var(--red);border:1px solid rgba(244,63,94,0.3);padding:6px 12px;border-radius:6px;font-size:12px;transition:all .15s;cursor:pointer;}
+  .btn-danger:hover{background:rgba(244,63,94,0.2);}
 
-  .pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; }
-  .pill-gold { background: var(--gold-soft); color: var(--gold-2); border: 1px solid rgba(201,168,106,0.25); }
-  .pill-green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,200,5,0.25); }
-  .pill-red { background: rgba(244,63,94,0.10); color: var(--red); border: 1px solid rgba(244,63,94,0.25); }
-  .pill-dim { background: var(--bg-3); color: var(--ink-2); border: 1px solid var(--line); }
+  /* ── Pills ── */
+  .pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;}
+  .pill-gold{background:var(--gold-soft);color:var(--gold-2);border:1px solid rgba(201,168,106,0.25);}
+  .pill-green{background:var(--green-soft);color:var(--green);border:1px solid rgba(0,200,5,0.25);}
+  .pill-red{background:rgba(244,63,94,0.10);color:var(--red);border:1px solid rgba(244,63,94,0.25);}
+  .pill-dim{background:var(--bg-3);color:var(--ink-2);border:1px solid var(--line);}
 
-  .nav-link { color: var(--ink-2); font-size: 14px; padding: 8px 14px; cursor: pointer; position: relative; transition: color .15s; }
-  .nav-link:hover { color: var(--ink); }
-  .nav-link.active { color: var(--ink); }
-  .nav-link.active::after { content: ''; position: absolute; bottom: -22px; left: 14px; right: 14px; height: 1px; background: var(--gold); }
+  /* ── Nav ── */
+  .nav-link{color:var(--ink-2);font-size:14px;padding:8px 14px;cursor:pointer;position:relative;transition:color .15s;}
+  .nav-link:hover{color:var(--ink);}
+  .nav-link.active{color:var(--ink);}
+  .nav-link.active::after{content:'';position:absolute;bottom:-22px;left:14px;right:14px;height:1px;background:var(--gold);}
 
-  .section-label { font-size: 11px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; font-weight: 500; }
+  /* ── Market Ticker ── */
+  .ticker-bar{background:var(--bg-2);border-bottom:1px solid var(--line);overflow:hidden;height:36px;position:relative;}
+  .ticker-bar::before,.ticker-bar::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;}
+  .ticker-bar::before{left:0;background:linear-gradient(to right,var(--bg-2) 0%,transparent 100%);}
+  .ticker-bar::after{right:0;background:linear-gradient(to left,var(--bg-2) 0%,transparent 100%);}
+  .ticker-track{display:flex;align-items:center;white-space:nowrap;animation:ticker-scroll 50s linear infinite;will-change:transform;}
+  .ticker-track:hover{animation-play-state:paused;}
+  @keyframes ticker-scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+  .ticker-item{display:inline-flex;align-items:center;gap:7px;padding:0 22px;border-right:1px solid var(--line);height:36px;flex-shrink:0;}
+  .ticker-name{font-size:11px;color:var(--ink-3);letter-spacing:0.04em;}
+  .ticker-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink);}
+  .ticker-chg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:1px 6px;border-radius:3px;}
+  .ticker-up{color:var(--green);background:rgba(0,200,5,0.08);}
+  .ticker-dn{color:var(--red);background:rgba(244,63,94,0.08);}
 
-  input[type="range"] { -webkit-appearance: none; height: 2px; background: var(--line-2); border-radius: 2px; outline: none; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--gold); border-radius: 50%; cursor: pointer; box-shadow: 0 0 0 4px rgba(201,168,106,0.15); }
+  /* ── Section label ── */
+  .section-label{font-size:11px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;font-weight:500;}
 
-  .check-chip { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; cursor: pointer; user-select: none; transition: all .15s; color: var(--ink-2); background: var(--bg-2); }
-  .check-chip.active { background: var(--gold); color: #0A0A0B; border-color: var(--gold); }
-  .check-chip:not(.active):hover { border-color: var(--gold); color: var(--gold); }
+  /* ── Hero stat cards ── */
+  .stat-card{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px 22px;transition:border-color .2s;}
+  .stat-card:hover{border-color:rgba(201,168,106,0.3);}
+  .stat-num{font-family:'Fraunces',serif;font-weight:500;font-variant-numeric:tabular-nums;}
 
-  select, input[type="text"], input[type="number"], input[type="password"], textarea {
-    background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
-    border-radius: 8px; padding: 9px 12px; font-size: 13px;
-    font-family: inherit; width: 100%; outline: none; transition: border-color .15s;
+  /* ── Check chips ── */
+  .check-chip{padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:12px;cursor:pointer;user-select:none;transition:all .15s;color:var(--ink-2);background:var(--bg-2);}
+  .check-chip.active{background:var(--gold);color:#0A0A0B;border-color:var(--gold);}
+  .check-chip:not(.active):hover{border-color:var(--gold);color:var(--gold);}
+
+  /* ── Inputs ── */
+  select,input[type="text"],input[type="number"],input[type="password"],textarea{
+    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:9px 12px;font-size:13px;
+    font-family:inherit;width:100%;outline:none;transition:border-color .15s;
   }
-  select { appearance: none; -webkit-appearance: none; padding-right: 32px;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
+  select{appearance:none;-webkit-appearance:none;padding-right:32px;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;
   }
-  textarea { resize: vertical; min-height: 80px; font-family: inherit; line-height: 1.6; }
-  select:focus, input:focus, textarea:focus { border-color: var(--gold); }
+  textarea{resize:vertical;min-height:80px;font-family:inherit;line-height:1.6;}
+  select:focus,input:focus,textarea:focus{border-color:var(--gold);}
 
-  .view { display: none; }
-  .view.active { display: block; animation: fadeIn .35s cubic-bezier(.4,0,.2,1); }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  /* ── Range ── */
+  input[type="range"]{-webkit-appearance:none;height:2px;background:var(--line-2);border-radius:2px;outline:none;width:100%;}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--gold);border-radius:50%;cursor:pointer;box-shadow:0 0 0 4px rgba(201,168,106,0.15);}
 
-  .score-display { font-family: 'Fraunces', serif; font-weight: 500; font-variant-numeric: tabular-nums; }
+  /* ── Views ── */
+  .view{display:none;}
+  .view.active{display:block;animation:fadeIn .35s cubic-bezier(.4,0,.2,1);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-  .data-table { width: 100%; border-collapse: collapse; }
-  .data-table th { text-align: left; font-size: 11px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; padding: 14px 16px; border-bottom: 1px solid var(--line); }
-  .data-table td { padding: 18px 16px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: top; }
-  .data-table tr.data-row-hover:hover { background: rgba(201,168,106,0.04); cursor: pointer; }
+  /* ── Stock card ── */
+  .stock-card{border:1px solid var(--line);border-radius:14px;padding:24px;transition:all .2s;cursor:pointer;background:var(--bg);}
+  .stock-card:hover{border-color:rgba(201,168,106,0.4);background:var(--bg-2);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
 
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
+  /* ── IV badge ── */
+  .iv-badge{background:rgba(201,168,106,0.08);border:1px solid rgba(201,168,106,0.2);border-radius:6px;padding:2px 7px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold-2);letter-spacing:0.02em;}
 
-  .grain::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.78 0 0 0 0 0.66 0 0 0 0 0.42 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* ── Score bar ── */
+  .score-bar-wrap{height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+  .score-bar-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+  /* ── Highlight bullet ── */
+  .highlight-bullet{display:flex;gap:8px;align-items:flex-start;}
+  .highlight-bullet::before{content:'·';color:var(--gold);font-weight:bold;flex-shrink:0;line-height:1.4;font-size:16px;}
+
+  /* ── Data table ── */
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{text-align:left;font-size:11px;font-weight:500;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.05em;padding:14px 16px;border-bottom:1px solid var(--line);}
+  .data-table td{padding:16px 16px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
+
+  /* ── Modals ── */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-backdrop.active{display:flex;animation:fadeIn .2s;}
+  .modal-box{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;}
+  .modal-header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .modal-body{padding:24px;overflow-y:auto;}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;}
+
+  /* ── Toast ── */
+  #toast-container{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;min-width:0;}
+  #toast-container>*{pointer-events:all;}
+  .toast-item{display:flex;align-items:center;gap:10px;background:var(--bg-2);border:1px solid var(--line-2);padding:12px 16px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:280px;max-width:400px;transition:all .25s;}
+
+  /* ── Admin ── */
+  .admin-label{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.05em;}
+  .admin-fab{position:fixed;bottom:24px;right:24px;z-index:50;padding:10px 18px;background:var(--gold);color:#000;border-radius:999px;font-size:12px;font-weight:600;box-shadow:0 8px 24px rgba(201,168,106,0.3);display:flex;align-items:center;gap:6px;cursor:pointer;border:none;}
+  .admin-fab:hover{background:var(--gold-2);}
+
+  /* ── Grain ── */
+  .grain{position:relative;}
+  .grain::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0.025;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:200px;
   }
 
-  .olive-mark { border: 1.4px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 30% 30%, rgba(230,204,143,0.15), transparent 70%); }
+  /* ── Olive mark ── */
+  .olive-mark{border:1.4px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,rgba(230,204,143,0.15),transparent 70%);}
 
-  .highlight-bullet { display: flex; gap: 8px; align-items: flex-start; }
-  .highlight-bullet::before { content: '·'; color: var(--gold); font-weight: bold; flex-shrink: 0; line-height: 1.4; }
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px;}
 
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-backdrop.active { display: flex; animation: fadeIn .2s; }
-  .modal-box { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; max-width: 900px; width: 100%; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
-  .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .modal-body { padding: 24px; overflow-y: auto; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0; }
+  /* ── Payoff chart label ── */
+  .payoff-legend-dot{display:inline-block;width:20px;height:2px;border-radius:1px;vertical-align:middle;margin-right:6px;}
 
-  .admin-row { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .admin-row.full { grid-template-columns: 1fr; }
-  .admin-label { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; }
-
-  .stock-row-link { cursor: pointer; }
-
-  .admin-fab { position: fixed; bottom: 24px; right: 24px; z-index: 50; padding: 10px 16px; background: var(--gold); color: #000; border-radius: 999px; font-size: 12px; font-weight: 600; box-shadow: 0 8px 24px rgba(201,168,106,0.3); display: flex; align-items: center; gap: 6px; cursor: pointer; }
-  .admin-fab:hover { background: var(--gold-2); }
-
-  .featured-banner { position: relative; overflow: hidden; }
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .hide-mobile{display:none!important;}
+    .mobile-full{grid-column:1/-1!important;}
+  }
 </style>
 </head>
 <body>
 
-<!-- =================== NAV =================== -->
-<nav class="sticky top-0 z-40 bg-bg-2/80 backdrop-blur-xl border-b border-line">
-  <div class="max-w-[1400px] mx-auto px-8 h-16 grid grid-cols-3 items-center">
-    <!-- LEFT: Logo -->
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="sticky top-0 z-40 bg-bg-2/90 backdrop-blur-xl border-b border-line">
+  <div class="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-3 items-center">
     <div class="flex items-center">
       <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('screener')">
         <div class="olive-mark w-9 h-9">
@@ -132,49 +179,60 @@
           </svg>
         </div>
         <div class="leading-none">
-          <div class="font-script text-[20px] text-gold-2" style="line-height: 1;">Olive</div>
+          <div class="font-script text-[20px] text-gold-2" style="line-height:1">Olive</div>
           <div class="text-[9px] text-ink-3 tracking-[0.22em] mt-1">资产管理</div>
         </div>
       </div>
     </div>
-
-    <!-- CENTER: Navigation -->
-    <div class="hidden md:flex items-center justify-center gap-8">
+    <div class="hidden md:flex items-center justify-center gap-6">
       <div class="nav-link active" data-view="screener">标的筛选</div>
       <div class="nav-link" data-view="featured">本周精选</div>
     </div>
-
-    <!-- RIGHT: 留白对称（移动端汉堡菜单） -->
-    <div class="flex items-center justify-end">
-      <button class="md:hidden p-2" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    <div class="flex items-center justify-end gap-3">
+      <div class="hidden md:flex items-center gap-1.5 text-[11px] text-green">
+        <span class="w-1.5 h-1.5 rounded-full bg-green animate-pulse"></span>
+        <span class="font-mono">实时数据</span>
+      </div>
+      <button class="md:hidden p-2 btn-ghost" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
     </div>
   </div>
-  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-8 py-3 space-y-1">
+  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-6 py-3 space-y-1">
     <div class="nav-link block py-2" data-view="screener">标的筛选</div>
     <div class="nav-link block py-2" data-view="featured">本周精选</div>
   </div>
 </nav>
 
-<!-- =================== VIEW: SCREENER (HOMEPAGE) =================== -->
+<!-- ═══════════════ TICKER ═══════════════ -->
+<div class="ticker-bar" id="market-ticker-bar">
+  <div class="ticker-track" id="ticker-track"></div>
+</div>
+
+<!-- ═══════════════ VIEW: SCREENER ═══════════════ -->
 <div id="view-screener" class="view active">
-  <section class="border-b border-line grain relative">
-    <div class="max-w-[1400px] mx-auto px-8 py-10 relative">
-      <div class="section-label mb-3">FCN 标的筛选</div>
+
+  <!-- Hero -->
+  <section class="border-b border-line grain">
+    <div class="max-w-[1400px] mx-auto px-6 pt-10 pb-8">
+      <div class="section-label mb-3">FCN 标的筛选 · 智能推荐</div>
       <h1 class="font-display text-4xl md:text-5xl font-medium mb-3">
-        本周<span class="text-gold italic">推荐标的</span>
+        本周<span class="text-gold italic"> 推荐标的</span>
       </h1>
-      <p class="text-ink-2 max-w-2xl">基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。</p>
+      <p class="text-ink-2 max-w-2xl mb-8">基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。结合隐含波动率、基本面、流动性与动量四维评分体系综合排名。</p>
+      <!-- Stats Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="hero-stats"></div>
     </div>
   </section>
 
-  <div class="max-w-[1400px] mx-auto px-8 py-10 grid lg:grid-cols-[260px_1fr] gap-12">
-    <aside class="space-y-10">
+  <!-- Screener Body -->
+  <div class="max-w-[1400px] mx-auto px-6 py-10 grid lg:grid-cols-[240px_1fr] gap-10">
+    <!-- Sidebar -->
+    <aside class="space-y-8">
       <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">行业</div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">行业</div>
         <div class="flex flex-wrap gap-2" id="filter-industry"></div>
       </div>
       <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">目标年化票息</div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">目标年化票息</div>
         <div class="flex flex-wrap gap-2" id="filter-yield">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="10-15">10–15%</div>
@@ -184,7 +242,7 @@
         </div>
       </div>
       <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">标的市场</div>
+        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">标的市场</div>
         <div class="flex flex-wrap gap-2" id="filter-market">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="US">美股</div>
@@ -193,11 +251,11 @@
         </div>
       </div>
       <div>
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-3">
           <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase">最低评分</div>
           <div class="font-display text-lg text-gold num" id="score-val">7.0</div>
         </div>
-        <input type="range" min="5" max="10" step="0.1" value="7" class="w-full" id="filter-score">
+        <input type="range" min="5" max="10" step="0.1" value="7" id="filter-score">
         <div class="flex justify-between text-[10px] text-ink-3 mt-2 num"><span>5.0</span><span>10.0</span></div>
       </div>
       <button class="text-xs text-ink-3 hover:text-gold flex items-center gap-1.5 transition-colors" onclick="resetFilters()">
@@ -205,12 +263,14 @@
       </button>
     </aside>
 
+    <!-- Results -->
     <div>
-      <div class="flex items-center justify-between mb-6 pb-4 border-b border-line">
+      <div class="flex items-center justify-between mb-5 pb-4 border-b border-line">
         <div class="text-sm text-ink-2">共 <span class="text-ink font-medium num" id="result-count">0</span> 个标的符合条件</div>
-        <select id="sort-select" class="w-auto">
+        <select id="sort-select" class="w-auto" style="width:auto;">
           <option value="score">按综合评分排序</option>
           <option value="coupon">按年化票息排序</option>
+          <option value="iv">按隐含波动率排序</option>
         </select>
       </div>
       <div id="screener-results" class="space-y-3"></div>
@@ -218,30 +278,29 @@
   </div>
 </div>
 
-<!-- =================== VIEW: FEATURED =================== -->
+<!-- ═══════════════ VIEW: FEATURED ═══════════════ -->
 <div id="view-featured" class="view">
-  <section class="border-b border-line grain relative featured-banner">
-    <div class="max-w-[1400px] mx-auto px-8 py-16 relative">
+  <section class="border-b border-line grain">
+    <div class="max-w-[1400px] mx-auto px-6 py-16">
       <div class="section-label mb-4" id="featured-meta-week">产品部精选</div>
-      <h1 class="font-display text-5xl md:text-6xl font-medium mb-6 leading-tight">
-        本周<span class="text-gold italic">精选</span>
+      <h1 class="font-display text-5xl md:text-6xl font-medium mb-5 leading-tight">
+        本周<span class="text-gold italic"> 精选</span>
       </h1>
-      <p class="text-ink-2 max-w-xl leading-relaxed mb-10">
-        由 Olive 产品部资深团队从量化模型 TOP 30 中精选 5 只，每只附详细推荐逻辑、市场观点与风险提示。
-      </p>
+      <p class="text-ink-2 max-w-xl leading-relaxed mb-10">由 Olive 产品部资深团队从量化模型 TOP 30 中精选 5 只，每只附详细推荐逻辑、市场观点与风险提示。</p>
       <div class="flex flex-wrap gap-8 text-sm border-t border-line pt-6">
-        <div><span class="text-ink-3">本周主题</span> <span class="ml-3 text-gold" id="featured-theme"></span></div>
-        <div><span class="text-ink-3">发布日期</span> <span class="ml-3 num" id="featured-date"></span></div>
-        <div><span class="text-ink-3">下次更新</span> <span class="ml-3 num" id="featured-next"></span></div>
+        <div><span class="text-ink-3">本周主题</span><span class="ml-3 text-gold" id="featured-theme"></span></div>
+        <div><span class="text-ink-3">发布日期</span><span class="ml-3 num" id="featured-date"></span></div>
+        <div><span class="text-ink-3">下次更新</span><span class="ml-3 num" id="featured-next"></span></div>
+        <div><span class="text-ink-3">平均票息</span><span class="ml-3 num text-gold" id="featured-avg-coupon"></span></div>
       </div>
     </div>
   </section>
-  <div class="max-w-[1400px] mx-auto px-8 py-12 space-y-px bg-line border-x border-b border-line" id="featured-list"></div>
+  <div class="max-w-[1400px] mx-auto px-6 py-12 space-y-1" id="featured-list"></div>
 </div>
 
-<!-- =================== VIEW: DETAIL =================== -->
+<!-- ═══════════════ VIEW: DETAIL ═══════════════ -->
 <div id="view-detail" class="view">
-  <div class="max-w-[1100px] mx-auto px-8 py-10">
+  <div class="max-w-[1100px] mx-auto px-6 py-10">
     <button class="btn-ghost mb-8 flex items-center gap-2" onclick="navigate('screener')">
       <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回筛选列表
     </button>
@@ -249,9 +308,9 @@
   </div>
 </div>
 
-<!-- =================== FOOTER =================== -->
+<!-- ═══════════════ FOOTER ═══════════════ -->
 <footer class="border-t border-line mt-12">
-  <div class="max-w-[1400px] mx-auto px-8 py-16 grid md:grid-cols-4 gap-12 text-sm">
+  <div class="max-w-[1400px] mx-auto px-6 py-16 grid md:grid-cols-4 gap-12 text-sm">
     <div>
       <div class="flex items-center gap-3 mb-5">
         <div class="olive-mark w-8 h-8">
@@ -260,10 +319,7 @@
             <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C9A86A" stroke-width="1" stroke-linecap="round" fill="none"/>
           </svg>
         </div>
-        <div class="leading-none">
-          <div class="font-script text-[17px] text-gold-2">Olive</div>
-          <div class="text-[8px] text-ink-3 tracking-[0.22em] mt-0.5">资产管理</div>
-        </div>
+        <div><div class="font-script text-[17px] text-gold-2">Olive</div><div class="text-[8px] text-ink-3 tracking-[0.22em] mt-0.5">资产管理</div></div>
       </div>
       <p class="text-ink-3 leading-relaxed text-xs">私行结构化产品智能推荐平台。仅向合资格投资者开放。</p>
     </div>
@@ -292,23 +348,23 @@
     </div>
   </div>
   <div class="border-t border-line">
-    <div class="max-w-[1400px] mx-auto px-8 py-6 text-[11px] text-ink-3 leading-relaxed">
+    <div class="max-w-[1400px] mx-auto px-6 py-6 text-[11px] text-ink-3 leading-relaxed">
       <p><strong class="text-ink-2">重要风险披露 ·</strong> 固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本平台内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
       <p class="mt-3">© 2026 Olive Asset Management · 保留所有权利 · 本演示页面所有数据均为模拟数据。</p>
     </div>
   </div>
 </footer>
 
-<!-- =================== ADMIN PASSWORD MODAL =================== -->
+<!-- ═══════════════ ADMIN PASSWORD MODAL ═══════════════ -->
 <div class="modal-backdrop" id="login-modal">
-  <div class="modal-box" style="max-width: 420px;">
+  <div class="modal-box" style="max-width:420px;">
     <div class="modal-header">
       <div class="font-display text-lg">后台访问验证</div>
-      <button onclick="closeLoginModal()" class="text-ink-3 hover:text-ink"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <button onclick="closeLoginModal()" class="btn-ghost"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div class="modal-body">
       <div class="text-sm text-ink-2 mb-4">请输入管理密码以进入数据编辑后台</div>
-      <input type="password" id="admin-password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter') verifyPassword()">
+      <input type="password" id="admin-password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')verifyPassword()">
       <div id="login-error" class="text-red text-xs mt-2 hidden">密码错误，请重试</div>
     </div>
     <div class="modal-footer">
@@ -318,9 +374,9 @@
   </div>
 </div>
 
-<!-- =================== ADMIN PANEL MODAL =================== -->
+<!-- ═══════════════ ADMIN PANEL ═══════════════ -->
 <div class="modal-backdrop" id="admin-modal">
-  <div class="modal-box" style="max-width: 1100px; height: 90vh;">
+  <div class="modal-box" style="max-width:1100px;height:90vh;">
     <div class="modal-header">
       <div class="flex items-center gap-3">
         <i data-lucide="settings" class="w-5 h-5 text-gold"></i>
@@ -329,7 +385,7 @@
       </div>
       <div class="flex items-center gap-2">
         <button class="btn-outline text-xs flex items-center gap-1.5" onclick="exportData()">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> 导出 data.js
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> 导出 watchlist.json
         </button>
         <button class="btn-ghost" onclick="closeAdminModal()"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
@@ -343,9 +399,9 @@
   </div>
 </div>
 
-<!-- =================== STOCK EDIT MODAL =================== -->
+<!-- ═══════════════ STOCK EDIT MODAL ═══════════════ -->
 <div class="modal-backdrop" id="stock-edit-modal">
-  <div class="modal-box" style="max-width: 720px; height: 90vh;">
+  <div class="modal-box" style="max-width:720px;height:90vh;">
     <div class="modal-header">
       <div class="font-display text-lg" id="stock-edit-title">编辑标的</div>
       <button class="btn-ghost" onclick="closeStockEditModal()"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -358,578 +414,809 @@
   </div>
 </div>
 
-<div id="admin-fab" class="admin-fab" style="display:none" onclick="openAdminModal()">
-  <i data-lucide="settings" class="w-4 h-4"></i> 数据后台
+<!-- ═══════════════ CONFIRM MODAL ═══════════════ -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="font-display text-lg" id="confirm-title">确认操作</div>
+    </div>
+    <div class="modal-body">
+      <p class="text-ink-2" id="confirm-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" id="confirm-cancel-btn">取消</button>
+      <button class="btn-danger" id="confirm-ok-btn">确认删除</button>
+    </div>
+  </div>
 </div>
 
-<script src="data.js"></script>
+<!-- ═══════════════ TOAST ═══════════════ -->
+<div id="toast-container"></div>
+
+<button id="admin-fab" class="admin-fab" style="display:none" onclick="openAdminModal()">
+  <i data-lucide="settings" class="w-4 h-4"></i> 数据后台
+</button>
+
 <script>
-let DATA = JSON.parse(JSON.stringify(window.OLIVE_DATA));
+// ═══ State ═══
+let DATA = { meta: {}, stocks: [] };
 let isAdmin = false;
 let currentEditCode = null;
-
+let currentAdminTab = 'stocks';
 const LS_KEY = 'olive_admin_draft';
-function loadDraft() {
-  const draft = localStorage.getItem(LS_KEY);
-  if (draft && isAdmin) {
-    try { DATA = JSON.parse(draft); return true; } catch(e) {}
+const ADMIN_PASSWORD = 'olive2026';
+let _sgId = 0;
+
+// ═══ Draft ═══
+function loadDraft(){const d=localStorage.getItem(LS_KEY);if(d&&isAdmin){try{DATA=JSON.parse(d);return true;}catch(e){}}return false;}
+function saveDraft(){if(isAdmin)localStorage.setItem(LS_KEY,JSON.stringify(DATA));}
+function clearDraft(){localStorage.removeItem(LS_KEY);}
+
+// ═══ Toast ═══
+const Toast={
+  show(msg,type='success',dur=3500){
+    const id='t'+Date.now();
+    const icons={success:'check-circle',error:'alert-circle',info:'info',warning:'alert-triangle'};
+    const cols={success:'text-green',error:'text-red',info:'text-gold',warning:'text-gold'};
+    const el=document.createElement('div');
+    el.id=id;
+    el.className='toast-item';
+    el.style.cssText='opacity:0;transform:translateY(10px);';
+    el.innerHTML=`<i data-lucide="${icons[type]}" class="w-4 h-4 ${cols[type]} flex-shrink-0"></i><span class="text-sm flex-1">${msg}</span><button style="background:none;border:none;cursor:pointer;color:var(--ink-3);padding:0 0 0 8px;" onclick="this.closest('.toast-item').remove()"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+    document.getElementById('toast-container').appendChild(el);
+    lucide.createIcons({nodes:[el]});
+    requestAnimationFrame(()=>{el.style.transition='all .25s';el.style.opacity='1';el.style.transform='translateY(0)';});
+    setTimeout(()=>{if(el.parentNode){el.style.opacity='0';el.style.transform='translateY(10px)';setTimeout(()=>el.remove(),260);}},dur);
   }
-  return false;
-}
-function saveDraft() { if (isAdmin) localStorage.setItem(LS_KEY, JSON.stringify(DATA)); }
-function clearDraft() { localStorage.removeItem(LS_KEY); }
+};
 
-function navigate(view, param) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === view));
-  document.getElementById('mobile-menu').classList.add('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (view === 'detail' && param) renderDetail(param);
-  if (view === 'featured') renderFeatured();
-}
-document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navigate(l.dataset.view)));
-function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
-
-const marketLabel = m => ({ US: '美股', HK: '港股', CN: 'A股' }[m] || m);
-const riskPill = r => r === '低' ? '<span class="pill pill-green">低风险</span>' :
-                      r === '中' ? '<span class="pill pill-gold">中风险</span>' :
-                                   '<span class="pill pill-red">高风险</span>';
-
-const ALL_INDUSTRIES = ['AI半导体', '新能源', '消费', '金融', '医药', '互联网'];
-const ALL_RISKS = ['低', '中', '高'];
-const ALL_KI_TYPES = ['欧式敲入', '美式敲入'];
-const ALL_MARKETS = [{v:'US',l:'美股'},{v:'HK',l:'港股'},{v:'CN',l:'A股'}];
-
-let filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
-let sortBy = 'score';
-
-function renderIndustryFilters() {
-  const industries = ['all', ...new Set(DATA.stocks.map(s => s.industry))];
-  document.getElementById('filter-industry').innerHTML = industries.map(i =>
-    `<div class="check-chip ${i === filters.industry ? 'active' : ''}" data-val="${i}">${i === 'all' ? '全部' : i}</div>`
-  ).join('');
-  document.querySelectorAll('#filter-industry .check-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.industry = chip.dataset.val;
-      renderIndustryFilters();
-      renderScreener();
+// ═══ Confirm ═══
+const Confirm={
+  show(msg,title='确认操作'){
+    return new Promise(resolve=>{
+      document.getElementById('confirm-title').textContent=title;
+      document.getElementById('confirm-msg').textContent=msg;
+      document.getElementById('confirm-modal').classList.add('active');
+      const ok=document.getElementById('confirm-ok-btn');
+      const cancel=document.getElementById('confirm-cancel-btn');
+      const close=()=>document.getElementById('confirm-modal').classList.remove('active');
+      ok.onclick=()=>{close();resolve(true);};
+      cancel.onclick=()=>{close();resolve(false);};
     });
+  }
+};
+
+// ═══ Navigate ═══
+function navigate(view,param){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.dataset.view===view));
+  document.getElementById('mobile-menu').classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(view==='detail'&&param)renderDetail(param);
+  if(view==='featured')renderFeatured();
+}
+document.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',()=>navigate(l.dataset.view)));
+function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('hidden');}
+
+// ═══ Helpers ═══
+const mktLabel=m=>({US:'美股',HK:'港股',CN:'A股'}[m]||m);
+const riskPill=r=>r==='低'?'<span class="pill pill-green">低风险</span>':r==='中'?'<span class="pill pill-gold">中风险</span>':'<span class="pill pill-red">高风险</span>';
+const fmtChg=v=>{const up=v>=0;return`<span class="font-mono text-xs ${up?'text-green':'text-red'}">${up?'+':''}${v.toFixed(1)}%</span>`;};
+const priceLabel=s=>s.priceUSD?`$${s.priceUSD}`:s.priceHKD?`HK$${s.priceHKD}`:`¥${s.priceCNY||'—'}`;
+
+// ═══ Sparkline SVG ═══
+function sparklineSVG(data,w=88,h=30){
+  if(!data||data.length<2)return'';
+  const id='sg'+(++_sgId);
+  const isUp=data[data.length-1]>=data[0];
+  const col=isUp?'var(--green)':'var(--red)';
+  const mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1;
+  const px=2,py=3;
+  const pts=data.map((v,i)=>[px+i/(data.length-1)*(w-2*px),h-py-(v-mn)/rng*(h-2*py)]);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const fill=line+` L${pts.at(-1)[0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
+  const dot=pts[pts.length-1];
+  return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity="0.3"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><path d="${fill}" fill="url(#${id})"/><path d="${line}" stroke="${col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${dot[0].toFixed(1)}" cy="${dot[1].toFixed(1)}" r="2.5" fill="${col}"/></svg>`;
+}
+
+// ═══ Score Ring SVG ═══
+function scoreRingSVG(score){
+  const pct=Math.max(0,Math.min(1,(score-5)/5));
+  const r=16,cx=20,cy=20,circ=2*Math.PI*r;
+  const dash=(pct*circ).toFixed(1);
+  const col=score>=8.5?'var(--gold)':score>=7.5?'var(--ink-2)':'var(--ink-3)';
+  return`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="${cx}" cy="${cy}" r="${r}" stroke="var(--line)" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="${r}" stroke="${col}" stroke-width="2.5" stroke-dasharray="${dash} ${circ.toFixed(1)}" stroke-dashoffset="${(circ*0.25).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/><text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="10" font-family="'Fraunces',serif" font-weight="500">${score.toFixed(1)}</text></svg>`;
+}
+
+// ═══ Score Breakdown Bars ═══
+function scoreBreakdownHTML(sb){
+  if(!sb)return'';
+  const dims=[['基本面','fundamental'],['波动率','volatility'],['流动性','liquidity'],['动量','momentum']];
+  return dims.map(([lbl,key])=>{
+    const v=sb[key]||0;
+    const pct=((v/10)*100).toFixed(0);
+    const col=v>=8.5?'var(--gold)':v>=7?'#A1A1AA':'#71717A';
+    return`<div class="flex items-center gap-3 text-xs">
+      <span class="text-ink-3 w-12 flex-shrink-0">${lbl}</span>
+      <div class="flex-1 score-bar-wrap"><div class="score-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <span class="num text-ink-2 font-mono w-6 text-right">${v.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══ FCN Payoff Chart ═══
+function payoffSVG(coupon,strike,ki,tenor){
+  const tc=+(coupon*tenor/12).toFixed(1);
+  const W=480,H=200;
+  const ML=52,MR=16,MT=22,MB=42;
+  const cW=W-ML-MR,cH=H-MT-MB;
+  const pMin=25,pMax=125,rMin=-55,rMax=tc+8;
+  const px=v=>ML+(v-pMin)/(pMax-pMin)*cW;
+  const py=v=>MT+(rMax-v)/(rMax-rMin)*cH;
+  const y0=py(0);
+
+  let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" fill="none" style="max-width:100%">`;
+
+  // Grid
+  [40,60,80,100,120].forEach(p=>{
+    const x=px(p).toFixed(1);
+    svg+=`<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 3"/>`;
+    svg+=`<text x="${x}" y="${MT+cH+14}" text-anchor="middle" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${p}%</text>`;
+  });
+  const retTicks=[-40,-20,0,tc].filter((v,i,a)=>a.indexOf(v)===i);
+  retTicks.forEach(r=>{
+    const y=py(r).toFixed(1);
+    svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="var(--line)" stroke-width="${r===0?'1':'0.5'}" stroke-dasharray="${r===0?'':'3 3'}"/>`;
+    svg+=`<text x="${ML-6}" y="${parseFloat(y)+3.5}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${r>0?'+':''}${r}%</text>`;
+  });
+
+  // Loss fill
+  const be=100-tc;
+  if(be>pMin){
+    const lpts=[[be,0],[pMin,pMin-100+tc],[pMin,0]];
+    svg+=`<path d="${lpts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(244,63,94,0.07)"/>`;
+  }
+  // Gain fill (worst case above zero)
+  const gainPts=[[pMax,tc],[strike,tc],[Math.max(be,strike),0],[pMax,0]];
+  svg+=`<path d="${gainPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(0,200,5,0.05)"/>`;
+
+  // KI line
+  svg+=`<line x1="${px(ki).toFixed(1)}" y1="${MT}" x2="${px(ki).toFixed(1)}" y2="${MT+cH}" stroke="var(--red)" stroke-width="1" stroke-dasharray="5 3" opacity="0.7"/>`;
+  svg+=`<text x="${px(ki).toFixed(1)}" y="${MT-6}" text-anchor="middle" fill="var(--red)" font-size="9" opacity="0.8">KI ${ki}%</text>`;
+
+  // Strike line
+  svg+=`<line x1="${px(strike).toFixed(1)}" y1="${MT}" x2="${px(strike).toFixed(1)}" y2="${MT+cH}" stroke="var(--gold)" stroke-width="1" stroke-dasharray="5 3" opacity="0.7"/>`;
+  svg+=`<text x="${px(strike).toFixed(1)}" y="${MT-6}" text-anchor="middle" fill="var(--gold)" font-size="9" opacity="0.8">行权 ${strike}%</text>`;
+
+  // Best case (no KI): flat
+  svg+=`<path d="M${px(pMin).toFixed(1)},${py(tc).toFixed(1)} L${px(pMax).toFixed(1)},${py(tc).toFixed(1)}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.8"/>`;
+
+  // Worst case line
+  const wcPts=[[pMax,tc],[strike,tc],[pMin,pMin-100+tc]];
+  svg+=`<path d="${wcPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')}" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // Breakeven dot
+  if(be>pMin&&be<pMax)
+    svg+=`<circle cx="${px(be).toFixed(1)}" cy="${y0.toFixed(1)}" r="3" fill="var(--ink-2)" stroke="var(--bg)" stroke-width="1.5"/>`;
+
+  // Axis
+  svg+=`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT+cH}" stroke="var(--line-2)" stroke-width="1"/>`;
+  svg+=`<line x1="${ML}" y1="${MT+cH}" x2="${ML+cW}" y2="${MT+cH}" stroke="var(--line-2)" stroke-width="1"/>`;
+
+  // Y axis label
+  svg+=`<text x="10" y="${MT+cH/2}" text-anchor="middle" fill="var(--ink-3)" font-size="9" transform="rotate(-90 10 ${MT+cH/2})">收益率</text>`;
+  svg+=`<text x="${ML+cW/2}" y="${H-4}" text-anchor="middle" fill="var(--ink-3)" font-size="9">到期价格（% 初始价）</text>`;
+
+  svg+='</svg>';
+  return svg;
+}
+
+// ═══ Ticker ═══
+function initTicker(){
+  const snap=DATA.meta.marketSnapshot||{};
+  const items=[
+    {n:'S&P 500',v:snap.spx||'—',c:snap.spxChg,up:snap.spxUp},
+    {n:'NASDAQ',v:snap.ndx||'—',c:snap.ndxChg,up:snap.ndxUp},
+    {n:'恒生指数',v:snap.hsi||'—',c:snap.hsiChg,up:snap.hsiUp},
+    {n:'HSCEI',v:snap.hscei||'—',c:snap.hsceiChg,up:snap.hsceiUp},
+    {n:'VIX',v:snap.vix||'—',c:snap.vixChg,up:snap.vixUp},
+    {n:'DXY',v:snap.dxy||'—',c:snap.dxyChg,up:snap.dxyUp},
+  ];
+  const html=items.map(i=>`<div class="ticker-item">
+    <span class="ticker-name">${i.n}</span>
+    <span class="ticker-val">${i.v}</span>
+    <span class="ticker-chg ${i.up?'ticker-up':'ticker-dn'}">${i.c>=0||String(i.c).startsWith('+')?'+':''}${i.c}%</span>
+  </div>`).join('');
+  document.getElementById('ticker-track').innerHTML=html+html; // duplicate for seamless loop
+}
+
+// ═══ Hero Stats ═══
+function renderHeroStats(){
+  const stocks=DATA.stocks;
+  if(!stocks.length)return;
+  const avgCoupon=(stocks.reduce((a,s)=>a+s.coupon,0)/stocks.length).toFixed(1);
+  const avgScore=(stocks.reduce((a,s)=>a+s.score,0)/stocks.length).toFixed(1);
+  const avgIV=(stocks.filter(s=>s.iv30).reduce((a,s)=>a+s.iv30,0)/stocks.filter(s=>s.iv30).length).toFixed(1);
+  const top=stocks.slice().sort((a,b)=>b.score-a.score)[0];
+  const stats=[
+    {v:stocks.length,u:'个',l:'本周标的'},
+    {v:avgCoupon+'%',u:'',l:'平均年化票息'},
+    {v:avgScore,u:'/10',l:'平均综合评分'},
+    {v:avgIV+'%',u:'',l:'板块平均 IV30'},
+  ];
+  document.getElementById('hero-stats').innerHTML=stats.map(s=>`
+    <div class="stat-card">
+      <div class="stat-num text-3xl text-gold">${s.v}<span class="text-base text-ink-3">${s.u}</span></div>
+      <div class="text-[11px] text-ink-3 mt-1.5 tracking-wide uppercase">${s.l}</div>
+    </div>`).join('');
+}
+
+// ═══ Filters ═══
+const ALL_INDUSTRIES=['AI半导体','新能源','消费','金融','医药','互联网'];
+const ALL_RISKS=['低','中','高'];
+const ALL_KI_TYPES=['欧式敲入','美式敲入'];
+const ALL_MARKETS=[{v:'US',l:'美股'},{v:'HK',l:'港股'},{v:'CN',l:'A股'}];
+let filters={industry:'all',yield:'all',market:'all',score:7};
+let sortBy='score';
+
+function renderIndustryFilters(){
+  const industries=['all',...new Set(DATA.stocks.map(s=>s.industry))];
+  document.getElementById('filter-industry').innerHTML=industries.map(i=>
+    `<div class="check-chip ${i===filters.industry?'active':''}" data-val="${i}">${i==='all'?'全部':i}</div>`
+  ).join('');
+  document.querySelectorAll('#filter-industry .check-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{filters.industry=chip.dataset.val;renderIndustryFilters();renderScreener();});
   });
 }
 
-function setupFilters() {
+function setupFilters(){
   renderIndustryFilters();
-  const wire = (id, key) => {
-    document.querySelectorAll(`#${id} .check-chip`).forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll(`#${id} .check-chip`).forEach(c => c.classList.remove('active'));
+  const wire=(id,key)=>{
+    document.querySelectorAll(`#${id} .check-chip`).forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        document.querySelectorAll(`#${id} .check-chip`).forEach(c=>c.classList.remove('active'));
         chip.classList.add('active');
-        filters[key] = chip.dataset.val;
+        filters[key]=chip.dataset.val;
         renderScreener();
       });
     });
   };
-  wire('filter-yield', 'yield');
-  wire('filter-market', 'market');
-  document.getElementById('filter-score').addEventListener('input', e => {
-    filters.score = parseFloat(e.target.value);
-    document.getElementById('score-val').textContent = filters.score.toFixed(1);
+  wire('filter-yield','yield');
+  wire('filter-market','market');
+  document.getElementById('filter-score').addEventListener('input',e=>{
+    filters.score=parseFloat(e.target.value);
+    document.getElementById('score-val').textContent=filters.score.toFixed(1);
     renderScreener();
   });
-  document.getElementById('sort-select').addEventListener('change', e => {
-    sortBy = e.target.value;
-    renderScreener();
-  });
+  document.getElementById('sort-select').addEventListener('change',e=>{sortBy=e.target.value;renderScreener();});
 }
 
-function resetFilters() {
-  filters = { industry: 'all', yield: 'all', market: 'all', score: 7 };
-  document.querySelectorAll('.check-chip').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.check-chip[data-val="all"]').forEach(c => c.classList.add('active'));
-  document.getElementById('filter-score').value = 7;
-  document.getElementById('score-val').textContent = '7.0';
+function resetFilters(){
+  filters={industry:'all',yield:'all',market:'all',score:7};
+  document.querySelectorAll('.check-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.check-chip[data-val="all"]').forEach(c=>c.classList.add('active'));
+  document.getElementById('filter-score').value=7;
+  document.getElementById('score-val').textContent='7.0';
   renderIndustryFilters();
   renderScreener();
 }
 
-function renderScreener() {
-  let list = DATA.stocks.filter(s => {
-    if (filters.industry !== 'all' && s.industry !== filters.industry) return false;
-    if (filters.market !== 'all' && s.market !== filters.market) return false;
-    if (s.score < filters.score) return false;
-    if (filters.yield !== 'all') {
-      if (filters.yield === '10-15' && (s.coupon < 10 || s.coupon >= 15)) return false;
-      if (filters.yield === '15-20' && (s.coupon < 15 || s.coupon >= 20)) return false;
-      if (filters.yield === '20-25' && (s.coupon < 20 || s.coupon >= 25)) return false;
-      if (filters.yield === '25+' && s.coupon < 25) return false;
+// ═══ Screener ═══
+function renderScreener(){
+  let list=DATA.stocks.filter(s=>{
+    if(filters.industry!=='all'&&s.industry!==filters.industry)return false;
+    if(filters.market!=='all'&&s.market!==filters.market)return false;
+    if(s.score<filters.score)return false;
+    if(filters.yield!=='all'){
+      if(filters.yield==='10-15'&&(s.coupon<10||s.coupon>=15))return false;
+      if(filters.yield==='15-20'&&(s.coupon<15||s.coupon>=20))return false;
+      if(filters.yield==='20-25'&&(s.coupon<20||s.coupon>=25))return false;
+      if(filters.yield==='25+'&&s.coupon<25)return false;
     }
     return true;
   });
-  list.sort((a, b) => sortBy === 'coupon' ? b.coupon - a.coupon : b.score - a.score);
-  document.getElementById('result-count').textContent = list.length;
+  list.sort((a,b)=>{
+    if(sortBy==='coupon')return b.coupon-a.coupon;
+    if(sortBy==='iv')return(b.iv30||0)-(a.iv30||0);
+    return b.score-a.score;
+  });
+  document.getElementById('result-count').textContent=list.length;
 
-  if (!list.length) {
-    document.getElementById('screener-results').innerHTML = `
+  if(!list.length){
+    document.getElementById('screener-results').innerHTML=`
       <div class="text-center py-20 text-ink-3 border border-line rounded-xl">
-        <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-3 opacity-50"></i>
+        <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-3 opacity-40"></i>
         <div>没有符合条件的标的，请放宽筛选条件</div>
       </div>`;
     lucide.createIcons();
     return;
   }
-  document.getElementById('screener-results').innerHTML = list.map(s => stockListCard(s)).join('');
-  document.querySelectorAll('.stock-row-link').forEach(el => {
-    el.addEventListener('click', () => navigate('detail', el.dataset.code));
+  document.getElementById('screener-results').innerHTML=list.map(s=>stockCard(s)).join('');
+  document.querySelectorAll('.stock-card').forEach(el=>{
+    el.addEventListener('click',()=>navigate('detail',el.dataset.code));
   });
   lucide.createIcons();
 }
 
-function stockListCard(s) {
-  const highlights = (s.highlights || []).slice(0, 3).map(h =>
-    `<div class="highlight-bullet text-[13px] text-ink-2 leading-relaxed">${h}</div>`
-  ).join('');
-  return `
-    <div class="stock-row-link border border-line rounded-xl p-6 hover:border-gold/40 hover:bg-bg-2 transition-all" data-code="${s.code}">
-      <div class="grid lg:grid-cols-[1fr_auto] gap-6 items-start">
-        <div class="min-w-0">
-          <div class="flex items-center gap-3 mb-3 flex-wrap">
-            <h3 class="font-display text-xl font-medium">${s.name}</h3>
-            <span class="text-ink-3 text-sm num">${s.code}</span>
-            <span class="pill pill-dim">${marketLabel(s.market)}</span>
-            <span class="pill pill-dim">${s.industry}</span>
-            ${riskPill(s.risk)}
-            ${s.tag ? `<span class="pill pill-gold">${s.tag}</span>` : ''}
-          </div>
-          <div class="space-y-1.5 mb-4">${highlights}</div>
-          <div class="flex items-center gap-2 text-gold text-xs hover:text-gold-2 transition-colors">
-            <span>查看详细分析</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </div>
+function stockCard(s){
+  const hl=(s.highlights||[]).slice(0,2).map(h=>`<div class="highlight-bullet text-[13px] text-ink-2 leading-relaxed">${h}</div>`).join('');
+  const spk=sparklineSVG(s.sparkline,88,30);
+  const chg=s.priceChange!==undefined?fmtChg(s.priceChange):'';
+  const iv30=s.iv30?`<span class="iv-badge">IV ${s.iv30}%</span>`:'';
+  return`<div class="stock-card" data-code="${s.code}">
+    <div class="grid lg:grid-cols-[1fr_auto] gap-5 items-start">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <h3 class="font-display text-xl font-medium">${s.name}</h3>
+          <span class="text-ink-3 text-sm num">${s.code}</span>
+          <span class="pill pill-dim">${mktLabel(s.market)}</span>
+          <span class="pill pill-dim">${s.industry}</span>
+          ${riskPill(s.risk)}
+          ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
         </div>
-        <div class="lg:border-l border-line lg:pl-6 grid grid-cols-3 lg:grid-cols-2 gap-x-6 gap-y-4 lg:min-w-[260px]">
-          <div class="col-span-2 lg:col-span-2">
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">年化票息</div>
-            <div class="font-display text-3xl text-gold num">${s.coupon}<span class="text-base">%</span></div>
-          </div>
-          <div>
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">行权 / 敲入</div>
-            <div class="text-sm font-medium num">${s.strike}% / ${s.ki}%</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">敲入类型</div>
-            <div class="text-sm font-medium">${s.kiType}</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">期限</div>
-            <div class="text-sm font-medium num">${s.tenor} 个月</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">综合评分</div>
-            <div class="score-display text-2xl ${s.score >= 8.3 ? 'text-gold' : 'text-ink'}">${s.score}</div>
+        <div class="space-y-1.5 mb-4">${hl}</div>
+        <div class="flex items-center gap-3 flex-wrap">
+          ${iv30}
+          <div class="flex items-center gap-1.5 text-xs text-ink-3">${spk}<span class="font-mono">${priceLabel(s)}</span> ${chg}</div>
+          <div class="flex items-center gap-1.5 text-gold text-xs">
+            <span>查看详细分析</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </div>
         </div>
       </div>
+      <div class="lg:border-l border-line lg:pl-5 grid grid-cols-3 lg:grid-cols-2 gap-x-5 gap-y-4 lg:min-w-[240px] items-start">
+        <div class="col-span-2 lg:col-span-2 flex items-start gap-3">
+          <div>
+            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-0.5">年化票息</div>
+            <div class="font-display text-3xl text-gold num">${s.coupon}<span class="text-base">%</span></div>
+          </div>
+          <div class="mt-1">${scoreRingSVG(s.score)}</div>
+        </div>
+        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">行权 / 敲入</div><div class="text-sm font-medium num">${s.strike}% / ${s.ki}%</div></div>
+        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">结构</div><div class="text-sm font-medium">${s.kiType}</div></div>
+        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">期限</div><div class="text-sm font-medium num">${s.tenor} 个月</div></div>
+        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">风险</div>${riskPill(s.risk)}</div>
+      </div>
     </div>
-  `;
+  </div>`;
 }
 
-function renderFeatured() {
-  document.getElementById('featured-meta-week').textContent = '产品部精选 · ' + DATA.meta.week;
-  document.getElementById('featured-theme').textContent = DATA.meta.theme;
-  document.getElementById('featured-date').textContent = DATA.meta.publishDate;
-  document.getElementById('featured-next').textContent = DATA.meta.nextUpdate;
+// ═══ Featured ═══
+function renderFeatured(){
+  document.getElementById('featured-meta-week').textContent='产品部精选 · '+DATA.meta.week;
+  document.getElementById('featured-theme').textContent=DATA.meta.theme;
+  document.getElementById('featured-date').textContent=DATA.meta.publishDate;
+  document.getElementById('featured-next').textContent=DATA.meta.nextUpdate;
+  const picks=DATA.meta.featuredIds.map(code=>DATA.stocks.find(s=>s.code===code)).filter(Boolean);
+  const avgC=picks.length?(picks.reduce((a,s)=>a+s.coupon,0)/picks.length).toFixed(1)+'% p.a.':'—';
+  document.getElementById('featured-avg-coupon').textContent=avgC;
 
-  const picks = DATA.meta.featuredIds
-    .map(code => DATA.stocks.find(s => s.code === code))
-    .filter(Boolean);
-
-  document.getElementById('featured-list').innerHTML = picks.map((s, i) => `
-    <div class="bg-bg p-10 stock-row-link" data-code="${s.code}">
-      <div class="grid lg:grid-cols-[1fr_320px] gap-10">
+  document.getElementById('featured-list').innerHTML=picks.map((s,i)=>`
+    <div class="stock-card rounded-none first:rounded-t-xl last:rounded-b-xl border-x-0 first:border-t last:border-b border-line py-10 px-6 stock-card-featured" data-code="${s.code}" style="border-radius:0;border-left:1px solid var(--line);border-right:1px solid var(--line);">
+      <div class="grid lg:grid-cols-[1fr_300px] gap-10">
         <div>
           <div class="flex items-center gap-3 mb-5">
-            <div class="font-display text-3xl text-gold num">${String(i+1).padStart(2,'0')}</div>
+            <div class="font-display text-3xl text-gold num opacity-50">${String(i+1).padStart(2,'0')}</div>
             <div class="h-px flex-1 bg-line"></div>
             <span class="pill pill-dim">${s.industry}</span>
             ${riskPill(s.risk)}
           </div>
-          <h2 class="font-display text-3xl font-medium mb-2">${s.name} <span class="text-ink-3 text-base font-normal num ml-2">${s.code}</span></h2>
-          <div class="text-sm text-ink-3 mb-6">${marketLabel(s.market)} · ${s.industry}</div>
+          <h2 class="font-display text-3xl font-medium mb-1">${s.name} <span class="text-ink-3 text-base font-normal num ml-2">${s.code}</span></h2>
+          <div class="text-sm text-ink-3 mb-6">${mktLabel(s.market)} · ${s.industry} ${s.iv30?`<span class="iv-badge ml-2">IV ${s.iv30}%</span>`:''}</div>
           <div class="mb-6">
             <div class="section-label mb-3">投资亮点</div>
-            <div class="space-y-2">
-              ${(s.highlights || []).map(h => `<div class="highlight-bullet text-ink leading-relaxed">${h}</div>`).join('')}
-            </div>
+            <div class="space-y-2">${(s.highlights||[]).map(h=>`<div class="highlight-bullet text-ink leading-relaxed">${h}</div>`).join('')}</div>
           </div>
           <div class="mb-6">
             <div class="section-label mb-3">推荐逻辑</div>
-            <p class="text-ink leading-relaxed text-[15px] whitespace-pre-wrap">${s.thesis || ''}</p>
+            <p class="text-ink leading-relaxed text-[15px] whitespace-pre-wrap">${(s.thesis||'').split('\n')[0]}</p>
           </div>
           <div>
-            <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-3 opacity-80">风险提示</div>
-            <p class="text-ink-2 leading-relaxed text-sm">${s.risks || ''}</p>
+            <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-2 opacity-80">风险提示</div>
+            <p class="text-ink-2 leading-relaxed text-sm">${s.risks||''}</p>
           </div>
-          <div class="mt-6 flex items-center gap-2 text-gold text-sm hover:text-gold-2">
-            <span>查看完整分析</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <div class="mt-6 flex items-center gap-2 text-gold text-sm hover:text-gold-2 cursor-pointer">
+            <span>查看完整分析</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
           </div>
         </div>
-        <div class="border border-line rounded-xl p-7 self-start bg-bg-2">
-          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-2">年化票息</div>
+        <div class="border border-line rounded-xl p-6 self-start bg-bg-2">
+          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-1">年化票息</div>
           <div class="font-display text-5xl text-gold num mb-1">${s.coupon}<span class="text-xl">%</span></div>
-          <div class="text-[11px] text-ink-3 mb-7">推荐 FCN 结构</div>
+          <div class="text-[11px] text-ink-3 mb-6">推荐 FCN 结构</div>
           <div class="space-y-3 text-sm">
             <div class="flex justify-between"><span class="text-ink-3">行权价</span><span class="num font-medium">${s.strike}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入价</span><span class="num font-medium">${s.ki}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入类型</span><span class="font-medium">${s.kiType}</span></div>
             <div class="flex justify-between"><span class="text-ink-3">期限</span><span class="num font-medium">${s.tenor} 个月</span></div>
+            ${s.iv30?`<div class="flex justify-between"><span class="text-ink-3">IV 30日</span><span class="num font-medium iv-badge">${s.iv30}%</span></div>`:''}
             <div class="flex justify-between pt-3 border-t border-line"><span class="text-ink-3">综合评分</span><span class="num font-medium text-gold">${s.score} / 10</span></div>
+          </div>
+          <div class="mt-5">
+            <div class="text-[11px] text-ink-3 uppercase tracking-wider mb-3">评分细分</div>
+            ${scoreBreakdownHTML(s.scoreBreakdown)}
           </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
-  document.querySelectorAll('#view-featured .stock-row-link').forEach(el => {
-    el.addEventListener('click', (e) => {
-      if (e.target.closest('button')) return;
-      navigate('detail', el.dataset.code);
-    });
+  document.querySelectorAll('.stock-card-featured').forEach(el=>{
+    el.addEventListener('click',(e)=>{if(e.target.closest('button'))return;navigate('detail',el.dataset.code);});
   });
   lucide.createIcons();
 }
 
-function renderDetail(code) {
-  const s = DATA.stocks.find(x => x.code === code);
-  if (!s) { navigate('screener'); return; }
-  document.getElementById('detail-content').innerHTML = `
+// ═══ Detail ═══
+function renderDetail(code){
+  const s=DATA.stocks.find(x=>x.code===code);
+  if(!s){navigate('screener');return;}
+  document.getElementById('detail-content').innerHTML=`
     <div class="mb-8">
       <div class="flex items-center gap-3 mb-4 flex-wrap">
-        <span class="pill pill-dim">${marketLabel(s.market)}</span>
+        <span class="pill pill-dim">${mktLabel(s.market)}</span>
         <span class="pill pill-dim">${s.industry}</span>
         ${riskPill(s.risk)}
-        ${s.tag ? `<span class="pill pill-gold">${s.tag}</span>` : ''}
+        ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
+        ${s.iv30?`<span class="iv-badge">IV 30日 ${s.iv30}%</span>`:''}
       </div>
-      <h1 class="font-display text-5xl font-medium mb-2">${s.name}</h1>
-      <div class="text-ink-3 num text-lg">${s.code}</div>
+      <div class="flex items-start justify-between flex-wrap gap-4 mb-2">
+        <div>
+          <h1 class="font-display text-5xl font-medium mb-1">${s.name}</h1>
+          <div class="flex items-center gap-3 text-ink-3">
+            <span class="num text-lg">${s.code}</span>
+            ${s.priceChange!==undefined?`<span class="num font-mono text-sm">${priceLabel(s)}</span> ${fmtChg(s.priceChange)}`:''}
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          ${sparklineSVG(s.sparkline,120,40)}
+        </div>
+      </div>
     </div>
-    <div class="grid lg:grid-cols-[1fr_320px] gap-10 mb-12">
+
+    <div class="grid lg:grid-cols-[1fr_300px] gap-10 mb-12">
       <div>
-        <div class="border border-line rounded-xl p-8 bg-bg-2 mb-8">
+        <div class="border border-line rounded-xl p-7 bg-bg-2 mb-8">
           <div class="section-label mb-4">投资亮点</div>
           <div class="space-y-3">
-            ${(s.highlights || []).map(h => `<div class="highlight-bullet text-ink leading-relaxed text-[15px]">${h}</div>`).join('')}
+            ${(s.highlights||[]).map(h=>`<div class="highlight-bullet text-ink leading-relaxed text-[15px]">${h}</div>`).join('')}
           </div>
         </div>
         <div class="mb-10">
           <div class="section-label mb-4">详细投资逻辑</div>
-          <div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${s.thesis || ''}</div>
+          <div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${s.thesis||''}</div>
         </div>
-        <div class="border-l-2 border-red pl-5 py-2">
-          <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-3">风险提示</div>
-          <p class="text-ink-2 leading-relaxed text-sm">${s.risks || ''}</p>
+        <div class="border-l-2 border-red pl-5 py-1 mb-10">
+          <div class="text-[11px] tracking-[0.15em] text-red uppercase mb-2">风险提示</div>
+          <p class="text-ink-2 leading-relaxed text-sm">${s.risks||''}</p>
+        </div>
+
+        <!-- Payoff Chart -->
+        <div class="border border-line rounded-xl p-6 bg-bg-2">
+          <div class="section-label mb-1">FCN 到期收益结构</div>
+          <div class="text-xs text-ink-3 mb-4">行权价 ${s.strike}% · 敲入价 ${s.ki}% · ${s.kiType} · ${s.tenor} 个月 · 票息 ${s.coupon}% p.a.</div>
+          ${payoffSVG(s.coupon,s.strike,s.ki,s.tenor)}
+          <div class="flex items-center gap-6 mt-3 text-[11px] text-ink-3 flex-wrap">
+            <div><span class="payoff-legend-dot" style="background:var(--green);display:inline-block;width:16px;height:2px;border-radius:1px;margin-right:5px;border-bottom:2px dashed var(--green);background:none;"></span>无敲入（最优情景）</div>
+            <div><span class="payoff-legend-dot" style="background:var(--gold);"></span>发生敲入（到期价格决定收益）</div>
+            <div class="text-ink-3 border-l border-line pl-4">盈亏平衡点：约 ${(100-s.coupon*s.tenor/12).toFixed(1)}%</div>
+          </div>
         </div>
       </div>
-      <aside class="self-start lg:sticky lg:top-24">
-        <div class="border border-line rounded-xl p-7 bg-bg-2">
-          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-2">推荐 FCN 结构</div>
+
+      <aside class="self-start lg:sticky lg:top-24 space-y-4">
+        <div class="border border-line rounded-xl p-6 bg-bg-2">
+          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-1">推荐 FCN 结构</div>
           <div class="font-display text-5xl text-gold num mb-1">${s.coupon}<span class="text-xl">%</span></div>
-          <div class="text-[11px] text-ink-3 mb-7">年化票息 p.a.</div>
+          <div class="text-[11px] text-ink-3 mb-6">年化票息 p.a.</div>
           <div class="space-y-3 text-sm">
             <div class="flex justify-between"><span class="text-ink-3">行权价</span><span class="num font-medium">${s.strike}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入价</span><span class="num font-medium">${s.ki}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入类型</span><span class="font-medium">${s.kiType}</span></div>
             <div class="flex justify-between"><span class="text-ink-3">期限</span><span class="num font-medium">${s.tenor} 个月</span></div>
+            ${s.iv30?`<div class="flex justify-between"><span class="text-ink-3">IV 30日</span><span class="iv-badge">${s.iv30}%</span></div>`:''}
             <div class="flex justify-between pt-3 border-t border-line"><span class="text-ink-3">综合评分</span><span class="num font-medium text-gold">${s.score} / 10</span></div>
             <div class="flex justify-between"><span class="text-ink-3">风险等级</span>${riskPill(s.risk)}</div>
           </div>
-          <button class="btn-gold w-full mt-7">咨询此结构</button>
+          <button class="btn-gold w-full mt-6" style="justify-content:center;">咨询此结构</button>
         </div>
+
+        ${s.scoreBreakdown?`<div class="border border-line rounded-xl p-6 bg-bg-2">
+          <div class="section-label mb-4">评分细分</div>
+          <div class="space-y-3">${scoreBreakdownHTML(s.scoreBreakdown)}</div>
+        </div>`:''}
       </aside>
-    </div>
-  `;
+    </div>`;
   lucide.createIcons();
 }
 
-const ADMIN_PASSWORD = 'olive2026';
-
-function checkAdminMode() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('admin') === '1') {
+// ═══ Admin Auth ═══
+function checkAdminMode(){
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('admin')==='1'){
     document.getElementById('login-modal').classList.add('active');
-    setTimeout(() => { document.getElementById('admin-password').focus(); }, 100);
+    setTimeout(()=>document.getElementById('admin-password').focus(),100);
   }
 }
-
-function verifyPassword() {
-  const pwd = document.getElementById('admin-password').value;
-  if (pwd === ADMIN_PASSWORD) {
-    isAdmin = true;
+function verifyPassword(){
+  const pwd=document.getElementById('admin-password').value;
+  if(pwd===ADMIN_PASSWORD){
+    isAdmin=true;
     document.getElementById('login-modal').classList.remove('active');
-    document.getElementById('admin-fab').style.display = 'flex';
-    if (loadDraft()) {
-      alert('已加载上次未导出的草稿。如需丢弃请刷新页面后清除浏览器存储。');
-      renderScreener();
-    }
+    document.getElementById('admin-fab').style.display='flex';
+    if(loadDraft()){Toast.show('已加载上次未导出的草稿','info');renderScreener();}
     openAdminModal();
-  } else {
+  }else{
     document.getElementById('login-error').classList.remove('hidden');
   }
 }
-
-function closeLoginModal() {
+function closeLoginModal(){
   document.getElementById('login-modal').classList.remove('active');
-  document.getElementById('admin-password').value = '';
+  document.getElementById('admin-password').value='';
   document.getElementById('login-error').classList.add('hidden');
-  const url = new URL(window.location.href);
+  const url=new URL(window.location.href);
   url.searchParams.delete('admin');
-  window.history.replaceState({}, '', url);
+  window.history.replaceState({},'',url);
 }
 
-let currentAdminTab = 'stocks';
-
-function openAdminModal() {
-  document.getElementById('admin-modal').classList.add('active');
-  renderAdminTab();
-}
-function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
-
-document.querySelectorAll('.admin-tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.admin-tab').forEach(x => {
-      x.classList.remove('border-gold', 'active');
-      x.classList.add('border-transparent', 'text-ink-2');
-    });
-    t.classList.add('border-gold', 'active');
-    t.classList.remove('border-transparent', 'text-ink-2');
-    currentAdminTab = t.dataset.tab;
-    renderAdminTab();
+// ═══ Admin Panel ═══
+function openAdminModal(){document.getElementById('admin-modal').classList.add('active');renderAdminTab();}
+function closeAdminModal(){document.getElementById('admin-modal').classList.remove('active');}
+document.querySelectorAll('.admin-tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.admin-tab').forEach(x=>{x.classList.remove('border-gold','active');x.classList.add('border-transparent','text-ink-2');});
+    t.classList.add('border-gold','active');t.classList.remove('border-transparent','text-ink-2');
+    currentAdminTab=t.dataset.tab;renderAdminTab();
   });
 });
-
-function renderAdminTab() {
-  const body = document.getElementById('admin-body');
-  if (currentAdminTab === 'stocks') renderAdminStocks(body);
-  else if (currentAdminTab === 'featured') renderAdminFeatured(body);
-  else if (currentAdminTab === 'help') renderAdminHelp(body);
+function renderAdminTab(){
+  const body=document.getElementById('admin-body');
+  if(currentAdminTab==='stocks')renderAdminStocks(body);
+  else if(currentAdminTab==='featured')renderAdminFeatured(body);
+  else renderAdminHelp(body);
   lucide.createIcons();
 }
 
-function renderAdminStocks(body) {
-  body.innerHTML = `
+function renderAdminStocks(body){
+  body.innerHTML=`
     <div class="flex items-center justify-between mb-5">
-      <div class="text-sm text-ink-2">共 <span class="text-ink font-medium num">${DATA.stocks.length}</span> 个标的</div>
-      <button class="btn-gold text-xs flex items-center gap-1.5" onclick="openStockEdit(null)">
-        <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增标的
-      </button>
+      <div class="text-sm text-ink-2">共 <span class="text-ink font-medium">${DATA.stocks.length}</span> 个标的</div>
+      <button class="btn-gold text-xs flex items-center gap-1.5" onclick="openStockEdit(null)"><i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增标的</button>
     </div>
     <div class="border border-line rounded-lg overflow-hidden">
       <table class="data-table">
-        <thead>
-          <tr><th>标的</th><th>市场</th><th>行业</th><th class="text-right">票息</th><th class="text-right">评分</th><th class="text-right">操作</th></tr>
-        </thead>
-        <tbody>
-          ${DATA.stocks.map(s => `
-            <tr>
-              <td><div class="font-medium">${s.name}</div><div class="text-[11px] text-ink-3 num">${s.code}</div></td>
-              <td>${marketLabel(s.market)}</td>
-              <td class="text-[13px] text-ink-2">${s.industry}</td>
-              <td class="text-right num text-gold">${s.coupon}%</td>
-              <td class="text-right num">${s.score}</td>
-              <td class="text-right">
-                <button class="btn-ghost text-xs" onclick="openStockEdit('${s.code}')"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-                <button class="btn-danger text-xs" onclick="deleteStock('${s.code}')">删除</button>
-              </td>
-            </tr>
-          `).join('')}
+        <thead><tr><th>标的</th><th>市场</th><th>行业</th><th class="text-right">票息</th><th class="text-right">IV30</th><th class="text-right">评分</th><th class="text-right">操作</th></tr></thead>
+        <tbody>${DATA.stocks.map(s=>`
+          <tr>
+            <td><div class="font-medium">${s.name}</div><div class="text-[11px] text-ink-3 num">${s.code}</div></td>
+            <td>${mktLabel(s.market)}</td>
+            <td class="text-[13px] text-ink-2">${s.industry}</td>
+            <td class="text-right num text-gold">${s.coupon}%</td>
+            <td class="text-right"><span class="iv-badge">${s.iv30||'—'}${s.iv30?'%':''}</span></td>
+            <td class="text-right num">${s.score}</td>
+            <td class="text-right">
+              <button class="btn-ghost text-xs" onclick="openStockEdit('${s.code}')"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+              <button class="btn-danger text-xs" onclick="deleteStock('${s.code}')">删除</button>
+            </td>
+          </tr>`).join('')}
         </tbody>
       </table>
-    </div>
-  `;
+    </div>`;
 }
 
-function renderAdminFeatured(body) {
-  body.innerHTML = `
-    <div class="space-y-6">
-      <div><div class="admin-label mb-2">本周编号</div><input type="text" id="meta-week" value="${DATA.meta.week}" onchange="updateMeta('week', this.value)"></div>
-      <div><div class="admin-label mb-2">本周主题</div><input type="text" id="meta-theme" value="${DATA.meta.theme}" onchange="updateMeta('theme', this.value)"></div>
+function renderAdminFeatured(body){
+  body.innerHTML=`
+    <div class="space-y-5">
       <div class="grid grid-cols-2 gap-4">
-        <div><div class="admin-label mb-2">发布日期</div><input type="text" id="meta-publishDate" value="${DATA.meta.publishDate}" onchange="updateMeta('publishDate', this.value)"></div>
-        <div><div class="admin-label mb-2">下次更新</div><input type="text" id="meta-nextUpdate" value="${DATA.meta.nextUpdate}" onchange="updateMeta('nextUpdate', this.value)"></div>
+        <div><div class="admin-label mb-2">本周编号</div><input type="text" id="meta-week" value="${DATA.meta.week}" onchange="updateMeta('week',this.value)"></div>
+        <div><div class="admin-label mb-2">本周主题</div><input type="text" id="meta-theme" value="${DATA.meta.theme}" onchange="updateMeta('theme',this.value)"></div>
+        <div><div class="admin-label mb-2">发布日期</div><input type="text" id="meta-publishDate" value="${DATA.meta.publishDate}" onchange="updateMeta('publishDate',this.value)"></div>
+        <div><div class="admin-label mb-2">下次更新</div><input type="text" id="meta-nextUpdate" value="${DATA.meta.nextUpdate}" onchange="updateMeta('nextUpdate',this.value)"></div>
       </div>
       <div>
-        <div class="admin-label mb-3">精选标的（勾选启用 / 上下调整顺序）</div>
+        <div class="admin-label mb-3">精选标的（勾选启用 / 箭头调整顺序）</div>
         <div class="space-y-2" id="featured-checklist">
-          ${DATA.stocks.map(s => {
-            const idx = DATA.meta.featuredIds.indexOf(s.code);
-            const isFeatured = idx !== -1;
-            return `
-              <label class="flex items-center gap-3 p-3 border border-line rounded-lg cursor-pointer hover:border-gold/40">
-                <input type="checkbox" ${isFeatured ? 'checked' : ''} onchange="toggleFeatured('${s.code}', this.checked)" class="w-4 h-4 accent-gold">
-                <div class="font-display text-base w-10 num text-gold">${isFeatured ? String(idx+1).padStart(2,'0') : '—'}</div>
-                <div class="flex-1"><div class="font-medium">${s.name} <span class="text-ink-3 text-xs ml-1 num">${s.code}</span></div><div class="text-xs text-ink-3">${s.industry} · ${marketLabel(s.market)}</div></div>
-                ${isFeatured ? `<button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', -1)"><i data-lucide="arrow-up" class="w-3 h-3"></i></button><button class="btn-ghost text-xs px-2" onclick="event.preventDefault(); moveFeatured('${s.code}', 1)"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>` : ''}
-              </label>
-            `;
+          ${DATA.stocks.map(s=>{
+            const idx=DATA.meta.featuredIds.indexOf(s.code);
+            const isFeatured=idx!==-1;
+            return`<label class="flex items-center gap-3 p-3 border border-line rounded-lg cursor-pointer hover:border-gold/40 transition-colors">
+              <input type="checkbox" ${isFeatured?'checked':''} onchange="toggleFeatured('${s.code}',this.checked)" class="w-4 h-4 accent-yellow-500">
+              <div class="font-display text-base w-10 num text-gold">${isFeatured?String(idx+1).padStart(2,'0'):'—'}</div>
+              <div class="flex-1"><div class="font-medium text-sm">${s.name} <span class="text-ink-3 text-xs ml-1 num">${s.code}</span></div><div class="text-xs text-ink-3">${s.industry} · ${mktLabel(s.market)}</div></div>
+              ${isFeatured?`<button class="btn-ghost text-xs px-2" onclick="event.preventDefault();moveFeatured('${s.code}',-1)"><i data-lucide="arrow-up" class="w-3 h-3"></i></button><button class="btn-ghost text-xs px-2" onclick="event.preventDefault();moveFeatured('${s.code}',1)"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>`:''}
+            </label>`;
           }).join('')}
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
   lucide.createIcons();
 }
 
-function renderAdminHelp(body) {
-  body.innerHTML = `
+function renderAdminHelp(body){
+  body.innerHTML=`
     <div class="space-y-5 text-[14px] text-ink-2 leading-relaxed">
       <h3 class="font-display text-xl text-ink mb-2">使用流程</h3>
       <div class="border border-line rounded-lg p-5 space-y-4">
-        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">01</div><div><div class="text-ink font-medium mb-1">在浏览器中编辑数据</div><p>在「标的管理」中新增、删除、修改标的；在「本周精选」中选择本周推荐的标的并排序。</p><p class="text-[12px] text-ink-3 mt-2">编辑过程会自动保存到浏览器本地，刷新不丢失。</p></div></div>
-        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">02</div><div><div class="text-ink font-medium mb-1">导出 data.js 文件</div><p>点击顶部「导出 data.js」按钮，浏览器会下载一个 data.js 文件。</p></div></div>
-        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">03</div><div><div class="text-ink font-medium mb-1">替换项目中的 data.js</div><p>把下载的 data.js 覆盖到项目目录的同名文件。</p></div></div>
-        <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">04</div><div><div class="text-ink font-medium mb-1">推送到 GitHub</div><p>执行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">git add data.js && git commit -m "更新本周标的" && git push</code></p><p class="text-[12px] text-ink-3 mt-2">GitHub Pages 通常 1-2 分钟后自动更新。</p></div></div>
+        ${[['01','自动生成（推荐）','每周运行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">python generate_watchlist.py</code> — 脚本自动调用 Claude API 分析50个标的，输出新的 watchlist.json。'],
+          ['02','手动编辑数据','在「标的管理」中新增、删除、修改标的；在「本周精选」中选择本周推荐标的并排序。编辑过程会自动保存到浏览器本地，刷新不丢失。'],
+          ['03','导出 watchlist.json','点击顶部「导出 watchlist.json」按钮，浏览器会下载最新的 watchlist.json 文件。'],
+          ['04','推送到 GitHub','执行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">git add watchlist.json && git commit -m "W23 weekly update" && git push</code><br>GitHub Pages 通常 1-2 分钟后自动更新。']].map(([n,t,d])=>`
+          <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">${n}</div><div><div class="text-ink font-medium mb-1">${t}</div><p class="text-[13px]">${d}</p></div></div>`).join('')}
       </div>
-      <div class="border border-gold/30 bg-gold/5 rounded-lg p-5"><div class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-gold mt-0.5"></i><div><div class="text-gold-2 font-medium mb-1">重要</div><p class="text-sm">只有「导出 data.js 并推送到 GitHub」之后，客户访问的网站才会看到新数据。</p></div></div></div>
-      <div class="text-xs text-ink-3 pt-4 border-t border-line"><p>后台密码：<code class="font-mono text-ink-2">olive2026</code>（修改请编辑 index.html 中的 <code class="font-mono">ADMIN_PASSWORD</code>）</p></div>
-    </div>
-  `;
+      <div class="border border-gold/30 bg-gold/5 rounded-lg p-4 flex items-start gap-3">
+        <i data-lucide="info" class="w-5 h-5 text-gold mt-0.5 flex-shrink-0"></i>
+        <p class="text-sm">只有「推送 watchlist.json 到 GitHub」之后，客户访问的网站才会看到新数据。每周只需 git push 一个文件。</p>
+      </div>
+      <div class="text-xs text-ink-3 pt-4 border-t border-line">后台密码：<code class="font-mono text-ink-2">olive2026</code>（修改请编辑 index.html 中的 <code class="font-mono">ADMIN_PASSWORD</code>）</div>
+    </div>`;
   lucide.createIcons();
 }
 
-function updateMeta(key, val) { DATA.meta[key] = val; saveDraft(); }
-
-function toggleFeatured(code, checked) {
-  if (checked) { if (!DATA.meta.featuredIds.includes(code)) DATA.meta.featuredIds.push(code); }
-  else { DATA.meta.featuredIds = DATA.meta.featuredIds.filter(c => c !== code); }
-  saveDraft();
-  renderAdminFeatured(document.getElementById('admin-body'));
+function updateMeta(key,val){DATA.meta[key]=val;saveDraft();}
+function toggleFeatured(code,checked){
+  if(checked){if(!DATA.meta.featuredIds.includes(code))DATA.meta.featuredIds.push(code);}
+  else{DATA.meta.featuredIds=DATA.meta.featuredIds.filter(c=>c!==code);}
+  saveDraft();renderAdminFeatured(document.getElementById('admin-body'));
+}
+function moveFeatured(code,dir){
+  const idx=DATA.meta.featuredIds.indexOf(code);
+  if(idx===-1)return;
+  const ni=idx+dir;
+  if(ni<0||ni>=DATA.meta.featuredIds.length)return;
+  [DATA.meta.featuredIds[idx],DATA.meta.featuredIds[ni]]=[DATA.meta.featuredIds[ni],DATA.meta.featuredIds[idx]];
+  saveDraft();renderAdminFeatured(document.getElementById('admin-body'));
 }
 
-function moveFeatured(code, dir) {
-  const idx = DATA.meta.featuredIds.indexOf(code);
-  if (idx === -1) return;
-  const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= DATA.meta.featuredIds.length) return;
-  [DATA.meta.featuredIds[idx], DATA.meta.featuredIds[newIdx]] = [DATA.meta.featuredIds[newIdx], DATA.meta.featuredIds[idx]];
-  saveDraft();
-  renderAdminFeatured(document.getElementById('admin-body'));
-}
-
-function openStockEdit(code) {
-  currentEditCode = code;
-  const isNew = !code;
-  const s = isNew ? { code: '', name: '', industry: 'AI半导体', market: 'US', coupon: 18, strike: 80, ki: 70, kiType: '欧式敲入', tenor: 6, score: 8.0, risk: '中', tag: '', highlights: ['', '', ''], thesis: '', risks: '' } : DATA.stocks.find(x => x.code === code);
-  document.getElementById('stock-edit-title').textContent = isNew ? '新增标的' : `编辑 · ${s.name}`;
-  const h = s.highlights || ['', '', ''];
-  while (h.length < 3) h.push('');
-  document.getElementById('stock-edit-body').innerHTML = `
+// ═══ Stock Edit ═══
+function openStockEdit(code){
+  currentEditCode=code;
+  const isNew=!code;
+  const s=isNew?{code:'',name:'',industry:'AI半导体',market:'US',coupon:18,strike:80,ki:65,kiType:'欧式敲入',tenor:6,score:8.0,risk:'中',tag:'',iv30:'',highlights:['','',''],thesis:'',risks:''}:DATA.stocks.find(x=>x.code===code);
+  document.getElementById('stock-edit-title').textContent=isNew?'新增标的':`编辑 · ${s.name}`;
+  const h=s.highlights||['','',''];while(h.length<3)h.push('');
+  document.getElementById('stock-edit-body').innerHTML=`
     <div class="space-y-5">
       <div class="grid grid-cols-2 gap-4">
         <div><div class="admin-label mb-2">股票代码</div><input type="text" id="f-code" value="${s.code}" placeholder="AVGO.US"></div>
         <div><div class="admin-label mb-2">中文名称</div><input type="text" id="f-name" value="${s.name}" placeholder="博通"></div>
       </div>
       <div class="grid grid-cols-3 gap-4">
-        <div><div class="admin-label mb-2">行业</div><select id="f-industry">${ALL_INDUSTRIES.map(i => `<option value="${i}" ${s.industry === i ? 'selected' : ''}>${i}</option>`).join('')}</select></div>
-        <div><div class="admin-label mb-2">市场</div><select id="f-market">${ALL_MARKETS.map(m => `<option value="${m.v}" ${s.market === m.v ? 'selected' : ''}>${m.l}</option>`).join('')}</select></div>
-        <div><div class="admin-label mb-2">风险等级</div><select id="f-risk">${ALL_RISKS.map(r => `<option value="${r}" ${s.risk === r ? 'selected' : ''}>${r}风险</option>`).join('')}</select></div>
+        <div><div class="admin-label mb-2">行业</div><select id="f-industry">${ALL_INDUSTRIES.map(i=>`<option value="${i}"${s.industry===i?' selected':''}>${i}</option>`).join('')}</select></div>
+        <div><div class="admin-label mb-2">市场</div><select id="f-market">${ALL_MARKETS.map(m=>`<option value="${m.v}"${s.market===m.v?' selected':''}>${m.l}</option>`).join('')}</select></div>
+        <div><div class="admin-label mb-2">风险等级</div><select id="f-risk">${ALL_RISKS.map(r=>`<option value="${r}"${s.risk===r?' selected':''}>${r}风险</option>`).join('')}</select></div>
       </div>
-      <div class="border-t border-line pt-5">
-        <div class="text-xs text-gold tracking-wider uppercase mb-4">FCN 结构参数</div>
+      <div class="border-t border-line pt-4">
+        <div class="text-xs text-gold tracking-wider uppercase mb-3">FCN 结构参数</div>
         <div class="grid grid-cols-4 gap-4">
           <div><div class="admin-label mb-2">年化票息 %</div><input type="number" step="0.1" id="f-coupon" value="${s.coupon}"></div>
           <div><div class="admin-label mb-2">行权价 %</div><input type="number" id="f-strike" value="${s.strike}"></div>
           <div><div class="admin-label mb-2">敲入价 %</div><input type="number" id="f-ki" value="${s.ki}"></div>
           <div><div class="admin-label mb-2">期限（月）</div><input type="number" id="f-tenor" value="${s.tenor}"></div>
         </div>
-        <div class="grid grid-cols-2 gap-4 mt-4">
-          <div><div class="admin-label mb-2">敲入类型</div><select id="f-kiType">${ALL_KI_TYPES.map(k => `<option value="${k}" ${s.kiType === k ? 'selected' : ''}>${k}</option>`).join('')}</select></div>
+        <div class="grid grid-cols-3 gap-4 mt-3">
+          <div><div class="admin-label mb-2">敲入类型</div><select id="f-kiType">${ALL_KI_TYPES.map(k=>`<option value="${k}"${s.kiType===k?' selected':''}>${k}</option>`).join('')}</select></div>
           <div><div class="admin-label mb-2">综合评分 (0-10)</div><input type="number" step="0.1" min="0" max="10" id="f-score" value="${s.score}"></div>
+          <div><div class="admin-label mb-2">IV 30日 %（可选）</div><input type="number" step="0.1" id="f-iv30" value="${s.iv30||''}"></div>
         </div>
       </div>
-      <div><div class="admin-label mb-2">标签（如：高 IV、稳健，可留空）</div><input type="text" id="f-tag" value="${s.tag || ''}" placeholder="高 IV"></div>
-      <div class="border-t border-line pt-5">
-        <div class="text-xs text-gold tracking-wider uppercase mb-4">投资亮点（1-3 条）</div>
-        <div class="space-y-3">
-          <input type="text" id="f-h1" value="${h[0] || ''}" placeholder="亮点 1">
-          <input type="text" id="f-h2" value="${h[1] || ''}" placeholder="亮点 2">
-          <input type="text" id="f-h3" value="${h[2] || ''}" placeholder="亮点 3">
+      <div><div class="admin-label mb-2">标签（可留空）</div><input type="text" id="f-tag" value="${s.tag||''}" placeholder="高 IV"></div>
+      <div class="border-t border-line pt-4">
+        <div class="text-xs text-gold tracking-wider uppercase mb-3">投资亮点（1-3 条）</div>
+        <div class="space-y-2">
+          <input type="text" id="f-h1" value="${h[0]||''}" placeholder="亮点 1">
+          <input type="text" id="f-h2" value="${h[1]||''}" placeholder="亮点 2">
+          <input type="text" id="f-h3" value="${h[2]||''}" placeholder="亮点 3">
         </div>
       </div>
-      <div><div class="admin-label mb-2">详细投资逻辑（详情页显示，可换行）</div><textarea id="f-thesis" rows="6">${s.thesis || ''}</textarea></div>
-      <div><div class="admin-label mb-2">风险提示</div><textarea id="f-risks" rows="3">${s.risks || ''}</textarea></div>
-    </div>
-  `;
+      <div><div class="admin-label mb-2">详细投资逻辑（可换行）</div><textarea id="f-thesis" rows="6">${s.thesis||''}</textarea></div>
+      <div><div class="admin-label mb-2">风险提示</div><textarea id="f-risks" rows="3">${s.risks||''}</textarea></div>
+    </div>`;
   document.getElementById('stock-edit-modal').classList.add('active');
 }
-
-function closeStockEditModal() { document.getElementById('stock-edit-modal').classList.remove('active'); currentEditCode = null; }
-
-function saveStock() {
-  const v = id => document.getElementById(id).value;
-  const n = id => parseFloat(document.getElementById(id).value) || 0;
-  const h = [v('f-h1'), v('f-h2'), v('f-h3')].filter(x => x.trim());
-  const newStock = {
-    code: v('f-code').trim(), name: v('f-name').trim(),
-    industry: v('f-industry'), market: v('f-market'),
-    coupon: n('f-coupon'), strike: n('f-strike'), ki: n('f-ki'),
-    kiType: v('f-kiType'), tenor: n('f-tenor'), score: n('f-score'),
-    risk: v('f-risk'), tag: v('f-tag').trim(),
-    highlights: h, thesis: v('f-thesis').trim(), risks: v('f-risks').trim()
+function closeStockEditModal(){document.getElementById('stock-edit-modal').classList.remove('active');currentEditCode=null;}
+function saveStock(){
+  const v=id=>document.getElementById(id).value;
+  const n=id=>parseFloat(document.getElementById(id).value)||0;
+  const h=[v('f-h1'),v('f-h2'),v('f-h3')].filter(x=>x.trim());
+  const iv30val=parseFloat(v('f-iv30'))||undefined;
+  const ns={
+    code:v('f-code').trim(),name:v('f-name').trim(),
+    industry:v('f-industry'),market:v('f-market'),
+    coupon:n('f-coupon'),strike:n('f-strike'),ki:n('f-ki'),
+    kiType:v('f-kiType'),tenor:n('f-tenor'),score:n('f-score'),
+    risk:v('f-risk'),tag:v('f-tag').trim(),
+    iv30:iv30val,
+    highlights:h,thesis:v('f-thesis').trim(),risks:v('f-risks').trim()
   };
-  if (!newStock.code || !newStock.name) { alert('股票代码和名称为必填'); return; }
-  if (currentEditCode) {
-    const idx = DATA.stocks.findIndex(x => x.code === currentEditCode);
-    if (currentEditCode !== newStock.code) {
-      const fi = DATA.meta.featuredIds.indexOf(currentEditCode);
-      if (fi !== -1) DATA.meta.featuredIds[fi] = newStock.code;
+  if(!ns.code||!ns.name){Toast.show('股票代码和名称为必填','error');return;}
+  if(currentEditCode){
+    const idx=DATA.stocks.findIndex(x=>x.code===currentEditCode);
+    if(currentEditCode!==ns.code){
+      const fi=DATA.meta.featuredIds.indexOf(currentEditCode);
+      if(fi!==-1)DATA.meta.featuredIds[fi]=ns.code;
     }
-    DATA.stocks[idx] = newStock;
-  } else {
-    if (DATA.stocks.some(x => x.code === newStock.code)) { alert('已存在相同代码的标的'); return; }
-    DATA.stocks.push(newStock);
+    DATA.stocks[idx]=ns;
+  }else{
+    if(DATA.stocks.some(x=>x.code===ns.code)){Toast.show('已存在相同代码的标的','error');return;}
+    DATA.stocks.push(ns);
   }
-  saveDraft();
-  closeStockEditModal();
-  renderAdminTab();
-  renderScreener();
-  renderIndustryFilters();
+  saveDraft();closeStockEditModal();renderAdminTab();renderScreener();renderIndustryFilters();
+  Toast.show(`已保存 · ${ns.name}`,'success');
+}
+async function deleteStock(code){
+  const s=DATA.stocks.find(x=>x.code===code);
+  const ok=await Confirm.show(`确认删除「${s?s.name:code}」吗？此操作无法撤销。`,'删除标的');
+  if(!ok)return;
+  DATA.stocks=DATA.stocks.filter(s=>s.code!==code);
+  DATA.meta.featuredIds=DATA.meta.featuredIds.filter(c=>c!==code);
+  saveDraft();renderAdminTab();renderScreener();
+  Toast.show(`已删除 ${code}`,'info');
 }
 
-function deleteStock(code) {
-  if (!confirm(`确认删除 ${code} 吗？此操作无法撤销。`)) return;
-  DATA.stocks = DATA.stocks.filter(s => s.code !== code);
-  DATA.meta.featuredIds = DATA.meta.featuredIds.filter(c => c !== code);
-  saveDraft();
-  renderAdminTab();
-  renderScreener();
-}
-
-function exportData() {
-  const header = `// ============================================================
-// Olive Asset Management · FCN 数据文件
-// 此文件由后台编辑器导出，请勿手动编辑
-// 最后更新: ${new Date().toISOString().slice(0,10)}
-// ============================================================
-
-window.OLIVE_DATA = `;
-  const content = header + JSON.stringify(DATA, null, 2) + ';\n';
-  const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'data.js';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+// ═══ Export ═══
+function exportData(){
+  const out = JSON.parse(JSON.stringify(DATA));
+  out._generated = {
+    by: 'admin-editor',
+    model: 'manual',
+    at: new Date().toISOString(),
+    futu: false,
+    count: (out.stocks||[]).length
+  };
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='watchlist.json';document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  alert('data.js 已下载。请将该文件覆盖到项目目录后推送到 GitHub。');
+  Toast.show('watchlist.json 已下载，git push 一个文件即可更新网站','success',5000);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// ═══ Keyboard ═══
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    ['admin-modal','stock-edit-modal','login-modal','confirm-modal'].forEach(id=>{
+      document.getElementById(id).classList.remove('active');
+    });
+  }
+});
+
+// ═══ Loading skeleton ═══
+function showLoadingSkeleton(){
+  const grid=document.getElementById('screener-grid');
+  if(!grid)return;
+  grid.innerHTML=Array.from({length:6},()=>`
+    <div class="bg-bg-2 border border-line rounded-xl p-5 animate-pulse">
+      <div class="flex justify-between mb-3">
+        <div class="h-4 bg-bg-3 rounded w-24"></div>
+        <div class="h-4 bg-bg-3 rounded w-12"></div>
+      </div>
+      <div class="h-6 bg-bg-3 rounded w-32 mb-4"></div>
+      <div class="h-3 bg-bg-3 rounded w-full mb-2"></div>
+      <div class="h-3 bg-bg-3 rounded w-5/6 mb-2"></div>
+      <div class="h-3 bg-bg-3 rounded w-4/6 mb-4"></div>
+      <div class="flex gap-3">
+        <div class="h-10 bg-bg-3 rounded w-20"></div>
+        <div class="h-10 bg-bg-3 rounded w-20"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══ Init ═══
+document.addEventListener('DOMContentLoaded', async ()=>{
+  showLoadingSkeleton();
+  try {
+    const res = await fetch('watchlist.json?_=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    DATA = await res.json();
+  } catch(e) {
+    console.warn('watchlist.json load failed:', e);
+    Toast.show('数据加载失败，请检查 watchlist.json 是否存在', 'error', 6000);
+  }
+  initTicker();
+  renderHeroStats();
   setupFilters();
   renderScreener();
   lucide.createIcons();
   checkAdminMode();
 });
 </script>
-
 </body>
 </html>
