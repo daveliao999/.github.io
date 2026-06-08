@@ -52,20 +52,6 @@
   .nav-link.active{color:var(--ink);}
   .nav-link.active::after{content:'';position:absolute;bottom:-22px;left:14px;right:14px;height:1px;background:var(--gold);}
 
-  /* ── Market Ticker ── */
-  .ticker-bar{background:var(--bg-2);border-bottom:1px solid var(--line);overflow:hidden;height:36px;position:relative;}
-  .ticker-bar::before,.ticker-bar::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;}
-  .ticker-bar::before{left:0;background:linear-gradient(to right,var(--bg-2) 0%,transparent 100%);}
-  .ticker-bar::after{right:0;background:linear-gradient(to left,var(--bg-2) 0%,transparent 100%);}
-  .ticker-track{display:flex;align-items:center;white-space:nowrap;animation:ticker-scroll 50s linear infinite;will-change:transform;}
-  .ticker-track:hover{animation-play-state:paused;}
-  @keyframes ticker-scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-  .ticker-item{display:inline-flex;align-items:center;gap:7px;padding:0 22px;border-right:1px solid var(--line);height:36px;flex-shrink:0;}
-  .ticker-name{font-size:11px;color:var(--ink-3);letter-spacing:0.04em;}
-  .ticker-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink);}
-  .ticker-chg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:1px 6px;border-radius:3px;}
-  .ticker-up{color:var(--green);background:rgba(0,200,5,0.08);}
-  .ticker-dn{color:var(--red);background:rgba(244,63,94,0.08);}
 
   /* ── Section label ── */
   .section-label{font-size:11px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;font-weight:500;}
@@ -184,28 +170,10 @@
         </div>
       </div>
     </div>
-    <div class="hidden md:flex items-center justify-center gap-6">
-      <div class="nav-link active" data-view="screener">标的筛选</div>
-      <div class="nav-link" data-view="featured">本周精选</div>
-    </div>
     <div class="flex items-center justify-end gap-3">
-      <div class="hidden md:flex items-center gap-1.5 text-[11px] text-green">
-        <span class="w-1.5 h-1.5 rounded-full bg-green animate-pulse"></span>
-        <span class="font-mono">实时数据</span>
-      </div>
-      <button class="md:hidden p-2 btn-ghost" onclick="toggleMobileMenu()"><i data-lucide="menu" class="w-5 h-5"></i></button>
     </div>
-  </div>
-  <div id="mobile-menu" class="hidden md:hidden border-t border-line px-6 py-3 space-y-1">
-    <div class="nav-link block py-2" data-view="screener">标的筛选</div>
-    <div class="nav-link block py-2" data-view="featured">本周精选</div>
   </div>
 </nav>
-
-<!-- ═══════════════ TICKER ═══════════════ -->
-<div class="ticker-bar" id="market-ticker-bar">
-  <div class="ticker-track" id="ticker-track"></div>
-</div>
 
 <!-- ═══════════════ VIEW: SCREENER ═══════════════ -->
 <div id="view-screener" class="view active">
@@ -310,48 +278,9 @@
 
 <!-- ═══════════════ FOOTER ═══════════════ -->
 <footer class="border-t border-line mt-12">
-  <div class="max-w-[1400px] mx-auto px-6 py-16 grid md:grid-cols-4 gap-12 text-sm">
-    <div>
-      <div class="flex items-center gap-3 mb-5">
-        <div class="olive-mark w-8 h-8">
-          <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C9A86A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C9A86A" stroke-width="1" stroke-linecap="round" fill="none"/>
-          </svg>
-        </div>
-        <div><div class="font-script text-[17px] text-gold-2">Olive</div><div class="text-[8px] text-ink-3 tracking-[0.22em] mt-0.5">资产管理</div></div>
-      </div>
-      <p class="text-ink-3 leading-relaxed text-xs">私行结构化产品智能推荐平台。仅向合资格投资者开放。</p>
-    </div>
-    <div>
-      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">平台</div>
-      <div class="space-y-2.5 text-ink-2">
-        <div class="hover:text-gold cursor-pointer transition-colors" onclick="navigate('screener')">标的筛选</div>
-        <div class="hover:text-gold cursor-pointer transition-colors" onclick="navigate('featured')">本周精选</div>
-      </div>
-    </div>
-    <div>
-      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">公司</div>
-      <div class="space-y-2.5 text-ink-2">
-        <div class="hover:text-gold cursor-pointer transition-colors">关于我们</div>
-        <div class="hover:text-gold cursor-pointer transition-colors">投研团队</div>
-        <div class="hover:text-gold cursor-pointer transition-colors">联系我们</div>
-      </div>
-    </div>
-    <div>
-      <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-4">合规</div>
-      <div class="space-y-2.5 text-ink-2">
-        <div class="hover:text-gold cursor-pointer transition-colors">风险披露</div>
-        <div class="hover:text-gold cursor-pointer transition-colors">隐私政策</div>
-        <div class="hover:text-gold cursor-pointer transition-colors">服务条款</div>
-      </div>
-    </div>
-  </div>
-  <div class="border-t border-line">
-    <div class="max-w-[1400px] mx-auto px-6 py-6 text-[11px] text-ink-3 leading-relaxed">
-      <p><strong class="text-ink-2">重要风险披露 ·</strong> 固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本平台内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
-      <p class="mt-3">© 2026 Olive Asset Management · 保留所有权利 · 本演示页面所有数据均为模拟数据。</p>
-    </div>
+  <div class="max-w-[1400px] mx-auto px-6 py-6 text-[11px] text-ink-3 leading-relaxed">
+    <p><strong class="text-ink-2">重要风险披露 ·</strong> 固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本平台内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
+    <p class="mt-3">© 2026 Olive Asset Management · 保留所有权利</p>
   </div>
 </footer>
 
