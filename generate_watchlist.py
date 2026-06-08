@@ -30,11 +30,24 @@ import json_repair
 # ── Config ────────────────────────────────────────────────────────────────────
 EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"
 OUTPUT_PATH  = r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\watchlist.json"
-TOP_N        = 50
+TOP_N        = 30
 MODEL        = "deepseek-v4-pro"
 API_BASE     = "https://api.deepseek.com"
 BATCH_SIZE   = 3
 MAX_WORKERS  = 3
+
+# ── Optional field helpers (return None if cell is blank/NaN) ────────────────
+def _opt_float(v):
+    try:    return float(v) if v is not None and str(v).strip() not in ('', 'nan') else None
+    except: return None
+
+def _opt_int(v):
+    f = _opt_float(v)
+    return int(f) if f is not None else None
+
+def _opt_str(v):
+    s = str(v).strip() if v is not None else ''
+    return s if s not in ('', 'nan', 'None') else None
 
 # ── Code helpers ──────────────────────────────────────────────────────────────
 def to_display_code(futu: str) -> str:
@@ -141,6 +154,192 @@ def get_realtime_context(yf_code: str, display_code: str) -> str:
 
     return "\n".join(lines)
 
+# ── Method B: Futu real-time context ─────────────────────────────────────────
+
+# Confirmed field IDs (cross-checked against AAPL Q2-2026 and Tencent FY2025)
+_FIN_FIELDS = {
+    'US': {'revenue': 8001, 'gross_profit': 8003, 'net_income': 8037, 'operating_cf': 8015},
+    'HK': {'revenue': 5001, 'gross_profit': 5003, 'net_income': 5051, 'operating_cf': 5015},
+}
+
+def _get_fin_field(report: dict, fid: int):
+    """Return (value_float, yoy_float) for a field_id in one Futu report."""
+    for item in report.get('item_list', []):
+        if item.get('field_id') == fid:
+            v = item.get('data')
+            y = item.get('yoy')
+            try:    v = float(v) if v is not None else None
+            except: v = None
+            try:    y = float(y) if y is not None else None
+            except: y = None
+            return v, y
+    return None, None
+
+def _fmt_money(v: float, currency: str) -> str:
+    """Format large numbers: 1.23B USD or 45.6亿HKD."""
+    if currency == 'HKD':
+        yi = v / 1e8
+        return f"{yi:.1f}亿HKD" if abs(yi) < 1000 else f"{yi/100:.2f}万亿HKD"
+    else:
+        b = v / 1e9
+        return f"{b:.2f}B USD" if abs(b) >= 1 else f"{v/1e6:.0f}M USD"
+
+def _get_futu_financials(ctx, futu_code: str, is_hk: bool) -> list:
+    """Pull income statement + cashflow from Futu, return formatted lines."""
+    from futu import RET_OK
+    lines = []
+    mkt   = 'HK' if is_hk else 'US'
+    fids  = _FIN_FIELDS[mkt]
+    curr  = 'HKD' if is_hk else 'USD'
+    # HK: annual reports (type=7), US: quarterly TTM combo (type=9)
+    fin_type   = 7 if is_hk else 9
+    num_period = 2 if is_hk else 4
+    period_lbl = '年度' if is_hk else '季度'
+
+    # ── Income statement ──────────────────────────────────────────────────────
+    ret, inc = ctx.get_financials_statements(
+        futu_code, statement_type=1, financial_type=fin_type, num=num_period
+    )
+    time.sleep(1.5)
+    if ret == RET_OK and inc and inc.get('report_list'):
+        rows = []
+        for rpt in inc['report_list']:
+            period = str(rpt.get('report_date', ''))[:7]
+            rev, rev_yoy = _get_fin_field(rpt, fids['revenue'])
+            gp,  _       = _get_fin_field(rpt, fids['gross_profit'])
+            ni,  ni_yoy  = _get_fin_field(rpt, fids['net_income'])
+
+            parts = [f"[{period}]"]
+            if rev:
+                yoy = f" YoY{rev_yoy:+.1f}%" if rev_yoy is not None else ""
+                parts.append(f"营收={_fmt_money(rev, curr)}{yoy}")
+            if gp and rev and rev != 0:
+                parts.append(f"毛利率={gp/rev*100:.1f}%")
+            if ni:
+                yoy = f" YoY{ni_yoy:+.1f}%" if ni_yoy is not None else ""
+                parts.append(f"净利={_fmt_money(ni, curr)}{yoy}")
+            if len(parts) > 1:
+                rows.append("  " + " | ".join(parts))
+
+        if rows:
+            lines.append(f"财务报表（富途 最近{num_period}期{period_lbl}）：")
+            lines.extend(rows)
+
+    # ── Operating cash flow ───────────────────────────────────────────────────
+    ret2, cf = ctx.get_financials_statements(
+        futu_code, statement_type=3, financial_type=fin_type, num=2
+    )
+    time.sleep(1.5)
+    if ret2 == RET_OK and cf and cf.get('report_list'):
+        cf_parts = []
+        for rpt in cf['report_list'][:2]:
+            period = str(rpt.get('report_date', ''))[:7]
+            ocf, _ = _get_fin_field(rpt, fids['operating_cf'])
+            if ocf is not None:
+                cf_parts.append(f"[{period}]{_fmt_money(ocf, curr)}")
+        if cf_parts:
+            lines.append("经营现金流：" + " | ".join(cf_parts))
+
+    # ── Revenue breakdown by segment ─────────────────────────────────────────
+    ret3, rbk = ctx.get_financials_revenue_breakdown(futu_code)
+    time.sleep(1.5)
+    if ret3 == RET_OK and rbk is not None:
+        items = rbk if isinstance(rbk, list) else (rbk.get('breakdown_list') or [])
+        segs = []
+        for item in items[:6]:
+            name = item.get('name') or item.get('segment_name', '')
+            pct  = item.get('percentage') or item.get('pct')
+            if name and pct:
+                try:    segs.append(f"{name}:{float(pct):.0f}%")
+                except: pass
+        if segs:
+            lines.append("收入构成：" + " | ".join(segs))
+
+    # ── Earnings beat/miss history ────────────────────────────────────────────
+    ret4, em = ctx.get_financials_earnings_price_move(futu_code, period_count=4)
+    time.sleep(1.5)
+    if ret4 == RET_OK and em is not None:
+        records = em.to_dict('records') if hasattr(em, 'to_dict') else []
+        beats = total = 0
+        for row in records:
+            if row.get('day_offset') == 1:
+                c = float(row.get('close_price') or 0)
+                p = float(row.get('last_close_price') or 0)
+                if p > 0:
+                    total += 1
+                    if c > p: beats += 1
+        if total > 0:
+            lines.append(f"近{total}次财报发布后次日股价：{beats}涨/{total-beats}跌")
+
+    return lines
+
+
+def get_futu_context(futu_code: str, display_code: str) -> str:
+    """Fetch analyst consensus + rating changes + financial statements from Futu."""
+    try:
+        from futu import OpenQuoteContext, RET_OK
+        ctx = OpenQuoteContext(host='127.0.0.1', port=11111)
+    except Exception as e:
+        return f"(Futu 连接失败: {e})"
+
+    is_hk = futu_code.startswith('HK.')
+    lines = [f"[富途实时数据 · {display_code} · {datetime.today().strftime('%Y-%m-%d')}]"]
+    try:
+        # ── Analyst consensus ─────────────────────────────────────────────────
+        ret, data = ctx.get_research_analyst_consensus(futu_code)
+        if ret == RET_OK and data:
+            avg = data.get('average')
+            buy, hold, sell = data.get('buy_cnt',0), data.get('hold_cnt',0), data.get('sell_cnt',0)
+            total_cnt = (buy or 0) + (hold or 0) + (sell or 0)
+            if avg:
+                lines.append(
+                    f"分析师共识：目标价均值={avg} | 区间=[{data.get('low')}, {data.get('high')}] | "
+                    f"买入{buy}/持有{hold}/卖出{sell}（共{total_cnt}家）"
+                )
+
+        # ── Recent rating changes (90 days) ───────────────────────────────────
+        from datetime import timedelta
+        cutoff = (datetime.today() - timedelta(days=90)).strftime('%Y-%m-%d')
+        ret2, data2 = ctx.get_research_rating_summary(
+            futu_code, rating_dimension_type=1, num=15, next_key=None, uid=None
+        )
+        if ret2 == RET_OK and data2:
+            rating_map = {1:'强力买入', 2:'买入', 3:'持有', 4:'卖出', 5:'强力卖出'}
+            changes = []
+            for inst in (data2.get('inst_rating_summary_list') or []):
+                items = inst.get('rating_item_list') or []
+                if not items: continue
+                latest = items[0]
+                if (latest.get('recommendation_date_str') or '') < cutoff: continue
+                firm   = inst.get('inst_name_simplified') or inst.get('inst_name', '')
+                date_s = latest.get('recommendation_date_str', '')
+                curr_r = rating_map.get(latest.get('rating', 0), '?')
+                target = latest.get('target_price')
+                s = f"{firm}({date_s})→{curr_r}"
+                if target: s += f" 目标价={target}"
+                if len(items) >= 2:
+                    prev_r = rating_map.get(items[1].get('rating', 0), '?')
+                    if curr_r != prev_r:
+                        arrow = '↑' if (items[0].get('rating',0) or 0) < (items[1].get('rating',0) or 0) else '↓'
+                        s += f"({arrow}从{prev_r})"
+                changes.append(s)
+            if changes:
+                lines.append("近90天评级变动：")
+                for c in changes[:8]: lines.append(f"  · {c}")
+
+        # ── Financial statements ──────────────────────────────────────────────
+        fin_lines = _get_futu_financials(ctx, futu_code, is_hk)
+        lines.extend(fin_lines)
+
+    except Exception as e:
+        lines.append(f"(Futu 数据获取失败: {e})")
+    finally:
+        try: ctx.close()
+        except Exception: pass
+
+    return "\n".join(lines)
+
+
 # ── Claude prompts ────────────────────────────────────────────────────────────
 SYSTEM_PROMPT = """\
 你是一位专业的私人银行 FCN（固定票息票据）结构化产品分析师，服务对象是香港/新加坡的高净值客户。
@@ -160,9 +359,15 @@ SYSTEM_PROMPT = """\
 """
 
 BATCH_PROMPT = """\
-请为以下 {n} 只股票生成投资分析内容，基于你的训练数据知识，对无法确认的数据在 data_quality.model_inferences 中注明。
+请为以下 {n} 只股票生成投资分析内容。
 
-股票数据（来自 FCN 筛选器输出）：
+数据优先级规则（严格遵守）：
+1. 标注「富途实时数据」的财务数字 → 必须原样引用，不得用训练记忆覆盖
+2. 标注「Yahoo Finance」的公司信息 → 用于核实公司背景
+3. 训练数据知识 → 仅用于行业背景、竞争格局等无实时数据的部分
+4. 无法确认的推断 → 在 data_quality.model_inferences 中注明
+
+股票数据：
 {stock_data}
 
 ---
@@ -221,16 +426,32 @@ def extract_json_array(text: str) -> list:
         raise ValueError(f"Cannot parse JSON even after repair: {raw[:200]}")
 
 def analyze_batch(client: OpenAI, batch: list) -> list:
-    # Build per-stock block: FCN screener row + Yahoo Finance realtime context
     stock_blocks = []
     for i, s in enumerate(batch):
-        header = (
-            f"{i+1}. 代码={s['display_code']} | 名称={s['name']} | 市场={s['market']} | "
-            f"市值={s['market_cap']:.1f}B {s['currency']} | IV={s['iv_pct']:.1f}% | "
-            f"现价={s['price']:.2f} | 分析师上涨空间={s['analyst_upside']:.1%} | 评分={s['display_score']:.1f}"
-        )
-        ctx = s.get("realtime_context", "")
-        stock_blocks.append(f"{header}\n{ctx}" if ctx else header)
+        # ── Method A: structured FCN screener fields ──────────────────────────
+        lines = [
+            f"{i+1}. 代码={s['display_code']} | 名称={s['name']} | 市场={s['market']}",
+            f"   现价={s['price']:.2f} {s['currency']} | 市值={s['market_cap']:.1f}B | IV={s['iv_pct']:.1f}%({s['iv_src']})",
+            f"   分析师目标价上涨空间={s['analyst_upside']:.1%} | 综合评分={s['display_score']:.1f}",
+        ]
+        if s.get('catalyst_raw') is not None:
+            lines.append(f"   催化剂评分(0-1)={s['catalyst_raw']:.3f} | 期权OI={int(s['option_oi'] or 0):,}")
+        if s.get('max_drop') is not None:
+            lines.append(
+                f"   过去8季最大单日跌幅={s['max_drop']:.1%} | "
+                f"现价/50日均线={s['sma50_ratio']:.3f} | "
+                f"50日均线斜率={s['sma50_slope']:.4f}%/日"
+            )
+        # ── Method B: Futu analyst consensus + rating changes ─────────────────
+        futu_ctx = s.get('futu_context', '')
+        if futu_ctx:
+            lines.append(futu_ctx)
+        # ── Yahoo Finance: business summary + news ────────────────────────────
+        yf_ctx = s.get('yf_context', '')
+        if yf_ctx:
+            lines.append(yf_ctx)
+
+        stock_blocks.append("\n".join(lines))
     stock_data = "\n\n".join(stock_blocks)
     prompt = BATCH_PROMPT.format(n=len(batch), stock_data=stock_data)
 
@@ -294,6 +515,17 @@ def main():
         elif 'Analyst' in c and 'Upside' in c:     col_map[col] = 'analyst_upside'
         elif 'DISPLAY' in c and 'SCORE' in c:      col_map[col] = 'display_score'
         elif 'Avg Vol' in c:                       col_map[col] = 'avg_vol'
+        elif c in ('Coupon%', 'Coupon', '票息%'):  col_map[col] = 'manual_coupon'
+        elif c in ('Strike%', 'Strike', '行权价%'): col_map[col] = 'manual_strike'
+        elif c in ('KI%', 'KI', '敲入价%'):        col_map[col] = 'manual_ki'
+        elif c in ('KI Type', 'KIType', '敲入类型'): col_map[col] = 'manual_ki_type'
+        elif c in ('Tenor', 'Tenor(M)', '期限'):   col_map[col] = 'manual_tenor'
+        elif 'Catalyst' in c:                      col_map[col] = 'catalyst_raw'
+        elif 'Max 1D Drop' in c:                   col_map[col] = 'max_drop'
+        elif 'Price/50DMA' in c:                   col_map[col] = 'sma50_ratio'
+        elif '50DMA Slope' in c:                   col_map[col] = 'sma50_slope'
+        elif 'Option OI' in c:                     col_map[col] = 'option_oi'
+        elif c == 'IV Src':                        col_map[col] = 'iv_src'
     df = df.rename(columns=col_map)
 
     n = 5 if args.dry_run else args.top
@@ -319,6 +551,18 @@ def main():
             "analyst_upside": float(row.get('analyst_upside', 0) or 0),
             "display_score":  float(row.get('display_score', 0) or 0),
             "avg_vol":        float(row.get('avg_vol', 0) or 0),
+            "manual_coupon":  _opt_float(row.get('manual_coupon')),
+            "manual_strike":  _opt_float(row.get('manual_strike')),
+            "manual_ki":      _opt_float(row.get('manual_ki')),
+            "manual_ki_type": _opt_str(row.get('manual_ki_type')),
+            "manual_tenor":   _opt_int(row.get('manual_tenor')),
+            # Method A: extra screener fields for LLM context
+            "catalyst_raw":   _opt_float(row.get('catalyst_raw')),
+            "max_drop":       _opt_float(row.get('max_drop')),
+            "sma50_ratio":    _opt_float(row.get('sma50_ratio')),
+            "sma50_slope":    _opt_float(row.get('sma50_slope')),
+            "option_oi":      _opt_float(row.get('option_oi')),
+            "iv_src":         _opt_str(row.get('iv_src')) or 'futu',
         })
 
     # ── 2. yfinance sparklines ────────────────────────────────────────────────
@@ -327,7 +571,8 @@ def main():
         for i, s in enumerate(stocks):
             s['sparkline']        = get_sparkline(s['yf_code'])
             s['priceChange']      = get_price_change(s['yf_code'])
-            s['realtime_context'] = get_realtime_context(s['yf_code'], s['display_code'])
+            s['yf_context']       = get_realtime_context(s['yf_code'], s['display_code'])
+            s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
             print(f"  [{i+1:2d}/{len(stocks)}] {s['display_code']:<14} "
                   f"{len(s['sparkline'])} weeks  Δ{s['priceChange']:+.1f}%")
             time.sleep(0.35)
@@ -335,7 +580,8 @@ def main():
         for s in stocks:
             s['sparkline']        = []
             s['priceChange']      = 0.0
-            s['realtime_context'] = get_realtime_context(s['yf_code'], s['display_code'])
+            s['yf_context']       = get_realtime_context(s['yf_code'], s['display_code'])
+            s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
         print("\n[2/4] Sparklines skipped (--no-sparkline)")
 
     # ── 3. Claude analysis ────────────────────────────────────────────────────
@@ -369,6 +615,12 @@ def main():
         code = s['display_code']
         ana  = analysis_map.get(code, {})
         fcn  = calc_fcn_terms(s['iv_pct'])
+        # Manual Excel values override IV-estimated terms
+        if s['manual_coupon']  is not None: fcn['coupon'] = s['manual_coupon']
+        if s['manual_strike']  is not None: fcn['strike'] = s['manual_strike']
+        if s['manual_ki']      is not None: fcn['ki']     = s['manual_ki']
+        if s['manual_ki_type'] is not None: fcn['kiType'] = s['manual_ki_type']
+        if s['manual_tenor']   is not None: fcn['tenor']  = s['manual_tenor']
 
         score_10 = round(s['display_score'] / score_max * 10, 1)
         score_bd = {
