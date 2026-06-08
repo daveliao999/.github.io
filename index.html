@@ -542,23 +542,6 @@ function payoffSVG(coupon,strike,ki,tenor){
 }
 
 // ═══ Ticker ═══
-function initTicker(){
-  const snap=DATA.meta.marketSnapshot||{};
-  const items=[
-    {n:'S&P 500',v:snap.spx||'—',c:snap.spxChg,up:snap.spxUp},
-    {n:'NASDAQ',v:snap.ndx||'—',c:snap.ndxChg,up:snap.ndxUp},
-    {n:'恒生指数',v:snap.hsi||'—',c:snap.hsiChg,up:snap.hsiUp},
-    {n:'HSCEI',v:snap.hscei||'—',c:snap.hsceiChg,up:snap.hsceiUp},
-    {n:'VIX',v:snap.vix||'—',c:snap.vixChg,up:snap.vixUp},
-    {n:'DXY',v:snap.dxy||'—',c:snap.dxyChg,up:snap.dxyUp},
-  ];
-  const html=items.map(i=>`<div class="ticker-item">
-    <span class="ticker-name">${i.n}</span>
-    <span class="ticker-val">${i.v}</span>
-    <span class="ticker-chg ${i.up?'ticker-up':'ticker-dn'}">${i.c>=0||String(i.c).startsWith('+')?'+':''}${i.c}%</span>
-  </div>`).join('');
-  document.getElementById('ticker-track').innerHTML=html+html; // duplicate for seamless loop
-}
 
 // ═══ Hero Stats ═══
 function renderHeroStats(){
@@ -1167,7 +1150,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     console.warn('watchlist.json load failed:', e);
     Toast.show('数据加载失败，请检查 watchlist.json 是否存在', 'error', 6000);
   }
-  initTicker();
   renderHeroStats();
   setupFilters();
   renderScreener();
