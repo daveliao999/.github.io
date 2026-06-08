@@ -14,11 +14,14 @@ Flow:
 import json, os, sys, re, time, argparse
 from datetime import datetime, timedelta
 
-# Windows GBK console fix
-if sys.platform == "win32":
+# Windows GBK console fix (only when running directly, not when imported)
+if sys.platform == "win32" and hasattr(sys.stdout, 'buffer'):
     import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -157,9 +160,11 @@ def get_realtime_context(yf_code: str, display_code: str) -> str:
 # ── Method B: Futu real-time context ─────────────────────────────────────────
 
 # Confirmed field IDs (cross-checked against AAPL Q2-2026 and Tencent FY2025)
+# gross_profit removed: field 8003/5003 returns EBIT (operating income), NOT gross profit
+# Displaying operating margin as "毛利率" was misleading the AI analysis
 _FIN_FIELDS = {
-    'US': {'revenue': 8001, 'gross_profit': 8003, 'net_income': 8037, 'operating_cf': 8015},
-    'HK': {'revenue': 5001, 'gross_profit': 5003, 'net_income': 5051, 'operating_cf': 5015},
+    'US': {'revenue': 8001, 'net_income': 8037, 'operating_cf': 8015},
+    'HK': {'revenue': 5001, 'net_income': 5051, 'operating_cf': 5015},
 }
 
 def _get_fin_field(report: dict, fid: int):
@@ -206,15 +211,12 @@ def _get_futu_financials(ctx, futu_code: str, is_hk: bool) -> list:
         for rpt in inc['report_list']:
             period = str(rpt.get('report_date', ''))[:7]
             rev, rev_yoy = _get_fin_field(rpt, fids['revenue'])
-            gp,  _       = _get_fin_field(rpt, fids['gross_profit'])
             ni,  ni_yoy  = _get_fin_field(rpt, fids['net_income'])
 
             parts = [f"[{period}]"]
             if rev:
                 yoy = f" YoY{rev_yoy:+.1f}%" if rev_yoy is not None else ""
                 parts.append(f"营收={_fmt_money(rev, curr)}{yoy}")
-            if gp and rev and rev != 0:
-                parts.append(f"毛利率={gp/rev*100:.1f}%")
             if ni:
                 yoy = f" YoY{ni_yoy:+.1f}%" if ni_yoy is not None else ""
                 parts.append(f"净利={_fmt_money(ni, curr)}{yoy}")
@@ -585,6 +587,18 @@ def main():
         print("\n[2/4] Sparklines skipped (--no-sparkline)")
 
     # ── 3. Claude analysis ────────────────────────────────────────────────────
+    def _validate_ana(ana: dict) -> tuple[bool, list]:
+        """Check all required fields are present and non-empty."""
+        inner = ana.get("analysis", ana)
+        issues = []
+        if not inner.get("intro"):        issues.append("no intro")
+        if not inner.get("business"):     issues.append("no business")
+        hl = inner.get("highlights") or []
+        if not hl:                        issues.append("no highlights")
+        elif len(hl) < 3:                 issues.append(f"highlights={len(hl)}<3")
+        if not inner.get("financials"):   issues.append("no financials")
+        return len(issues) == 0, issues
+
     analysis_map = {}
     if not args.no_claude:
         print(f"\n[3/4] Generating analysis ({MODEL})...")
@@ -603,6 +617,31 @@ def main():
                     completed += 1
                     print(f"  ✅ [{completed:2d}/{len(stocks)}] "
                           f"{stock['display_code']} {stock['name']} — 完成")
+
+        # ── 单股重试：修复 batch 中格式不完整的股票 ──────────────────────────
+        retry_stocks = []
+        for s in stocks:
+            ana = analysis_map.get(s['display_code'], {})
+            ok, issues = _validate_ana(ana)
+            if not ok:
+                print(f"  ⚠  {s['display_code']} 分析不完整 ({issues})，单股重试...")
+                retry_stocks.append(s)
+
+        for s in retry_stocks:
+            for attempt in range(3):
+                results = analyze_batch(client, [s])
+                if results:
+                    ok, issues = _validate_ana(results[0])
+                    if ok:
+                        analysis_map[s['display_code']] = results[0]
+                        print(f"  ✅  {s['display_code']} 重试成功")
+                        break
+                    print(f"  ⚠  {s['display_code']} 重试 {attempt+1}/3 仍不完整: {issues}")
+                else:
+                    print(f"  ⚠  {s['display_code']} 重试 {attempt+1}/3 无输出")
+                time.sleep(6)
+            else:
+                print(f"  ❌  {s['display_code']} 重试耗尽，保留空分析")
     else:
         print("\n[3/4] Claude skipped (--no-claude)")
 
