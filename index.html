@@ -419,14 +419,10 @@ const Confirm={
 function navigate(view,param){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.dataset.view===view));
-  document.getElementById('mobile-menu').classList.add('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
   if(view==='detail'&&param)renderDetail(param);
   if(view==='featured')renderFeatured();
 }
-document.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',()=>navigate(l.dataset.view)));
-function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('hidden');}
 
 // ═══ Helpers ═══
 const mktLabel=m=>({US:'美股',HK:'港股',CN:'A股'}[m]||m);
