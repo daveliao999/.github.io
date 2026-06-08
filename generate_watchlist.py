@@ -28,8 +28,8 @@ from openai import OpenAI
 import json_repair
 
 # ── Config ────────────────────────────────────────────────────────────────────
-EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\FCN_Results.xlsx"
-OUTPUT_PATH  = r"C:\Users\liy22223\fcn_scanner\watchlist.json"
+EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"
+OUTPUT_PATH  = r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\watchlist.json"
 TOP_N        = 50
 MODEL        = "deepseek-v4-pro"
 API_BASE     = "https://api.deepseek.com"

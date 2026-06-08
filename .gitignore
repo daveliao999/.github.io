@@ -1,24 +1,3 @@
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.egg-info/
-.venv/
-venv/
-
-# Debug scripts
-debug*.py
-patch_*.py
-discover_*.py
-constituents*.py
-export_report.py
-fcn_scanner.py
-fcn_screener_v2.py
-gics.py
-
-# Old data files
-data.js
-*.txt
-
-# Cache
-constituents_cache.json
+*.log
