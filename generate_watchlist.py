@@ -387,7 +387,7 @@ BATCH_PROMPT = """\
   ],
   "analysis": {{
     "intro": "公司简介（150-200字）：成立时间、总部、控股背景、上市市场与代码、当前市值、核心业务一句白话定位、关键规模数据",
-    "business": "业务介绍（300-450字）：每个板块以「👉 **板块名称**」开头，结构为「行业痛点→公司解法→为什么客户选这家」，含收入占比。每板块第一句必须是直接点明商业价值的结论句",
+    "business": "业务介绍（300-450字）：每个板块以「👉 板块名称：」开头（不使用任何markdown符号如**），结构为「行业痛点→公司解法→为什么客户选这家」，含收入占比。每板块第一句必须是直接点明商业价值的结论句",
     "highlights": [
       {{
         "emoji": "适合的emoji",
@@ -646,6 +646,10 @@ def main():
         print("\n[3/4] Claude skipped (--no-claude)")
 
     # ── 4. Merge and write ────────────────────────────────────────────────────
+    def _strip_md_bold(text: str) -> str:
+        """Remove **bold** markdown markers from AI output."""
+        return re.sub(r'\*\*([^*]+)\*\*', r'\1', text) if text else text
+
     print(f"\n[4/4] Writing {args.output}...")
     score_max = max((s['display_score'] for s in stocks), default=100) or 100
 
@@ -696,7 +700,8 @@ def main():
             "kiType":         fcn['kiType'],
             "tenor":          fcn['tenor'],
             "bullets":        ana.get("bullets", []),
-            "analysis":       ana.get("analysis", {}),
+            "analysis":       {**ana.get("analysis", {}),
+                               "business": _strip_md_bold(ana.get("analysis", {}).get("business", ""))},
             "data_quality":   ana.get("data_quality", {}),
         })
 
