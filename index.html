@@ -225,57 +225,58 @@
   </section>
 
   <!-- Screener Body -->
-  <div class="max-w-[1400px] mx-auto px-6 py-10 grid lg:grid-cols-[240px_1fr] gap-10">
-    <!-- Sidebar -->
-    <aside class="space-y-8">
-      <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">行业</div>
-        <div class="flex flex-wrap gap-2" id="filter-industry"></div>
-      </div>
-      <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">目标年化票息</div>
-        <div class="flex flex-wrap gap-2" id="filter-yield">
-          <div class="check-chip active" data-val="all">全部</div>
-          <div class="check-chip" data-val="10-15">10–15%</div>
-          <div class="check-chip" data-val="15-20">15–20%</div>
-          <div class="check-chip" data-val="20-25">20–25%</div>
-          <div class="check-chip" data-val="25+">25%+</div>
-        </div>
-      </div>
-      <div>
-        <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-3">标的市场</div>
-        <div class="flex flex-wrap gap-2" id="filter-market">
+  <div class="max-w-[1400px] mx-auto px-6 py-8">
+
+    <!-- ── Horizontal Filter Bar ── -->
+    <div class="mb-7 p-5 rounded-2xl border border-line" style="background:var(--bg-2);">
+      <!-- Row 1: Industry + Market -->
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-4">
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">行业</span>
+        <div class="flex flex-wrap gap-1.5" id="filter-industry"></div>
+        <div class="w-px h-3.5 bg-line mx-1 hidden md:block self-center shrink-0"></div>
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">市场</span>
+        <div class="flex flex-wrap gap-1.5" id="filter-market">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="US">美股</div>
           <div class="check-chip" data-val="HK">港股</div>
           <div class="check-chip" data-val="CN">A 股</div>
         </div>
       </div>
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase">最低评分</div>
-          <div class="font-display text-lg text-gold num" id="score-val">7.0</div>
+      <!-- Row 2: Yield + Score + Reset -->
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-3 pt-4 border-t border-line">
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">票息</span>
+        <div class="flex flex-wrap gap-1.5" id="filter-yield">
+          <div class="check-chip active" data-val="all">全部</div>
+          <div class="check-chip" data-val="10-15">10–15%</div>
+          <div class="check-chip" data-val="15-20">15–20%</div>
+          <div class="check-chip" data-val="20-25">20–25%</div>
+          <div class="check-chip" data-val="25+">25%+</div>
         </div>
-        <input type="range" min="0" max="10" step="0.1" value="7" id="filter-score">
-        <div class="flex justify-between text-[10px] text-ink-3 mt-2 num"><span>0.0</span><span>10.0</span></div>
+        <div class="ml-auto flex items-center gap-5 shrink-0">
+          <div class="flex items-center gap-2.5">
+            <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase whitespace-nowrap">最低评分</span>
+            <input type="range" min="0" max="10" step="0.1" value="7" id="filter-score" style="width:88px;">
+            <span class="font-display text-gold num" style="font-size:1.1rem;min-width:2.4rem;" id="score-val">7.0</span>
+          </div>
+          <button class="text-xs text-ink-3 hover:text-gold flex items-center gap-1.5 transition-colors" onclick="resetFilters()">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重置
+          </button>
+        </div>
       </div>
-      <button class="text-xs text-ink-3 hover:text-gold flex items-center gap-1.5 transition-colors" onclick="resetFilters()">
-        <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重置筛选
-      </button>
-    </aside>
-
-    <!-- Results -->
-    <div>
-      <div class="flex items-center justify-between mb-5 pb-4 border-b border-line">
-        <div class="text-sm text-ink-2">共 <span class="text-ink font-medium num" id="result-count">0</span> 个标的符合条件</div>
-        <select id="sort-select" class="w-auto" style="width:auto;">
-          <option value="score">按综合评分排序</option>
-          <option value="coupon">按年化票息排序</option>
-          <option value="iv">按隐含波动率排序</option>
-        </select>
-      </div>
-      <div id="screener-results" class="space-y-3"></div>
     </div>
+
+    <!-- Results Header -->
+    <div class="flex items-center justify-between mb-5">
+      <div class="text-sm text-ink-2">共 <span class="text-ink font-medium num" id="result-count">0</span> 个标的符合条件</div>
+      <select id="sort-select" class="w-auto" style="width:auto;">
+        <option value="score">按综合评分排序</option>
+        <option value="coupon">按年化票息排序</option>
+        <option value="iv">按隐含波动率排序</option>
+      </select>
+    </div>
+
+    <!-- 2-column card grid -->
+    <div id="screener-results" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
   </div>
 </div>
 
