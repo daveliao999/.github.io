@@ -179,15 +179,33 @@
 <div id="view-screener" class="view active">
 
   <!-- Hero -->
-  <section class="border-b border-line grain">
-    <div class="max-w-[1400px] mx-auto px-6 pt-10 pb-8">
-      <div class="section-label mb-3">FCN 标的筛选 · 智能推荐</div>
-      <h1 class="font-display text-4xl md:text-5xl font-medium mb-3">
-        本周<span class="text-gold italic"> 推荐标的</span>
+  <section class="border-b border-line grain relative overflow-hidden" style="min-height:78vh;display:flex;flex-direction:column;justify-content:center;">
+    <!-- 背景光晕 -->
+    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:900px;height:520px;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,106,0.09) 0%,transparent 68%);pointer-events:none;z-index:0;"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,106,0.25),transparent);"></div>
+
+    <div class="max-w-[1400px] mx-auto px-6 py-24 relative z-10 w-full">
+      <div class="section-label mb-6">FCN 标的筛选 · 智能推荐</div>
+
+      <h1 class="font-display font-medium leading-[0.95] mb-7" style="font-size:clamp(3.2rem,8.5vw,7.5rem);">
+        每周精选<br><span class="text-gold italic">最高票息标的</span>
       </h1>
-      <p class="text-ink-2 max-w-2xl mb-8">基于多因子量化模型，每周从全球 800+ 标的中筛选最适合固定票息票据的底层资产。结合隐含波动率、基本面、流动性与动量四维评分体系综合排名。</p>
+
+      <p class="text-ink-2 max-w-lg mb-10 leading-relaxed" style="font-size:1.05rem;">
+        基于 10 维度量化评分，从全球 300+ 标的中自动筛选<br class="hidden md:block">最适合 FCN 结构的底层资产，每周更新。
+      </p>
+
+      <div class="flex items-center gap-3 mb-20">
+        <button class="btn-gold" style="font-size:14px;padding:12px 28px;" onclick="document.getElementById('screener-results').scrollIntoView({behavior:'smooth'})">
+          <i data-lucide="trending-up" class="w-4 h-4 mr-2"></i>查看本周标的
+        </button>
+        <button class="btn-outline" style="font-size:14px;padding:12px 28px;" onclick="navigate('featured')">
+          本周精选 →
+        </button>
+      </div>
+
       <!-- Stats Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="hero-stats"></div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line rounded-xl overflow-hidden border border-line" id="hero-stats"></div>
     </div>
   </section>
 
@@ -553,9 +571,9 @@ function renderHeroStats(){
     {v:avgIV+'%',u:'',l:'板块平均 IV30'},
   ];
   document.getElementById('hero-stats').innerHTML=stats.map(s=>`
-    <div class="stat-card">
-      <div class="stat-num text-3xl text-gold">${s.v}<span class="text-base text-ink-3">${s.u}</span></div>
-      <div class="text-[11px] text-ink-3 mt-1.5 tracking-wide uppercase">${s.l}</div>
+    <div class="bg-bg-2 px-7 py-6">
+      <div class="font-display text-4xl text-gold num leading-none mb-2">${s.v}<span class="text-lg text-ink-3 ml-1">${s.u}</span></div>
+      <div class="text-[11px] text-ink-3 tracking-[0.15em] uppercase">${s.l}</div>
     </div>`).join('');
 }
 
@@ -648,42 +666,70 @@ function renderScreener(){
 
 function stockCard(s){
   const hl=(s.bullets||s.highlights||[]).slice(0,2).map(h=>`<div class="highlight-bullet text-[13px] text-ink-2 leading-relaxed">${h}</div>`).join('');
-  const spk=sparklineSVG(s.sparkline,88,30);
+  const spk=sparklineSVG(s.sparkline,148,46);
   const chg=s.priceChange!==undefined?fmtChg(s.priceChange):'';
   const iv30=s.iv30?`<span class="iv-badge">IV ${s.iv30}%</span>`:'';
-  return`<div class="stock-card" data-code="${s.code}">
-    <div class="grid lg:grid-cols-[1fr_auto] gap-5 items-start">
-      <div class="min-w-0">
-        <div class="flex items-center gap-2 mb-3 flex-wrap">
-          <h3 class="font-display text-xl font-medium">${s.name}</h3>
-          <span class="text-ink-3 text-sm num">${s.code}</span>
-          <span class="pill pill-dim">${mktLabel(s.market)}</span>
-          <span class="pill pill-dim">${s.industry}</span>
-          ${riskPill(s.risk)}
-          ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
+  return`<div class="stock-card" data-code="${s.code}" style="padding:28px 28px;">
+    <div class="grid lg:grid-cols-[1fr_180px] gap-6 items-stretch">
+
+      <!-- Left: info -->
+      <div class="min-w-0 flex flex-col gap-3">
+        <div>
+          <div class="flex items-baseline gap-2.5 flex-wrap mb-2">
+            <h3 class="font-display text-2xl font-medium leading-tight">${s.name}</h3>
+            <span class="text-ink-3 text-sm num font-mono">${s.code}</span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="pill pill-dim">${mktLabel(s.market)}</span>
+            <span class="pill pill-dim">${s.industry}</span>
+            ${riskPill(s.risk)}
+            ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
+            ${iv30}
+          </div>
         </div>
-        <div class="space-y-1.5 mb-4">${hl}</div>
-        <div class="flex items-center gap-3 flex-wrap">
-          ${iv30}
-          <div class="flex items-center gap-1.5 text-xs text-ink-3">${spk} ${chg}</div>
-          <div class="flex items-center gap-1.5 text-gold text-xs">
-            <span>查看详细分析</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+
+        <div class="space-y-1.5 flex-1">${hl}</div>
+
+        <!-- Sparkline row -->
+        <div class="flex items-center gap-3 pt-2 border-t border-line">
+          ${spk}
+          <span>${chg}</span>
+          <span class="ml-auto text-gold text-xs flex items-center gap-1">
+            查看详细分析 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: coupon hero + metadata -->
+      <div class="lg:border-l border-line lg:pl-6 flex flex-col justify-between gap-4">
+        <!-- Big coupon -->
+        <div>
+          <div class="text-[10px] text-ink-3 tracking-[0.18em] uppercase mb-1">年化票息</div>
+          <div class="flex items-end leading-none gap-1">
+            <span class="font-display num text-gold" style="font-size:clamp(3rem,5vw,4.5rem);line-height:1;">${s.coupon}</span>
+            <span class="font-display text-2xl text-gold-2 num mb-1">%</span>
+          </div>
+        </div>
+
+        <!-- Score ring -->
+        <div class="flex items-center gap-2">
+          ${scoreRingSVG(s.score)}
+          <span class="text-[11px] text-ink-3">综合评分</span>
+        </div>
+
+        <!-- Key params -->
+        <div class="space-y-1.5 text-[12px]">
+          <div class="flex justify-between">
+            <span class="text-ink-3">行权 / 敲入</span>
+            <span class="num font-medium">${s.strike}% / ${s.ki}%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-ink-3">期限</span>
+            <span class="num font-medium">${s.tenor}M · ${s.kiType.replace('敲入','')}</span>
           </div>
         </div>
       </div>
-      <div class="lg:border-l border-line lg:pl-5 grid grid-cols-3 lg:grid-cols-2 gap-x-5 gap-y-4 lg:min-w-[240px] items-start">
-        <div class="col-span-2 lg:col-span-2 flex items-start gap-3">
-          <div>
-            <div class="text-[10px] text-ink-3 tracking-wider uppercase mb-0.5">年化票息</div>
-            <div class="font-display text-3xl text-gold num">${s.coupon}<span class="text-base">%</span></div>
-          </div>
-          <div class="mt-1">${scoreRingSVG(s.score)}</div>
-        </div>
-        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">行权 / 敲入</div><div class="text-sm font-medium num">${s.strike}% / ${s.ki}%</div></div>
-        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">结构</div><div class="text-sm font-medium">${s.kiType}</div></div>
-        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">期限</div><div class="text-sm font-medium num">${s.tenor} 个月</div></div>
-        <div><div class="text-[10px] text-ink-3 tracking-wider uppercase mb-1">风险</div>${riskPill(s.risk)}</div>
-      </div>
+
     </div>
   </div>`;
 }
