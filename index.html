@@ -89,8 +89,23 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
   /* ── Stock card ── */
-  .stock-card{border:1px solid var(--line);border-radius:14px;padding:24px;transition:all .2s;cursor:pointer;background:var(--bg);}
-  .stock-card:hover{border-color:rgba(201,168,106,0.4);background:var(--bg-2);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+  .stock-card{
+    border:1px solid var(--line);border-radius:14px;padding:24px;cursor:pointer;position:relative;overflow:hidden;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(201,168,106,0.055) 0%, transparent 55%), var(--bg);
+    transition:border-color .25s, box-shadow .25s, transform .25s, background .15s;
+  }
+  .stock-card:hover{
+    border-color:rgba(201,168,106,0.5);
+    transform:translateY(-2px);
+    box-shadow:0 0 0 1px rgba(201,168,106,0.12), 0 16px 48px rgba(0,0,0,0.45);
+  }
+
+  /* ── Card entrance animation ── */
+  @keyframes cardIn{
+    from{opacity:0;transform:translateY(20px);}
+    to  {opacity:1;transform:translateY(0);}
+  }
+  .card-enter{opacity:0;animation:cardIn .42s cubic-bezier(.22,.68,0,1.2) forwards;}
 
   /* ── IV badge ── */
   .iv-badge{background:rgba(201,168,106,0.08);border:1px solid rgba(201,168,106,0.2);border-radius:6px;padding:2px 7px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold-2);letter-spacing:0.02em;}
@@ -556,6 +571,20 @@ function payoffSVG(coupon,strike,ki,tenor){
 
 // ═══ Ticker ═══
 
+// ═══ Count-up ═══
+function countUp(el, target, decimals=0, duration=1300){
+  const start=performance.now();
+  const easeOut=t=>1-Math.pow(1-t,4);
+  const tick=now=>{
+    const p=Math.min((now-start)/duration,1);
+    const v=target*easeOut(p);
+    el.textContent=decimals?v.toFixed(decimals):Math.floor(v);
+    if(p<1)requestAnimationFrame(tick);
+    else el.textContent=decimals?target.toFixed(decimals):target;
+  };
+  requestAnimationFrame(tick);
+}
+
 // ═══ Hero Stats ═══
 function renderHeroStats(){
   const stocks=DATA.stocks;
@@ -565,16 +594,19 @@ function renderHeroStats(){
   const avgIV=(stocks.filter(s=>s.iv30).reduce((a,s)=>a+s.iv30,0)/stocks.filter(s=>s.iv30).length).toFixed(1);
   const top=stocks.slice().sort((a,b)=>b.score-a.score)[0];
   const stats=[
-    {v:stocks.length,u:'个',l:'本周标的'},
-    {v:avgCoupon+'%',u:'',l:'平均年化票息'},
-    {v:avgScore,u:'/10',l:'平均综合评分'},
-    {v:avgIV+'%',u:'',l:'板块平均 IV30'},
+    {v:stocks.length,      dec:0, u:'个',  l:'本周标的'},
+    {v:parseFloat(avgCoupon),dec:1,u:'%',  l:'平均年化票息'},
+    {v:parseFloat(avgScore), dec:1,u:'/10',l:'平均综合评分'},
+    {v:parseFloat(avgIV),    dec:1,u:'%',  l:'板块平均 IV30'},
   ];
-  document.getElementById('hero-stats').innerHTML=stats.map(s=>`
+  document.getElementById('hero-stats').innerHTML=stats.map((s,i)=>`
     <div class="bg-bg-2 px-7 py-6">
-      <div class="font-display text-4xl text-gold num leading-none mb-2">${s.v}<span class="text-lg text-ink-3 ml-1">${s.u}</span></div>
+      <div class="font-display text-4xl text-gold num leading-none mb-2">
+        <span class="stat-num-${i}">0</span><span class="text-lg text-ink-3 ml-1">${s.u}</span>
+      </div>
       <div class="text-[11px] text-ink-3 tracking-[0.15em] uppercase">${s.l}</div>
     </div>`).join('');
+  stats.forEach((s,i)=>countUp(document.querySelector(`.stat-num-${i}`),s.v,s.dec,1300));
 }
 
 // ═══ Filters ═══
@@ -658,8 +690,22 @@ function renderScreener(){
     return;
   }
   document.getElementById('screener-results').innerHTML=list.map(s=>stockCard(s)).join('');
-  document.querySelectorAll('.stock-card').forEach(el=>{
+  document.querySelectorAll('.stock-card').forEach((el,i)=>{
+    // click
     el.addEventListener('click',()=>navigate('detail',el.dataset.code));
+    // ② 错开入场动画
+    el.classList.add('card-enter');
+    el.style.animationDelay=`${i*55}ms`;
+    // ③ 鼠标追踪光晕
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.setProperty('--mx','50%');
+      el.style.setProperty('--my','50%');
+    });
   });
   lucide.createIcons();
 }
