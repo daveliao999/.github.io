@@ -504,7 +504,7 @@ function scoreBreakdownHTML(sb){
 }
 
 // ═══ FCN Payoff Chart ═══
-function payoffSVG(coupon,strike,ki,tenor){
+function payoffSVG(coupon,strike,ki,tenor,ko=100){
   const tc=+(coupon*tenor/12).toFixed(1);
   const W=480,H=200;
   const ML=52,MR=16,MT=22,MB=42;
@@ -548,6 +548,12 @@ function payoffSVG(coupon,strike,ki,tenor){
   // Strike line
   svg+=`<line x1="${px(strike).toFixed(1)}" y1="${MT}" x2="${px(strike).toFixed(1)}" y2="${MT+cH}" stroke="var(--gold)" stroke-width="1" stroke-dasharray="5 3" opacity="0.7"/>`;
   svg+=`<text x="${px(strike).toFixed(1)}" y="${MT-6}" text-anchor="middle" fill="var(--gold)" font-size="9" opacity="0.8">行权 ${strike}%</text>`;
+
+  // KO line
+  if(ko>=pMin&&ko<=pMax){
+    svg+=`<line x1="${px(ko).toFixed(1)}" y1="${MT}" x2="${px(ko).toFixed(1)}" y2="${MT+cH}" stroke="var(--green)" stroke-width="1" stroke-dasharray="5 3" opacity="0.7"/>`;
+    svg+=`<text x="${px(ko).toFixed(1)}" y="${MT-6}" text-anchor="middle" fill="var(--green)" font-size="9" opacity="0.8">KO ${ko}%</text>`;
+  }
 
   // Best case (no KI): flat
   svg+=`<path d="M${px(pMin).toFixed(1)},${py(tc).toFixed(1)} L${px(pMax).toFixed(1)},${py(tc).toFixed(1)}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.8"/>`;
@@ -771,8 +777,8 @@ function stockCard(s){
         <!-- Key params -->
         <div class="space-y-1.5 text-[12px]">
           <div class="flex justify-between">
-            <span class="text-ink-3">行权 / 敲入</span>
-            <span class="num font-medium">${s.strike}% / ${s.ki}%</span>
+            <span class="text-ink-3">行权 / 敲入 / 敲出</span>
+            <span class="num font-medium">${s.strike}% / ${s.ki}% / ${s.ko||100}%</span>
           </div>
           <div class="flex justify-between">
             <span class="text-ink-3">期限</span>
@@ -824,6 +830,7 @@ function renderFeatured(){
           <div class="space-y-3 text-sm">
             <div class="flex justify-between"><span class="text-ink-3">行权价</span><span class="num font-medium">${s.strike}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入价</span><span class="num font-medium">${s.ki}%</span></div>
+            <div class="flex justify-between"><span class="text-ink-3">敲出价</span><span class="num font-medium">${s.ko||100}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入类型</span><span class="font-medium">${s.kiType}</span></div>
             <div class="flex justify-between"><span class="text-ink-3">期限</span><span class="num font-medium">${s.tenor} 个月</span></div>
             ${s.iv30?`<div class="flex justify-between"><span class="text-ink-3">IV 30日</span><span class="num font-medium iv-badge">${s.iv30}%</span></div>`:''}
@@ -927,11 +934,12 @@ function renderDetail(code){
         <!-- Payoff Chart -->
         <div class="border border-line rounded-xl p-6 bg-bg-2">
           <div class="section-label mb-1">FCN 到期收益结构</div>
-          <div class="text-xs text-ink-3 mb-4">行权价 ${s.strike}% · 敲入价 ${s.ki}% · ${s.kiType} · ${s.tenor} 个月 · 票息 ${s.coupon}% p.a.</div>
-          ${payoffSVG(s.coupon,s.strike,s.ki,s.tenor)}
+          <div class="text-xs text-ink-3 mb-4">行权价 ${s.strike}% · 敲入价 ${s.ki}% · 敲出价 ${s.ko||100}% · ${s.kiType} · ${s.tenor} 个月 · 票息 ${s.coupon}% p.a.</div>
+          ${payoffSVG(s.coupon,s.strike,s.ki,s.tenor,s.ko||100)}
           <div class="flex items-center gap-6 mt-3 text-[11px] text-ink-3 flex-wrap">
             <div><span class="payoff-legend-dot" style="background:var(--green);display:inline-block;width:16px;height:2px;border-radius:1px;margin-right:5px;border-bottom:2px dashed var(--green);background:none;"></span>无敲入（最优情景）</div>
             <div><span class="payoff-legend-dot" style="background:var(--gold);"></span>发生敲入（到期价格决定收益）</div>
+            <div><span style="display:inline-block;width:16px;height:2px;border-bottom:2px dashed var(--green);margin-right:5px;vertical-align:middle;opacity:0.8;"></span>KO 敲出线（自动赎回）</div>
             <div class="text-ink-3 border-l border-line pl-4">盈亏平衡点：约 ${(s.strike*(1-s.coupon*s.tenor/1200)).toFixed(1)}%</div>
           </div>
         </div>
@@ -945,6 +953,7 @@ function renderDetail(code){
           <div class="space-y-3 text-sm">
             <div class="flex justify-between"><span class="text-ink-3">行权价</span><span class="num font-medium">${s.strike}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入价</span><span class="num font-medium">${s.ki}%</span></div>
+            <div class="flex justify-between"><span class="text-ink-3">敲出价</span><span class="num font-medium">${s.ko||100}%</span></div>
             <div class="flex justify-between"><span class="text-ink-3">敲入类型</span><span class="font-medium">${s.kiType}</span></div>
             <div class="flex justify-between"><span class="text-ink-3">期限</span><span class="num font-medium">${s.tenor} 个月</span></div>
             ${s.iv30?`<div class="flex justify-between"><span class="text-ink-3">IV 30日</span><span class="iv-badge">${s.iv30}%</span></div>`:''}
@@ -1124,6 +1133,7 @@ function openStockEdit(code){
           <div><div class="admin-label mb-2">年化票息 %</div><input type="number" step="0.1" id="f-coupon" value="${s.coupon}"></div>
           <div><div class="admin-label mb-2">行权价 %</div><input type="number" id="f-strike" value="${s.strike}"></div>
           <div><div class="admin-label mb-2">敲入价 %</div><input type="number" id="f-ki" value="${s.ki}"></div>
+          <div><div class="admin-label mb-2">敲出价 %</div><input type="number" id="f-ko" value="${s.ko||100}"></div>
           <div><div class="admin-label mb-2">期限（月）</div><input type="number" id="f-tenor" value="${s.tenor}"></div>
         </div>
         <div class="grid grid-cols-3 gap-4 mt-3">
@@ -1152,7 +1162,7 @@ function saveStock(){
   const ns={
     code:v('f-code').trim(),name:v('f-name').trim(),
     industry:v('f-industry'),market:v('f-market'),
-    coupon:n('f-coupon'),strike:n('f-strike'),ki:n('f-ki'),
+    coupon:n('f-coupon'),strike:n('f-strike'),ki:n('f-ki'),ko:n('f-ko'),
     kiType:v('f-kiType'),tenor:n('f-tenor'),score:n('f-score'),
     risk:v('f-risk'),tag:v('f-tag').trim(),
     iv30:iv30val,

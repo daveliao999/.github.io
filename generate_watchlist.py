@@ -73,14 +73,14 @@ def to_yf_code(futu: str) -> str:
 # ── FCN terms from IV ─────────────────────────────────────────────────────────
 def calc_fcn_terms(iv_pct: float) -> dict:
     if iv_pct >= 80:
-        return dict(coupon=27.0, strike=72, ki=58, kiType="美式敲入", tenor=6,  risk="高")
+        return dict(coupon=27.0, strike=72, ki=58, ko=100, kiType="美式敲入", tenor=6,  risk="高")
     if iv_pct >= 60:
-        return dict(coupon=22.0, strike=78, ki=63, kiType="欧式敲入", tenor=6,  risk="中")
+        return dict(coupon=22.0, strike=78, ki=63, ko=100, kiType="欧式敲入", tenor=6,  risk="中")
     if iv_pct >= 40:
-        return dict(coupon=18.0, strike=82, ki=68, kiType="欧式敲入", tenor=6,  risk="中")
+        return dict(coupon=18.0, strike=82, ki=68, ko=100, kiType="欧式敲入", tenor=6,  risk="中")
     if iv_pct >= 25:
-        return dict(coupon=14.0, strike=88, ki=75, kiType="欧式敲入", tenor=6,  risk="低")
-    return     dict(coupon=12.0, strike=90, ki=78, kiType="欧式敲入", tenor=6,  risk="低")
+        return dict(coupon=14.0, strike=88, ki=75, ko=100, kiType="欧式敲入", tenor=6,  risk="低")
+    return     dict(coupon=12.0, strike=90, ki=78, ko=100, kiType="欧式敲入", tenor=6,  risk="低")
 
 # ── yfinance helpers ──────────────────────────────────────────────────────────
 def get_sparkline(yf_code: str) -> list:
@@ -525,6 +525,7 @@ def main():
         elif c in ('KI%', 'KI', '敲入价%'):        col_map[col] = 'manual_ki'
         elif c in ('KI Type', 'KIType', '敲入类型'): col_map[col] = 'manual_ki_type'
         elif c in ('Tenor', 'Tenor(M)', '期限'):   col_map[col] = 'manual_tenor'
+        elif c in ('KO%', 'KO', '敲出价%', '敲出价'): col_map[col] = 'manual_ko'
         elif 'Catalyst' in c:                      col_map[col] = 'catalyst_raw'
         elif 'Max 1D Drop' in c:                   col_map[col] = 'max_drop'
         elif 'Price/50DMA' in c:                   col_map[col] = 'sma50_ratio'
@@ -568,6 +569,7 @@ def main():
             "sma50_slope":    _opt_float(row.get('sma50_slope')),
             "option_oi":      _opt_float(row.get('option_oi')),
             "iv_src":         _opt_str(row.get('iv_src')) or 'futu',
+            "manual_ko":      _opt_float(row.get('manual_ko')),
         })
 
     # ── 2. yfinance sparklines ────────────────────────────────────────────────
@@ -665,6 +667,7 @@ def main():
         if s['manual_coupon']  is not None: fcn['coupon'] = s['manual_coupon']
         if s['manual_strike']  is not None: fcn['strike'] = s['manual_strike']
         if s['manual_ki']      is not None: fcn['ki']     = s['manual_ki']
+        if s['manual_ko']      is not None: fcn['ko']     = s['manual_ko']
         if s['manual_ki_type'] is not None: fcn['kiType'] = s['manual_ki_type']
         if s['manual_tenor']   is not None: fcn['tenor']  = s['manual_tenor']
 
@@ -700,6 +703,7 @@ def main():
             "coupon":         fcn['coupon'],
             "strike":         fcn['strike'],
             "ki":             fcn['ki'],
+            "ko":             fcn['ko'],
             "kiType":         fcn['kiType'],
             "tenor":          fcn['tenor'],
             "bullets":        ana.get("bullets", []),
