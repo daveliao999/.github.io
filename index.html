@@ -509,7 +509,9 @@ function payoffSVG(coupon,strike,ki,tenor){
   const W=480,H=200;
   const ML=52,MR=16,MT=22,MB=42;
   const cW=W-ML-MR,cH=H-MT-MB;
-  const pMin=25,pMax=125,rMin=-55,rMax=tc+8;
+  const pMin=25,pMax=125;
+  const worstY=+(pMin/strike*100-100+tc).toFixed(1);
+  const rMin=Math.min(-55,Math.floor(worstY/10)*10-5),rMax=tc+8;
   const px=v=>ML+(v-pMin)/(pMax-pMin)*cW;
   const py=v=>MT+(rMax-v)/(rMax-rMin)*cH;
   const y0=py(0);
@@ -530,13 +532,13 @@ function payoffSVG(coupon,strike,ki,tenor){
   });
 
   // Loss fill
-  const be=100-tc;
+  const be=+(strike*(1-tc/100)).toFixed(1);
   if(be>pMin){
-    const lpts=[[be,0],[pMin,pMin-100+tc],[pMin,0]];
+    const lpts=[[be,0],[pMin,worstY],[pMin,0]];
     svg+=`<path d="${lpts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(244,63,94,0.07)"/>`;
   }
   // Gain fill (worst case above zero)
-  const gainPts=[[pMax,tc],[strike,tc],[Math.max(be,strike),0],[pMax,0]];
+  const gainPts=[[pMax,tc],[strike,tc],[be,0],[pMax,0]];
   svg+=`<path d="${gainPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(0,200,5,0.05)"/>`;
 
   // KI line
@@ -551,7 +553,7 @@ function payoffSVG(coupon,strike,ki,tenor){
   svg+=`<path d="M${px(pMin).toFixed(1)},${py(tc).toFixed(1)} L${px(pMax).toFixed(1)},${py(tc).toFixed(1)}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.8"/>`;
 
   // Worst case line
-  const wcPts=[[pMax,tc],[strike,tc],[pMin,pMin-100+tc]];
+  const wcPts=[[pMax,tc],[strike,tc],[pMin,worstY]];
   svg+=`<path d="${wcPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')}" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
 
   // Breakeven dot
@@ -930,7 +932,7 @@ function renderDetail(code){
           <div class="flex items-center gap-6 mt-3 text-[11px] text-ink-3 flex-wrap">
             <div><span class="payoff-legend-dot" style="background:var(--green);display:inline-block;width:16px;height:2px;border-radius:1px;margin-right:5px;border-bottom:2px dashed var(--green);background:none;"></span>无敲入（最优情景）</div>
             <div><span class="payoff-legend-dot" style="background:var(--gold);"></span>发生敲入（到期价格决定收益）</div>
-            <div class="text-ink-3 border-l border-line pl-4">盈亏平衡点：约 ${(100-s.coupon*s.tenor/12).toFixed(1)}%</div>
+            <div class="text-ink-3 border-l border-line pl-4">盈亏平衡点：约 ${(s.strike*(1-s.coupon*s.tenor/1200)).toFixed(1)}%</div>
           </div>
         </div>
       </div>
