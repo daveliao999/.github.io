@@ -70,14 +70,14 @@ def to_yf_code(futu: str) -> str:
 # ── FCN terms from IV ─────────────────────────────────────────────────────────
 def calc_fcn_terms(iv_pct: float) -> dict:
     if iv_pct >= 80:
-        return dict(coupon=27.0, strike=72, ki=58, kiType="美式敲入", tenor=3,  risk="高")
+        return dict(coupon=27.0, strike=72, ki=58, kiType="美式敲入", tenor=6,  risk="高")
     if iv_pct >= 60:
         return dict(coupon=22.0, strike=78, ki=63, kiType="欧式敲入", tenor=6,  risk="中")
     if iv_pct >= 40:
         return dict(coupon=18.0, strike=82, ki=68, kiType="欧式敲入", tenor=6,  risk="中")
     if iv_pct >= 25:
-        return dict(coupon=14.0, strike=88, ki=75, kiType="欧式敲入", tenor=12, risk="低")
-    return     dict(coupon=12.0, strike=90, ki=78, kiType="欧式敲入", tenor=12, risk="低")
+        return dict(coupon=14.0, strike=88, ki=75, kiType="欧式敲入", tenor=6,  risk="低")
+    return     dict(coupon=12.0, strike=90, ki=78, kiType="欧式敲入", tenor=6,  risk="低")
 
 # ── yfinance helpers ──────────────────────────────────────────────────────────
 def get_sparkline(yf_code: str) -> list:
