@@ -45,6 +45,9 @@ def _opt_float(v):
     except: return None
 
 def _opt_int(v):
+    # Handle values like "6M", "12M" by stripping trailing non-numeric characters
+    if isinstance(v, str):
+        v = v.strip().rstrip('Mm月').strip()
     f = _opt_float(v)
     return int(f) if f is not None else None
 
