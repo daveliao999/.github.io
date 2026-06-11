@@ -12,7 +12,7 @@ Flow:
 """
 
 import json, os, sys, re, time, argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time as dt_time
 
 # Windows GBK console fix (only when running directly, not when imported)
 if sys.platform == "win32" and hasattr(sys.stdout, 'buffer'):
@@ -83,6 +83,37 @@ def calc_fcn_terms(iv_pct: float) -> dict:
     return     dict(coupon=12.0, strike=90, ki=78, ko=100, kiType="欧式敲入", tenor=6,  risk="低")
 
 # ── yfinance helpers ──────────────────────────────────────────────────────────
+def _drop_live_bar(hist):
+    """If the last daily bar is today's still-trading session (before 16:00
+    exchange local time, both NYSE and HKEX), drop it — we only want
+    completed closes. 初始价格 = 最近一个已完结交易日的收盘价。"""
+    if hist is None or len(hist) == 0:
+        return hist
+    idx_last = hist.index[-1]
+    now = datetime.now(idx_last.tz) if idx_last.tz else datetime.now()
+    if idx_last.date() == now.date() and now.time() < dt_time(16, 0):
+        return hist.iloc[:-1]
+    return hist
+
+def get_price_history(yf_code: str) -> dict:
+    """2-year daily closes + initial price (last completed session close).
+    Returns {'dates': [...], 'closes': [...], 'initialPrice': x, 'initialPriceDate': 'YYYY-MM-DD'}"""
+    try:
+        hist = yf.Ticker(yf_code).history(period="2y", interval="1d")
+        hist = _drop_live_bar(hist)
+        closes = hist["Close"].dropna()
+        if len(closes) == 0:
+            return {}
+        return {
+            "dates":  [d.strftime("%Y-%m-%d") for d in closes.index],
+            "closes": [round(float(p), 3) for p in closes],
+            "initialPrice":     round(float(closes.iloc[-1]), 3),
+            "initialPriceDate": closes.index[-1].strftime("%Y-%m-%d"),
+        }
+    except Exception as e:
+        print(f"  ⚠  yfinance history {yf_code}: {e}")
+        return {}
+
 def get_sparkline(yf_code: str) -> list:
     try:
         hist = yf.Ticker(yf_code).history(period="12wk", interval="1wk")
@@ -578,6 +609,7 @@ def main():
         for i, s in enumerate(stocks):
             s['sparkline']        = get_sparkline(s['yf_code'])
             s['priceChange']      = get_price_change(s['yf_code'])
+            s['price_history']    = get_price_history(s['yf_code'])
             s['yf_context']       = get_realtime_context(s['yf_code'], s['display_code'])
             s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
             print(f"  [{i+1:2d}/{len(stocks)}] {s['display_code']:<14} "
@@ -587,6 +619,7 @@ def main():
         for s in stocks:
             s['sparkline']        = []
             s['priceChange']      = 0.0
+            s['price_history']    = {}
             s['yf_context']       = get_realtime_context(s['yf_code'], s['display_code'])
             s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
         print("\n[2/4] Sparklines skipped (--no-sparkline)")
@@ -695,6 +728,10 @@ def main():
             "currency":       s['currency'],
             "priceChange":    s['priceChange'],
             "sparkline":      s['sparkline'],
+            "initialPrice":     s['price_history'].get('initialPrice'),
+            "initialPriceDate": s['price_history'].get('initialPriceDate'),
+            "priceHistory":     {"dates":  s['price_history'].get('dates', []),
+                                 "closes": s['price_history'].get('closes', [])},
             "iv30":           s['iv_pct'],
             "score":          score_10,
             "scoreBreakdown": score_bd,

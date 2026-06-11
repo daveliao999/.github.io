@@ -579,6 +579,98 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
   return svg;
 }
 
+// ═══ 2Y Price History Chart with FCN Levels ═══
+function priceHistorySVG(s){
+  const ph=s.priceHistory;
+  if(!ph||!ph.closes||ph.closes.length<10||!s.initialPrice)return'';
+  const closes=ph.closes,dates=ph.dates,init=s.initialPrice,n=closes.length;
+  const fp=p=>p>=1000?Math.round(p).toLocaleString('en-US'):p>=100?p.toFixed(1):p.toFixed(2);
+
+  // 价位线：基于期初价换算成绝对价格
+  const ko=s.ko||100;
+  const lvls=[];
+  if(ko===100) lvls.push({v:init,         lbl:`期初 · KO 100%`, col:'var(--ink-2)', solid:true});
+  else{        lvls.push({v:init,         lbl:`期初 100%`,      col:'var(--ink-2)', solid:true});
+               lvls.push({v:init*ko/100,  lbl:`KO ${ko}%`,      col:'var(--green)'});}
+  lvls.push(   {v:init*s.strike/100,      lbl:`行权 ${s.strike}%`, col:'var(--gold)'});
+  lvls.push(   {v:init*s.ki/100,          lbl:`敲入 ${s.ki}%`,     col:'var(--red)'});
+
+  const W=640,H=270,ML=48,MR=118,MT=16,MB=28;
+  const cW=W-ML-MR,cH=H-MT-MB;
+  const dMin=Math.min(...closes,...lvls.map(l=>l.v)),
+        dMax=Math.max(...closes,...lvls.map(l=>l.v));
+  const pad=(dMax-dMin)*0.05||1;
+  const yMin=dMin-pad,yMax=dMax+pad;
+  const X=i=>ML+i/(n-1)*cW;
+  const Y=v=>MT+(yMax-v)/(yMax-yMin)*cH;
+  const id='ph'+(++_sgId);
+
+  let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" fill="none" style="max-width:100%">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+    </linearGradient></defs>`;
+
+  // Y 轴刻度 + 网格
+  const step=(yMax-yMin)/4;
+  for(let k=0;k<=4;k++){
+    const v=yMin+step*k,y=Y(v).toFixed(1);
+    svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 4"/>`;
+    svg+=`<text x="${ML-7}" y="${+y+3}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${fp(v)}</text>`;
+  }
+  // X 轴年月刻度
+  [0,0.25,0.5,0.75,1].forEach(f=>{
+    const i=Math.round(f*(n-1)),x=X(i).toFixed(1);
+    svg+=`<text x="${x}" y="${MT+cH+16}" text-anchor="${f===0?'start':f===1?'end':'middle'}" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${dates[i].slice(0,7).replace('-','/')}</text>`;
+  });
+
+  // 走势面积 + 线
+  const pts=closes.map((v,i)=>[X(i),Y(v)]);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  svg+=`<path d="${line} L${pts[n-1][0].toFixed(1)},${MT+cH} L${pts[0][0].toFixed(1)},${MT+cH} Z" fill="url(#${id})"/>`;
+
+  // 价位水平线 + 右侧标签（标签防重叠：自上而下保持 ≥13px 间距）
+  const labs=lvls.map(l=>({...l,y:Y(l.v)})).sort((a,b)=>a.y-b.y);
+  let prev=-99;
+  labs.forEach(l=>{l.ly=Math.max(l.y,prev+13);prev=l.ly;});
+  labs.forEach(l=>{
+    const y=l.y.toFixed(1);
+    svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="${l.col}" stroke-width="1" ${l.solid?'':'stroke-dasharray="5 3"'} opacity="${l.solid?0.55:0.75}"/>`;
+    if(Math.abs(l.ly-l.y)>2)
+      svg+=`<line x1="${ML+cW}" y1="${y}" x2="${ML+cW+8}" y2="${l.ly.toFixed(1)}" stroke="${l.col}" stroke-width="0.6" opacity="0.5"/>`;
+    svg+=`<text x="${ML+cW+11}" y="${(l.ly+3).toFixed(1)}" fill="${l.col}" font-size="9.5">${l.lbl} <tspan font-family="JetBrains Mono,monospace" opacity="0.85">${fp(l.v)}</tspan></text>`;
+  });
+
+  svg+=`<path d="${line}" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  svg+=`<circle cx="${pts[n-1][0].toFixed(1)}" cy="${pts[n-1][1].toFixed(1)}" r="3" fill="var(--gold)" stroke="var(--bg)" stroke-width="1.5"/>`;
+
+  // 坐标轴
+  svg+=`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT+cH}" stroke="var(--line-2)" stroke-width="1"/>`;
+  svg+=`<line x1="${ML}" y1="${MT+cH}" x2="${ML+cW}" y2="${MT+cH}" stroke="var(--line-2)" stroke-width="1"/>`;
+  svg+='</svg>';
+  return svg;
+}
+
+function priceHistoryCard(s){
+  const ph=s.priceHistory;
+  if(!ph||!ph.closes||ph.closes.length<10||!s.initialPrice)return'';
+  const closes=ph.closes,init=s.initialPrice;
+  const fp=p=>p>=1000?Math.round(p).toLocaleString('en-US'):p>=100?p.toFixed(1):p.toFixed(2);
+  const shortHist=closes.length<480?`<div class="text-ink-3 border-l border-line pl-4">上市于 ${ph.dates[0].slice(0,7).replace('-','/')}，历史不足 2 年</div>`:'';
+  return`
+        <div class="border border-line rounded-xl p-6 bg-bg-2 mb-8">
+          <div class="section-label mb-1">2 年股价走势 · 关键价位</div>
+          <div class="text-xs text-ink-3 mb-4">期初价 <span class="num text-ink-2">${fp(init)} ${s.currency}</span>（${s.initialPriceDate} 收盘）· 价位线按期初价折算</div>
+          ${priceHistorySVG(s)}
+          <div class="flex items-center gap-6 mt-3 text-[11px] text-ink-3 flex-wrap">
+            <div><span style="display:inline-block;width:16px;height:0;border-bottom:2px solid var(--ink-2);margin-right:5px;vertical-align:middle;opacity:0.6;"></span>期初价${(s.ko||100)===100?' / KO':''}</div>
+            <div><span style="display:inline-block;width:16px;height:0;border-bottom:2px dashed var(--gold);margin-right:5px;vertical-align:middle;"></span>行权价</div>
+            <div><span style="display:inline-block;width:16px;height:0;border-bottom:2px dashed var(--red);margin-right:5px;vertical-align:middle;"></span>敲入价</div>
+            ${shortHist}
+          </div>
+        </div>`;
+}
+
 // ═══ Ticker ═══
 
 // ═══ Count-up ═══
@@ -931,6 +1023,9 @@ function renderDetail(code){
           }
           return parts.join('');
         })()}
+
+        <!-- 2Y Price History with FCN Levels -->
+        ${priceHistoryCard(s)}
 
         <!-- Payoff Chart -->
         <div class="border border-line rounded-xl p-6 bg-bg-2">
