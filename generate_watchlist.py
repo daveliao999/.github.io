@@ -379,19 +379,20 @@ def get_futu_context(futu_code: str, display_code: str) -> str:
 # ── DeepSeek prompts ──────────────────────────────────────────────────────────
 SYSTEM_PROMPT = """\
 你是一位专业的私人银行 FCN（固定票息票据）结构化产品分析师，服务对象是香港/新加坡的高净值客户。
+你的输出将装配进「报价解读」报告：Part B 读懂公司（B 卡片组）、Part C 我们的判断（C 卡片组 + 接货价位结论）、Part D 风险提示。
 
 核心写作原则：
 - 结论先行：每个板块的第一句必须是核心判断，不以背景铺垫开头
 - 数据具体：财务数字必须注明年度/季度，无法核实的绝对不引用
 - 白话优先：技术术语紧跟白话解释，格式「术语（白话：……）」
-- 客观专业：面向私人银行 HNW 客户，语气直白有力
+- 客观专业：面向私人银行 HNW 客户，第三人称，语气直白有力
 
 严格禁止：
-- 捏造或杜撰任何数据
+- 捏造或杜撰任何数据；模型记忆中的数字不得直接当作事实引用
 - 空洞表述（如"未来发展潜力巨大"）
 - bullet 超过 40 字
 - 正文板块缺少 topic sentence
-- 估值分析和风险分析（analysis 四个板块均不含）
+- 输出 schema 之外的 HTML 标签或任何内联样式（仅允许 <p> <b> <ul> <li> 与 class="conc"）
 """
 
 BATCH_PROMPT = """\
@@ -408,37 +409,41 @@ BATCH_PROMPT = """\
 
 ---
 
-每只股票输出以下 JSON 对象（严格按 schema，不含估值与风险分析）：
+每只股票输出以下 JSON 对象（严格按 schema）。B/C 卡片正文是 HTML 片段，**仅允许 <p> <b> <ul> <li> 标签与 class="conc"**，禁止其他标签、属性与内联样式：
 
 {{
   "ticker": "与输入一致的股票代码",
   "name": "公司中文全称",
   "name_en": "Company English Name",
   "sector": "行业分类（如：AI半导体、互联网、新能源、金融等）",
+  "tagline": "一句话定位（≤16字，将拼在报告大标题后，如「AI 存储周期的最大受益者」）",
+  "intro": "公司速览（120-160字，纯文本不含HTML）：成立时间、总部、上市市场与代码、当前市值、核心业务一句白话定位",
   "bullets": [
     "投资要点①（≤40字，结论先行，含具体数据，非空洞表述）",
     "投资要点②（≤40字，与①完全独立，不重复不互补）"
   ],
-  "analysis": {{
-    "intro": "公司简介（150-200字）：成立时间、总部、控股背景、上市市场与代码、当前市值、核心业务一句白话定位、关键规模数据",
-    "business": "业务介绍（300-450字）：每个板块以「👉 板块名称：」开头（不使用任何markdown符号如**），结构为「行业痛点→公司解法→为什么客户选这家」，含收入占比。每板块第一句必须是直接点明商业价值的结论句",
-    "highlights": [
-      {{
-        "emoji": "适合的emoji",
-        "title": "亮点标题（具体有画面感，非专业客户一眼懂，如「美国连锁化率70%，中国才27%——未来十年都是扩张窗口」）",
-        "content": "亮点正文（150-250字）：第一句结论先行。覆盖以下之一：宏观政策顺风/市场份额领导力/竞争壁垒/订单收入确定性/行业结构性机会。投行推断标注〔投行推论：来源〕，数据外推标注〔分析推断〕"
-      }}
-    ],
-    "financials": "财务数据（200-300字，2-3段，每段topic sentence开头）：含最新年度营收（绝对值+同比）、毛利率近3年走势、净利润、分业务收入占比、行业特有核心指标。利润变动附原因，展望连接具体催化剂"
-  }},
+  "B": [
+    ["公司是做什么的", "<p>150-250字：白话讲清公司靠什么赚钱、给谁提供什么价值；控股背景、市值规模、行业地位。第一句必须是直接点明商业本质的结论句</p>"],
+    ["行业格局与竞争位置", "<p>180-280字：行业痛点→公司解法→为什么客户选这家；市场份额、竞争壁垒，可用「术语（白话：……）」</p>"],
+    ["最新业绩与财务体质", "<p>180-280字：最新年度/季度营收（绝对值+同比）、净利润、毛利率走势、经营现金流。标注「富途实时数据」的数字必须原样引用并注明期间</p>"],
+    ["市场怎么看", "<p>120-220字：分析师共识目标价与现价差距、近期评级变动方向、买卖比例；引用输入中的富途分析师数据</p>"]
+  ],
+  "C": [
+    ["结论先行：这家公司值不值得接", "<p class=\\"conc\\"><b>一句话结论。</b>——一句话核心理由</p><p>2-3 句补充论证：从 FCN 卖方视角（愿不愿意在折扣价位成为它的股东）展开</p>"],
+    ["看多的核心理由", "<ul><li>理由①（≤60字，含数据）</li><li>理由②</li><li>理由③</li></ul>"],
+    ["需要警惕的变量", "<ul><li>变量①（≤60字，具体到事件/数据，非泛泛而谈）</li><li>变量②</li></ul>"]
+  ],
+  "health_conc": "接货价位一句话结论（≤45字，结合输入给出的行权价折扣与敲入缓冲，如「7.8 折接货+37%缓冲，结构留有余地」）",
+  "c4_prose": "100-160字：现价处于什么位置（结合输入的最大跌幅/均线数据）、接货价相当于回到什么水平、这个折扣对该标的波动性而言厚不厚",
+  "risks": [
+    "<b>风险名</b>——结合该标的具体化的说明（如财报日期、竞争对手、政策节点），≥4条，每条≤70字"
+  ],
   "data_quality": {{
     "verified": ["已核实数据项"],
     "broker_views": ["投行推论（来源：XX）"],
     "model_inferences": ["分析推断内容（依据：训练数据）"]
   }}
 }}
-
-highlights 要求：3-4 条，每条标题具体有画面感（参考：「3亿会员直接订房，绕开携程——利润多出10-15%」）。
 
 输出格式：JSON 数组 [{{...}}, {{...}}]，不输出任何其他文字。
 """
@@ -626,15 +631,17 @@ def main():
 
     # ── 3. DeepSeek analysis ──────────────────────────────────────────────────
     def _validate_ana(ana: dict) -> tuple[bool, list]:
-        """Check all required fields are present and non-empty."""
-        inner = ana.get("analysis", ana)
+        """Check all required report-schema fields are present and non-empty."""
         issues = []
-        if not inner.get("intro"):        issues.append("no intro")
-        if not inner.get("business"):     issues.append("no business")
-        hl = inner.get("highlights") or []
-        if not hl:                        issues.append("no highlights")
-        elif len(hl) < 3:                 issues.append(f"highlights={len(hl)}<3")
-        if not inner.get("financials"):   issues.append("no financials")
+        if not ana.get("tagline"):                  issues.append("no tagline")
+        if not ana.get("intro"):                    issues.append("no intro")
+        B = ana.get("B") or []
+        if len(B) < 3:                              issues.append(f"B={len(B)}<3")
+        C = ana.get("C") or []
+        if len(C) < 2:                              issues.append(f"C={len(C)}<2")
+        if not ana.get("health_conc"):              issues.append("no health_conc")
+        if not ana.get("c4_prose"):                 issues.append("no c4_prose")
+        if len(ana.get("risks") or []) < 3:         issues.append("risks<3")
         return len(issues) == 0, issues
 
     analysis_map = {}
@@ -684,9 +691,12 @@ def main():
         print("\n[3/4] DeepSeek skipped (--no-ai)")
 
     # ── 4. Merge and write ────────────────────────────────────────────────────
-    def _strip_md_bold(text: str) -> str:
-        """Remove **bold** markdown markers from AI output."""
-        return re.sub(r'\*\*([^*]+)\*\*', r'\1', text) if text else text
+    def _strip_md_bold(v):
+        """Recursively remove **bold** markdown markers from AI output."""
+        if isinstance(v, str):  return re.sub(r'\*\*([^*]+)\*\*', r'<b>\1</b>', v)
+        if isinstance(v, list): return [_strip_md_bold(x) for x in v]
+        if isinstance(v, dict): return {k: _strip_md_bold(x) for k, x in v.items()}
+        return v
 
     print(f"\n[4/4] Writing {args.output}...")
     score_max = max((s['display_score'] for s in stocks), default=100) or 100
@@ -744,8 +754,9 @@ def main():
             "kiType":         fcn['kiType'],
             "tenor":          fcn['tenor'],
             "bullets":        ana.get("bullets", []),
-            "analysis":       {**ana.get("analysis", {}),
-                               "business": _strip_md_bold(ana.get("analysis", {}).get("business", ""))},
+            "report":         _strip_md_bold({k: ana.get(k) for k in
+                               ("tagline", "intro", "B", "C",
+                                "health_conc", "c4_prose", "risks")}),
             "data_quality":   ana.get("data_quality", {}),
         })
 

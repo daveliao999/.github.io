@@ -579,6 +579,325 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
   return svg;
 }
 
+// ═══ Noah's ARK 报告页（详情视图）═══════════════════════════════
+// tokens.css 原文内联（body 选择器改为 .report-body 以适配 Shadow DOM）
+const REPORT_CSS=`
+:host,.report-body{--ink:#FAFAFA;--bg:#111113;--surface-1:#18181B;--fg-1:#C9CBD1;--fg-2:#A1A1AA;--fg-3:#71717A;--line-1:#27272A;--line-2:#1E1E21;--khaki:rgba(201,168,106,0.40);--khaki-ink:#D8C9A4;--khaki-soft:rgba(201,168,106,0.07);--accent-green:#00C805;--accent-green-ink:#4ADE80;--accent-green-soft:rgba(0,200,5,0.08);--accent-gold:#C9A86A;--accent-gold-ink:#E6CC8F;--accent-gold-soft:rgba(201,168,106,0.10);--pos:var(--accent-green);--neg:#F43F5E;--warn:var(--accent-gold);--font-cn:'Inter','PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','Noto Sans SC',system-ui,sans-serif;--font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);--font-num:'JetBrains Mono','DIN Next','Roboto','Inter',sans-serif;--font-mono:'JetBrains Mono','Roboto Mono','SF Mono',Menlo,monospace;}
+*{box-sizing:border-box;margin:0;padding:0;}
+.report-body{background:transparent;color:var(--ink);font-family:var(--font-cn);line-height:1.55;padding:8px 0 24px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:980px;margin:0 auto;}
+.tick,.card h2::before,.modlabel::before,.r-head::before{content:"";display:block;width:32px;height:3px;background:var(--accent-green);}
+.r-head{border-bottom:1px solid var(--line-1);padding-bottom:24px;margin-bottom:8px;}
+.r-head::before{margin-bottom:12px;}
+.eyebrow{font-family:var(--font-en);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--fg-2);}
+.r-head h1{font-size:32px;font-weight:700;color:var(--ink);margin:8px 0 12px;letter-spacing:-.3px;}
+.r-head .meta{display:flex;flex-wrap:wrap;gap:24px;font-size:12px;color:var(--fg-2);font-family:var(--font-num);}
+.r-head .meta b{color:var(--ink);font-weight:600;}
+.modlabel{margin:48px 0 16px;}
+.modlabel::before{margin-bottom:10px;}
+.modlabel .t{font-family:var(--font-en);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent-gold-ink);margin-right:12px;}
+.modlabel .cn{font-size:18px;font-weight:700;color:var(--ink);}
+.modlabel .rule{display:none;}
+.card{background:var(--bg);border:1px solid var(--line-1);border-radius:2px;padding:24px;margin-bottom:16px;}
+.card h2{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.card h2::before{margin-bottom:8px;}
+.card h2 .idx{font-family:var(--font-num);color:var(--accent-gold-ink);font-size:14px;margin-right:8px;font-weight:600;}
+.card .sub{font-size:12px;color:var(--fg-2);margin-bottom:16px;}
+.card p{font-size:14px;color:var(--fg-1);margin:8px 0;line-height:1.55;}
+.card p b{color:var(--ink);font-weight:600;}
+.conc{background:var(--accent-green-soft);border-left:3px solid var(--accent-green);border-radius:2px;padding:12px 14px;margin:4px 0 10px;}
+.hero{display:flex;align-items:stretch;padding:0;}
+.hero .l{flex:1.15;padding:24px;border-right:1px solid var(--line-1);background:var(--accent-green-soft);}
+.hero .l::before{content:"";display:block;width:32px;height:3px;background:var(--accent-green);margin-bottom:8px;}
+.hero .r{flex:1;padding:24px;}
+.hero .tag{font-family:var(--font-en);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-green-ink);margin-bottom:8px;}
+.hero .lab{font-size:12px;color:var(--fg-2);margin-bottom:4px;}
+.hero .big{font-family:var(--font-num);font-weight:700;color:var(--accent-green-ink);font-size:64px;line-height:1;letter-spacing:-1px;}
+.hero .mid{font-family:var(--font-num);font-weight:700;color:var(--accent-gold-ink);font-size:40px;line-height:1.1;}
+.hero .note{font-size:11px;color:var(--fg-3);margin-top:6px;}
+.hero .ulist{margin-top:16px;font-size:12px;}
+.hero .ulist span{display:inline-block;background:var(--accent-gold-soft);border:1px solid var(--accent-gold-soft);color:var(--accent-gold-ink);border-radius:2px;padding:4px 10px;margin:0 8px 8px 0;font-family:var(--font-num);font-size:12px;font-weight:600;}
+.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.term{background:var(--khaki-soft);border:1px solid var(--line-1);border-radius:2px;padding:12px;}
+.term .k{font-size:11px;color:var(--fg-2);margin-bottom:6px;}
+.term .v{font-size:15px;font-weight:700;color:var(--ink);font-family:var(--font-num);}
+.explain{margin-top:16px;border-top:1px solid var(--line-1);padding-top:16px;}
+.explain .h{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+.explain ul{list-style:none;}
+.explain li{font-size:13px;color:var(--fg-1);padding:5px 0 5px 18px;position:relative;line-height:1.5;}
+.explain li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--accent-gold);}
+.explain li b{color:var(--ink);font-family:var(--font-num);font-weight:600;}
+.chart-cap{font-size:11px;color:var(--fg-2);margin-top:12px;line-height:1.5;}
+.chart-cap b{color:var(--ink);font-weight:600;}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:4px 0;}
+.kpi{background:var(--bg);border:1px solid var(--line-1);border-radius:2px;padding:14px;}
+.kpi .k{font-size:11px;color:var(--fg-2);margin-bottom:6px;}
+.kpi .v{font-family:var(--font-num);font-size:22px;font-weight:700;color:var(--ink);}
+.kpi.hl{background:var(--accent-green-soft);border-color:var(--accent-green-soft);}
+.kpi.hl .v{color:var(--accent-green-ink);}
+.kpi.gold{background:var(--accent-gold-soft);border-color:var(--accent-gold-soft);}
+.kpi.gold .v{color:var(--accent-gold-ink);}
+.kpi .s{font-size:10px;color:var(--fg-3);margin-top:4px;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line-1);}
+th{background:var(--khaki-soft);color:var(--khaki-ink);font-weight:600;font-size:11px;text-transform:none;}
+td.num,th.num,td .num{font-family:var(--font-num);text-align:right;}
+th.num{text-align:right;}
+tbody tr:nth-child(even) td{background:var(--surface-1);}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mini{border:1px solid var(--line-1);border-left:2px solid var(--khaki);border-radius:2px;padding:16px;background:var(--bg);}
+.mini.bull{border-left:2px solid var(--accent-green);background:var(--accent-green-soft);}
+.mini.bear{border-left:2px solid var(--neg);}
+.mini h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.mini ul{padding-left:16px;} .mini li{font-size:12.5px;color:var(--fg-1);margin-bottom:6px;line-height:1.5;}
+.risk{list-style:none;}
+.risk li{font-size:12.5px;color:var(--fg-1);margin-bottom:8px;padding-left:18px;position:relative;line-height:1.5;}
+.risk li::before{content:"—";position:absolute;left:0;top:0;color:var(--neg);font-weight:600;}
+.risk li b{color:var(--ink);font-weight:600;}
+.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--line-1);font-size:11px;color:var(--fg-3);line-height:1.7;}
+.foot .src{font-family:var(--font-num);font-size:10px;}
+.health{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+.hcell{border:1px solid var(--line-1);border-left:2px solid var(--khaki);border-radius:2px;padding:12px 14px;background:var(--bg);}
+.hcell.ok{border-left-color:var(--accent-green);}
+.hcell.watch{border-left-color:var(--accent-gold);}
+.hcell .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:5px;}
+.hcell .name{font-size:12.5px;font-weight:700;color:var(--ink);}
+.hstat{font-size:10px;font-weight:600;font-family:var(--font-en);letter-spacing:.5px;padding:2px 7px;border-radius:2px;white-space:nowrap;}
+.hstat.ok{background:var(--accent-green-soft);color:var(--accent-green-ink);}
+.hstat.watch{background:var(--accent-gold-soft);color:var(--accent-gold-ink);}
+.hcell .val{font-family:var(--font-num);font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.hcell .read{font-size:12px;color:var(--fg-1);line-height:1.5;}
+.navflow{display:flex;align-items:stretch;margin-top:12px;}
+.navstep{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:4px 8px;}
+.navtag{flex:none;width:30px;height:30px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--font-en);font-weight:700;font-size:14px;color:var(--accent-green-ink);background:var(--accent-green-soft);}
+.navtag.risk{color:var(--khaki-ink);background:var(--khaki-soft);}
+.navstep .nt{font-weight:700;color:var(--ink);font-size:14px;}
+.navstep .nd{color:var(--fg-2);font-size:11px;line-height:1.5;}
+.navarrow{flex:none;display:flex;align-items:flex-start;justify-content:center;padding-top:9px;color:var(--accent-gold-ink);font-weight:700;font-size:15px;}
+@media(max-width:768px){.hero{flex-direction:column;}.terms{grid-template-columns:repeat(2,1fr);}.kpis{grid-template-columns:repeat(2,1fr)!important;}.twocol,.health{grid-template-columns:1fr;}.navflow{flex-wrap:wrap;}}
+/* ── 暗金主题覆盖：主强调改为香槟金，绿色仅保留正向语义（达标/敲出/看多）── */
+.tick,.card h2::before,.modlabel::before,.r-head::before{background:var(--accent-gold);}
+.conc{background:var(--accent-gold-soft);border-left-color:var(--accent-gold);}
+.hero .l{background:var(--accent-gold-soft);}
+.hero .l::before{background:var(--accent-gold);}
+.hero .tag{color:var(--accent-gold-ink);}
+.hero .big{color:var(--accent-gold-ink);}
+.navtag{color:var(--accent-gold-ink);background:var(--accent-gold-soft);}
+.navtag.risk{color:var(--fg-2);background:var(--surface-1);}
+.modlabel .t{color:var(--accent-gold-ink);}
+.navarrow{color:var(--accent-gold-ink);}
+`;
+
+// —— 报告页工具 ——
+const _rsym=s=>s.currency==='HKD'?'HK$':'US$';
+const _rfmt=(p,sym)=>sym+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const _zhe=pct=>parseFloat((pct/10).toFixed(2)).toString();
+const _esc=t=>String(t??'');
+
+// —— A·3 三线走势图（移植自 render_report.make_svg，近一年切片）——
+function reportChartSVG(s){
+  const ph=s.priceHistory;
+  if(!ph||!ph.closes||ph.closes.length<10||!s.initialPrice)return'';
+  const take=Math.min(250,ph.closes.length);
+  const px=ph.closes.slice(-take),dates=ph.dates.slice(-take);
+  const sym=_rsym(s),sp=s.initialPrice,CUR=px[px.length-1];
+  const KO=sp*(s.ko||100)/100,STK=sp*s.strike/100,KI=sp*s.ki/100;
+  const N=px.length,W=1000,H=440,L=66,R=150,T=30,B=52;
+  const x1=W-R,y1=H-B;
+  const pad=(Math.max(...px)-Math.min(...px))*0.10||1;
+  const PMIN=Math.min(Math.min(...px),KI)-pad,PMAX=Math.max(Math.max(...px),KO)+pad;
+  const X=i=>L+i/(N-1)*(x1-L),Y=p=>y1-(p-PMIN)/(PMAX-PMIN)*(y1-T);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'Roboto Mono','Inter',monospace;">`;
+  // 自适应步长水平网格
+  const raw=(PMAX-PMIN)/6,mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  const nm=raw/mag,step=(nm<1.5?1:nm<3.5?2:nm<7.5?5:10)*mag;
+  const tickFmt=v=>step>=1?Math.round(v).toLocaleString('en-US'):v.toFixed(step>=0.1?1:2);
+  for(let p=Math.ceil(PMIN/step)*step;p<=PMAX;p+=step){
+    const yy=Y(p).toFixed(1);
+    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="#27272A" stroke-width="1"/>`;
+    svg+=`<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="12" fill="#71717A">${tickFmt(p)}</text>`;
+  }
+  // 月份刻度
+  const seen=new Set();let last=-999;
+  dates.forEach((d,i)=>{
+    const ym=d.slice(0,7);
+    if(!seen.has(ym)){seen.add(ym);
+      if(X(i)-last>=60){svg+=`<text x="${X(i).toFixed(1)}" y="${H-30}" text-anchor="middle" font-size="11.5" fill="#71717A">${d.slice(2,7).replace('-','/')}</text>`;last=X(i);}}
+  });
+  // 价格面积 + 折线
+  const pts=px.map((p,i)=>`${X(i).toFixed(1)},${Y(p).toFixed(1)}`).join(' ');
+  svg+=`<polygon points="${X(0).toFixed(1)},${y1.toFixed(1)} ${pts} ${X(N-1).toFixed(1)},${y1.toFixed(1)}" fill="rgba(201,168,106,0.05)"/>`;
+  svg+=`<polyline points="${pts}" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linejoin="round"/>`;
+  // 三条关键价位线
+  const rl=(p,color,ink,label)=>{
+    const yy=Y(p).toFixed(1);
+    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="${color}" stroke-width="1.7" stroke-dasharray="5 4"/>`;
+    svg+=`<text x="${x1+10}" y="${(+yy-3).toFixed(1)}" font-size="12.5" font-weight="700" fill="${ink}">${label}</text>`;
+    svg+=`<text x="${x1+10}" y="${(+yy+13).toFixed(1)}" font-size="13" font-weight="700" fill="${ink}">${_rfmt(p,sym)}</text>`;
+  };
+  rl(KO,"#00C805","#00C805","KO 敲出线");
+  rl(STK,"#C9A86A","#E6CC8F","接货价 / 执行价");
+  rl(KI,"#F43F5E","#F43F5E","KI 敲入线");
+  const cx=X(N-1),cy=Y(CUR);
+  svg+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="#FAFAFA"/>`;
+  svg+=`<text x="${(cx-8).toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="end" font-size="12.5" font-weight="700" fill="#FAFAFA">现价 ${_rfmt(CUR,sym)}</text>`;
+  return svg+'</svg>';
+}
+
+// —— 模块装配 ——
+function _rcards(prefix,items){
+  return items.map((it,i)=>`<div class="card"><h2><span class="idx">${prefix}·${i+1}</span>${_esc(it[0])}</h2>${it[1]||''}</div>`).join('');
+}
+
+// 旧 schema（intro/business/highlights/financials）→ 新报告骨架适配
+function _legacyReport(s){
+  const ana=s.analysis||{};
+  const B=[],C=[];
+  if(ana.intro)      B.push(['公司是做什么的',`<p>${_esc(ana.intro)}</p>`]);
+  if(ana.business)   B.push(['业务介绍',`<p style="white-space:pre-wrap">${_esc(ana.business)}</p>`]);
+  if(ana.financials) B.push(['最新业绩与财务体质',`<p style="white-space:pre-wrap">${_esc(ana.financials)}</p>`]);
+  const bl=s.bullets||[];
+  if(bl.length) C.push(['结论先行：投资要点',`<p class="conc"><b>${_esc(bl[0])}</b></p>${bl[1]?`<p>${_esc(bl[1])}</p>`:''}`]);
+  const hl=ana.highlights||[];
+  if(hl.length) C.push(['看多的核心理由',`<div class="twocol">${hl.map(h=>`<div class="mini bull"><h4>${_esc(h.emoji||'💡')} ${_esc(h.title)}</h4><p style="margin:0">${_esc(h.content)}</p></div>`).join('')}</div>`]);
+  const dq=s.data_quality||{};
+  const dqRows=[['已核实数据',dq.verified],['投行观点',dq.broker_views],['模型推断（请人工复核）',dq.model_inferences]]
+    .filter(([,v])=>v&&v.length)
+    .map(([k,v])=>`<p><b>${k}：</b>${v.map(_esc).join('；')}</p>`).join('');
+  if(dqRows) C.push(['数据可信度说明',dqRows]);
+  return{tagline:s.industry||'',B,C,health_conc:null,c4_prose:null,risks:null};
+}
+
+const _DEFAULT_RISKS=[
+  '<b>接货与本金风险</b>——到期价低于行权价时按行权价接入股票，接入市值可能低于投入本金，极端下跌情形下本金可能出现较大亏损。',
+  '<b>敲入观察方式</b>——美式敲入为每日观察、欧式仅到期观察；高波动标的触发敲入的概率显著更高，票息越高通常对应越高的敲入风险。',
+  '<b>提前敲出与再投资</b>——股价上涨触发 KO 后产品提前结束，后续能否以同等票息续作存在不确定性。',
+  '<b>集中度</b>——FCN 挂钩单一标的，建议控制单票敞口并跨行业分散配置。',
+  '<b>发行商信用与条款</b>——FCN 为发行商的高级无抵押负债，承担发行机构信用风险；本页条款为指示性，实际以发行商最终报价文件为准。',
+  '<b>流动性</b>——持有期内转让可能面临折价，建议以持有到期为前提进行配置。',
+];
+
+// —— 报告页主装配 ——
+function buildReport(s){
+  const sym=_rsym(s);
+  const ph=(s.priceHistory&&s.priceHistory.closes&&s.priceHistory.closes.length>=10)?s.priceHistory:null;
+  const sp=s.initialPrice||s.price, cur=ph?ph.closes[ph.closes.length-1]:s.price;
+  const spDate=s.initialPriceDate||DATA.meta.publishDate;
+  const ko=s.ko||100, fzhe=_zhe(s.strike);
+  const stkAbs=sp*s.strike/100;
+  const rep=(s.report&&s.report.B&&s.report.B.length)?s.report:_legacyReport(s);
+  const kiTypeFull=s.kiType==='美式敲入'?'美式 · 每日观察':s.kiType==='欧式敲入'?'欧式 · 仅到期观察':_esc(s.kiType||'—');
+
+  // —— 实算指标（近一年） ——
+  let lo1y=null,ma200=null,maxDD=null,ddNow=null;
+  if(ph){
+    const px1=ph.closes.slice(-250);
+    lo1y=Math.min(...px1);
+    const m=ph.closes.slice(-200);
+    ma200=m.reduce((a,b)=>a+b,0)/m.length;
+    let peak=px1[0],dd=0;
+    px1.forEach(p=>{peak=Math.max(peak,p);dd=Math.min(dd,p/peak-1);});
+    maxDD=dd*100;
+    ddNow=(cur/Math.max(...px1)-1)*100;
+  }
+
+  // —— 头部 ——
+  const head=`<div class="r-head">
+    <div class="eyebrow">FCN · Fixed Coupon Note · 固定派息票据 · 标的解读</div>
+    <h1>${_esc(s.name)} ${_esc(s.code)}${rep.tagline?' · '+_esc(rep.tagline):''}</h1>
+    <div class="meta"><span>报价基准日 <b>${_esc(spDate)}</b></span><span>评估日 <b>${_esc(DATA.meta.publishDate)}</b></span>
+      <span>币种 <b>${_esc(s.currency)}</b></span><span>起始价 <b>${_rfmt(sp,sym)}</b></span><span>现价 <b>${_rfmt(cur,sym)}（${_esc(spDate)} 收盘）</b></span></div>
+  </div>`;
+
+  // —— 导读 ——
+  const nav=`<div class="card" style="margin-top:24px"><h2><span class="idx">导读</span>这份报告怎么看</h2>
+    <p class="conc"><b>FCN 持续派息、低位接货。</b>——平时按月领票息；只有标的大跌、到期仍在行权价之下时，才以折扣价接股票。</p>
+    <div class="sub">本解读基于本周量化筛选的推荐结构展开，按下面四步推进，看到哪一段就知道在讲什么。</div>
+    <div class="navflow">
+      <div class="navstep"><span class="navtag">A</span><div class="nt">读懂报价</div><div class="nd">票息·条款·怎么运作；走势图标出行权/敲出/敲入三线</div></div>
+      <div class="navarrow">→</div>
+      <div class="navstep"><span class="navtag">B</span><div class="nt">读懂公司</div><div class="nd">挂钩公司：做什么·行业·业绩·市场怎么看</div></div>
+      <div class="navarrow">→</div>
+      <div class="navstep"><span class="navtag">C</span><div class="nt">我们的判断</div><div class="nd">值不值得接 × 这个价位接票划不划算</div></div>
+      <div class="navarrow">→</div>
+      <div class="navstep"><span class="navtag risk">!</span><div class="nt">风险提示</div><div class="nd">接货·集中·提前结束·发行商信用等须知</div></div>
+    </div></div>`;
+
+  // —— Part A ——
+  const termPairs=[['期限',`${s.tenor} 个月`],['观察 / 派息频率','每月'],
+    ['执行价（接货价）',`${s.strike}%`],['敲入价 KI',`${s.ki}%`],['敲出价 KO',`${ko}%`],
+    ['敲入方式',kiTypeFull],['起始价',_rfmt(sp,sym)],['综合评分',`${s.score} / 10`]];
+  const terms=termPairs.map(([k,v])=>`<div class="term"><div class="k">${k}</div><div class="v" style="font-size:14px">${v}</div></div>`).join('');
+  const explain=`
+    <li>按月领息：年化票息 <b>${s.coupon}%</b>，折合每月约 <b>${(s.coupon/12).toFixed(2)}%</b>，持有期间无论股价涨跌均照常派发。</li>
+    <li>提前结束（敲出）：观察日收盘价 ≥ 期初价的 <b>${ko}%</b>（敲出线）时产品提前到期，拿回全部本金并结清当期票息。</li>
+    <li>低位接货（敲入）：${kiTypeFull}下，只有股价跌破期初价的 <b>${s.ki}%</b>（敲入线）且到期仍低于行权价时，才按 <b>${_rfmt(stkAbs,sym)}</b> 接入股票——相当于较期初价打 <b>${fzhe} 折</b>买入。</li>`;
+  const chartSvg=reportChartSVG(s);
+  const partA=`<section class="part">
+    <div class="modlabel"><span class="t">Part A</span><span class="cn">读懂这笔报价 · 一张报价看懂全部要点</span><span class="rule"></span></div>
+    <div class="card hero">
+      <div class="l"><div class="tag">推荐结构 · 指示性条款</div><div class="lab">年化票息</div>
+        <div class="big">${(+s.coupon).toFixed(2)}<span style="font-size:30px">%</span></div>
+        <div class="ulist"><span>期限 ${s.tenor} 个月</span><span>每月派息</span><span>${_esc(s.kiType||'欧式敲入')}</span></div></div>
+      <div class="r"><div class="lab">约每月票息</div><div class="mid">${(s.coupon/12).toFixed(2)}<span style="font-size:22px">%</span></div>
+        <div class="note">年化票息 ÷ 12 的约数，实际以发行条款为准</div>
+        <div class="lab" style="margin-top:18px">这笔报价的本质</div>
+        <p style="font-size:13px;color:var(--fg-2);margin-top:4px;line-height:1.6">在持有期内按月领票息；只有当标的大跌、最终低于约定价格时，才会以折扣价"接货"成为股东。</p></div>
+    </div>
+    <div class="card"><h2><span class="idx">A·2</span>关键要素</h2>
+      <div class="terms">${terms}</div>
+      <div class="explain"><div class="h">三句话讲清这笔产品怎么运作</div><ul>${explain}</ul></div></div>
+    ${chartSvg?`<div class="card"><h2><span class="idx">A·3</span>近一年走势 · 三条关键价位一眼看清</h2>
+      <div class="sub">绿线 = 敲出（提前结束）、金线 = 行权价（接票）、红线 = 敲入（接票保护，跌破才可能接票）——三条线都由报价基准日收盘价 ${_rfmt(sp,sym)} 换算而来。</div>
+      ${chartSvg}
+      <div class="chart-cap"><b>本图对应当前推荐结构</b>（${s.tenor} 个月 / 接货价 ${fzhe} 折 / KI ${s.ki}%）· 走势数据来源 Yahoo Finance 日线收盘</div></div>`:''}
+  </section>`;
+
+  // —— Part B ——
+  const partB=rep.B.length?`<section class="part">
+    <div class="modlabel"><span class="t">Part B</span><span class="cn">读懂这家公司</span><span class="rule"></span></div>
+    ${_rcards('B',rep.B)}</section>`:'';
+
+  // —— Part C（C·1–C·n 判断 + C·4 结构性体检）——
+  const kiBuf=100-s.ki, stkBuf=100-s.strike;
+  const health=[];
+  health.push(['接货折扣',`期初价的 ${s.strike}%（${fzhe} 折）`,'ok',`触发接货时按 ${_rfmt(stkAbs,sym)} 买入，较 ${_esc(spDate)} 收盘价折让 ${stkBuf}%。`]);
+  health.push(['敲入缓冲',`需下跌 ${kiBuf}% 才触及`,kiBuf>=30?'ok':'watch',kiBuf>=30?'缓冲厚度较好，常规回调难以触发敲入。':'缓冲相对较薄，大幅回调时敲入概率不可忽视。']);
+  if(s.iv30)health.push(['隐含波动率（6M）',`${s.iv30}%`,s.iv30>=80?'watch':'ok',s.iv30>=80?'高波动是高票息的来源，但敲入概率同步上升，需匹配风险承受能力。':'波动处于可控区间，票息与敲入风险的平衡较好。']);
+  if(maxDD!==null)health.push(['近一年最大回撤',`${maxDD.toFixed(1)}%`,Math.abs(maxDD)>kiBuf?'watch':'ok',Math.abs(maxDD)>kiBuf?`过去一年曾出现超过敲入缓冲（${kiBuf}%）的回撤，历史上这类波动足以触发敲入。`:`过去一年最大回撤未超过敲入缓冲（${kiBuf}%）。`]);
+  if(ma200!==null)health.push(['现价 vs 200 日均线',`${((cur/ma200-1)*100).toFixed(1)}%`,cur<=ma200*1.15?'ok':'watch',cur<=ma200*1.15?'现价未大幅偏离中长期价格中枢。':'现价显著高于 200 日中枢，回归风险需要留意。']);
+  health.push(['市值体量',`${s.currency==='HKD'?'HK$':'US$'}${s.marketCap.toFixed(0)}B`,s.marketCap>=10?'ok':'watch',s.marketCap>=10?'大市值标的，极端流动性风险较低。':'中等市值标的，极端行情下波动可能放大。']);
+  const nOk=health.filter(h=>h[2]==='ok').length;
+  const healthConc=rep.health_conc||`接货价较期初打 ${fzhe} 折、敲入缓冲 ${kiBuf}%，结构性体检 ${nOk}/${health.length} 项达标${nOk<health.length?'，其余项请逐条留意':''}。`;
+  const c4prose=rep.c4_prose||`现价 ${_rfmt(cur,sym)}${ddNow!==null?`，较一年高点回撤 ${Math.abs(ddNow).toFixed(1)}%`:''}${ma200!==null?`，${cur<ma200?'已落在':'位于'} 200 日均价 ${_rfmt(ma200,sym)} ${cur<ma200?'之下':'附近或上方'}`:''}。接货价 ${_rfmt(stkAbs,sym)} 相当于在此基础上再折让 ${stkBuf}%${lo1y!==null?`，与一年最低价 ${_rfmt(lo1y,sym)} 的相对位置见上方对照`:''}。以下体检格逐项核对该价位的结构性风险。`;
+  const hcells=health.map(([name,val,st,read])=>`<div class="hcell ${st}"><div class="top"><span class="name">${name}</span><span class="hstat ${st}">${st==='ok'?'达标':'留意'}</span></div><div class="val">${val}</div><div class="read">${read}</div></div>`).join('');
+  const c4=`<div class="card"><h2><span class="idx">C·4</span>这个价位接票，划不划算 · 接货价位与结构性体检</h2>
+    <div class="sub">前面回答了"这家公司值不值得接成股东"；这一节看在什么价位接票才划算——先看接货价落在什么位置，再逐项体检其余风险。</div>
+    <p class="conc"><b>结论：${healthConc}</b></p>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><div class="k">现价（${_esc(spDate)} 收盘）</div><div class="v">${_rfmt(cur,sym)}</div><div class="s">${ddNow!==null?`较一年高点回撤 ${Math.abs(ddNow).toFixed(1)}%`:''}</div></div>
+      <div class="kpi"><div class="k">这一年的最低价</div><div class="v">${lo1y!==null?'≈ '+_rfmt(lo1y,sym):'—'}</div><div class="s">${lo1y!==null?`接货价 ${_rfmt(stkAbs,sym)} ${stkAbs<lo1y?'低于它':'与之对照'}`:''}</div></div>
+      <div class="kpi"><div class="k">价格中枢（200 日均价）</div><div class="v">${ma200!==null?'≈ '+_rfmt(ma200,sym):'—'}</div><div class="s">${ma200!==null?`现价在中枢${cur<ma200?'之下':'附近或上方'}`:''}</div></div>
+    </div>
+    <p style="margin-top:14px">${c4prose}</p>
+    <div class="health">${hcells}</div></div>`;
+  const partC=`<section class="part">
+    <div class="modlabel"><span class="t">Part C</span><span class="cn">我们的判断 · 值不值得接 × 这个价位接票划不划算</span><span class="rule"></span></div>
+    ${_rcards('C',rep.C)}
+    ${c4}</section>`;
+
+  // —— Part D ——
+  const risks=(rep.risks&&rep.risks.length?rep.risks:_DEFAULT_RISKS).map(r=>`<li>${r}</li>`).join('');
+  const partD=`<section class="part">
+    <div class="modlabel"><span class="t">Part D</span><span class="cn">风险提示 · 接前必读</span><span class="rule"></span></div>
+    <div class="card"><h2><span class="idx">D·1</span>风险提示</h2><ul class="risk">${risks}</ul></div></section>`;
+
+  const foot=`<div class="foot">本材料仅供参考，不构成投资建议；投资有风险，决策需谨慎。<br>
+    <span class="src">数据来源：富途 OpenAPI · Yahoo Finance 日线收盘 · AI 辅助分析（人工复核中）· 数据截至 ${_esc(spDate)}</span><br>Olive Asset Management · ${_esc(DATA.meta.publishDate)}</div>`;
+
+  return head+nav+partA+partB+partC+partD+foot;
+}
+
 // ═══ 2Y Price History Chart with FCN Levels ═══
 function priceHistorySVG(s){
   const ph=s.priceHistory;
@@ -910,7 +1229,7 @@ function renderFeatured(){
             <div class="section-label mb-3">投资要点</div>
             <div class="space-y-2">${(s.bullets||s.highlights||[]).map(h=>`<div class="highlight-bullet text-ink leading-relaxed">${h}</div>`).join('')}</div>
           </div>
-          ${(s.analysis&&s.analysis.intro)?`<div class="mb-4"><div class="section-label mb-3">公司简介</div><p class="text-ink-2 leading-relaxed text-[13px] line-clamp-4">${s.analysis.intro}</p></div>`:''}
+          ${(()=>{const it=(s.report&&s.report.intro)||(s.analysis&&s.analysis.intro);return it?`<div class="mb-4"><div class="section-label mb-3">公司简介</div><p class="text-ink-2 leading-relaxed text-[13px] line-clamp-4">${it}</p></div>`:''})()}
           ${(s.analysis&&s.analysis.highlights&&s.analysis.highlights.length)?`<div><div class="section-label mb-2">核心亮点</div><div class="space-y-1">${s.analysis.highlights.slice(0,2).map(hl=>`<div class="text-[12px] text-ink-2">${hl.emoji||''} <span class="text-ink-3">${hl.title||''}</span></div>`).join('')}</div></div>`:''}
           <div class="mt-6 flex items-center gap-2 text-gold text-sm hover:text-gold-2 cursor-pointer">
             <span>查看完整分析</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -947,125 +1266,13 @@ function renderFeatured(){
 function renderDetail(code){
   const s=DATA.stocks.find(x=>x.code===code);
   if(!s){navigate('screener');return;}
-  document.getElementById('detail-content').innerHTML=`
-    <div class="mb-8">
-      <div class="flex items-center gap-3 mb-4 flex-wrap">
-        <span class="pill pill-dim">${mktLabel(s.market)}</span>
-        <span class="pill pill-dim">${s.industry}</span>
-        ${riskPill(s.risk)}
-        ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
-        ${s.iv30?`<span class="iv-badge">IV 30日 ${s.iv30}%</span>`:''}
-      </div>
-      <div class="flex items-start justify-between flex-wrap gap-4 mb-2">
-        <div>
-          <h1 class="font-display text-5xl font-medium mb-1">${s.name}</h1>
-          <div class="flex items-center gap-3 text-ink-3">
-            <span class="num text-lg">${s.code}</span>
-            ${s.priceChange!==undefined?fmtChg(s.priceChange):''}
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          ${sparklineSVG(s.sparkline,120,40)}
-        </div>
-      </div>
-    </div>
-
-    <div class="grid lg:grid-cols-[1fr_300px] gap-10 mb-12">
-      <div>
-        <!-- 投资要点 bullets -->
-        <div class="border border-line rounded-xl p-7 bg-bg-2 mb-8">
-          <div class="section-label mb-4">投资要点</div>
-          <div class="space-y-3">
-            ${(s.bullets||s.highlights||[]).map(h=>`<div class="highlight-bullet text-ink leading-relaxed text-[15px]">${h}</div>`).join('')}
-          </div>
-        </div>
-
-        ${(()=>{
-          const ana = s.analysis || {};
-          const parts = [];
-          // 公司简介
-          if(ana.intro) parts.push(`
-            <div class="mb-8">
-              <div class="section-label mb-4">公司简介</div>
-              <p class="text-ink leading-loose text-[15px]">${ana.intro}</p>
-            </div>`);
-          // 业务介绍
-          if(ana.business) parts.push(`
-            <div class="mb-8">
-              <div class="section-label mb-4">业务介绍</div>
-              <div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${ana.business}</div>
-            </div>`);
-          // 核心亮点
-          if(ana.highlights && ana.highlights.length) parts.push(`
-            <div class="mb-8">
-              <div class="section-label mb-5">核心亮点</div>
-              <div class="space-y-5">
-                ${ana.highlights.map(hl=>`
-                  <div class="border border-line rounded-xl p-5 bg-bg-3">
-                    <div class="flex items-start gap-3 mb-2">
-                      <span class="text-2xl">${hl.emoji||'💡'}</span>
-                      <div class="font-medium text-ink text-[15px] leading-snug">${hl.title||''}</div>
-                    </div>
-                    <p class="text-ink-2 leading-loose text-[14px] pl-9">${hl.content||''}</p>
-                  </div>`).join('')}
-              </div>
-            </div>`);
-          // 财务数据
-          if(ana.financials) parts.push(`
-            <div class="mb-8">
-              <div class="section-label mb-4">财务数据</div>
-              <div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${ana.financials}</div>
-            </div>`);
-          // Fallback: old thesis/risks
-          if(!parts.length){
-            if(s.thesis) parts.push(`<div class="mb-8"><div class="section-label mb-4">详细投资逻辑</div><div class="text-ink leading-loose text-[15px] whitespace-pre-wrap">${s.thesis}</div></div>`);
-            if(s.risks)  parts.push(`<div class="border-l-2 border-red pl-5 py-1 mb-8"><div class="text-[11px] tracking-[0.15em] text-red uppercase mb-2">风险提示</div><p class="text-ink-2 leading-relaxed text-sm">${s.risks}</p></div>`);
-          }
-          return parts.join('');
-        })()}
-
-        <!-- 2Y Price History with FCN Levels -->
-        ${priceHistoryCard(s)}
-
-        <!-- Payoff Chart -->
-        <div class="border border-line rounded-xl p-6 bg-bg-2">
-          <div class="section-label mb-1">FCN 到期收益结构</div>
-          <div class="text-xs text-ink-3 mb-4">行权价 ${s.strike}% · 敲入价 ${s.ki}% · 敲出价 ${s.ko||100}% · ${s.kiType} · ${s.tenor} 个月 · 票息 ${s.coupon}% p.a.</div>
-          ${payoffSVG(s.coupon,s.strike,s.ki,s.tenor,s.ko||100)}
-          <div class="flex items-center gap-6 mt-3 text-[11px] text-ink-3 flex-wrap">
-            <div><span class="payoff-legend-dot" style="background:var(--green);display:inline-block;width:16px;height:2px;border-radius:1px;margin-right:5px;border-bottom:2px dashed var(--green);background:none;"></span>无敲入（最优情景）</div>
-            <div><span class="payoff-legend-dot" style="background:var(--gold);"></span>发生敲入（到期价格决定收益）</div>
-            <div><span style="display:inline-block;width:16px;height:2px;border-bottom:2px dashed var(--green);margin-right:5px;vertical-align:middle;opacity:0.8;"></span>KO 敲出线（自动赎回）</div>
-            <div class="text-ink-3 border-l border-line pl-4">盈亏平衡点：约 ${(s.strike*(1-s.coupon*s.tenor/1200)).toFixed(1)}%</div>
-          </div>
-        </div>
-      </div>
-
-      <aside class="self-start lg:sticky lg:top-24 space-y-4">
-        <div class="border border-line rounded-xl p-6 bg-bg-2">
-          <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-1">推荐 FCN 结构</div>
-          <div class="font-display text-5xl text-gold num mb-1">${s.coupon}<span class="text-xl">%</span></div>
-          <div class="text-[11px] text-ink-3 mb-6">年化票息 p.a.</div>
-          <div class="space-y-3 text-sm">
-            <div class="flex justify-between"><span class="text-ink-3">行权价</span><span class="num font-medium">${s.strike}%</span></div>
-            <div class="flex justify-between"><span class="text-ink-3">敲入价</span><span class="num font-medium">${s.ki}%</span></div>
-            <div class="flex justify-between"><span class="text-ink-3">敲出价</span><span class="num font-medium">${s.ko||100}%</span></div>
-            <div class="flex justify-between"><span class="text-ink-3">敲入类型</span><span class="font-medium">${s.kiType}</span></div>
-            <div class="flex justify-between"><span class="text-ink-3">期限</span><span class="num font-medium">${s.tenor} 个月</span></div>
-            ${s.iv30?`<div class="flex justify-between"><span class="text-ink-3">IV 30日</span><span class="iv-badge">${s.iv30}%</span></div>`:''}
-            <div class="flex justify-between pt-3 border-t border-line"><span class="text-ink-3">综合评分</span><span class="num font-medium text-gold">${s.score} / 10</span></div>
-            <div class="flex justify-between"><span class="text-ink-3">风险等级</span>${riskPill(s.risk)}</div>
-          </div>
-          <button class="btn-gold w-full mt-6" style="justify-content:center;">咨询此结构</button>
-        </div>
-
-        ${s.scoreBreakdown?`<div class="border border-line rounded-xl p-6 bg-bg-2">
-          <div class="section-label mb-4">评分细分</div>
-          <div class="space-y-3">${scoreBreakdownHTML(s.scoreBreakdown)}</div>
-        </div>`:''}
-      </aside>
-    </div>`;
-  lucide.createIcons();
+  const el=document.getElementById('detail-content');
+  el.innerHTML='';
+  const host=document.createElement('div');
+  el.appendChild(host);
+  host.attachShadow({mode:'open'}).innerHTML=
+    `<style>${REPORT_CSS}</style><div class="report-body"><div class="wrap">${buildReport(s)}</div></div>`;
+  window.scrollTo(0,0);
 }
 
 // ═══ Admin Auth ═══

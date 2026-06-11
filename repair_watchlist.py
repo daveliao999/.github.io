@@ -30,15 +30,25 @@ from openai import OpenAI
 
 WATCHLIST_JSON = os.path.join(WATCHLIST_DIR, "watchlist.json")
 
-# ── 验证一个 analysis 对象是否完整 ──────────────────────────────────────────
+# ── 验证一个报告 schema 对象是否完整 ────────────────────────────────────────
+REPORT_KEYS = ("tagline", "intro", "B", "C", "health_conc", "c4_prose", "risks")
+
+def _strip_md(v):
+    """**bold** → <b>bold</b>，递归处理。"""
+    if isinstance(v, str):  return re.sub(r'\*\*([^*]+)\*\*', r'<b>\1</b>', v)
+    if isinstance(v, list): return [_strip_md(x) for x in v]
+    if isinstance(v, dict): return {k: _strip_md(x) for k, x in v.items()}
+    return v
+
 def _is_valid(ana: dict) -> tuple[bool, list]:
     issues = []
-    if not ana.get("intro"):        issues.append("missing intro")
-    if not ana.get("business"):     issues.append("missing business")
-    hl = ana.get("highlights") or []
-    if not hl:                      issues.append("missing highlights")
-    elif len(hl) < 3:               issues.append(f"highlights={len(hl)}<3")
-    if not ana.get("financials"):   issues.append("missing financials")
+    if not ana.get("tagline"):              issues.append("missing tagline")
+    if not ana.get("intro"):                issues.append("missing intro")
+    if len(ana.get("B") or []) < 3:         issues.append("B<3")
+    if len(ana.get("C") or []) < 2:         issues.append("C<2")
+    if not ana.get("health_conc"):          issues.append("missing health_conc")
+    if not ana.get("c4_prose"):             issues.append("missing c4_prose")
+    if len(ana.get("risks") or []) < 3:     issues.append("risks<3")
     return (len(issues) == 0), issues
 
 
@@ -70,12 +80,7 @@ def analyze_single(client: OpenAI, s: dict, max_attempts: int = 3) -> dict:
                 time.sleep(6)
                 continue
             ana = results[0]
-            # DeepSeek 有时把字段放在顶层而不是 analysis 子对象
-            if "intro" in ana and "analysis" not in ana:
-                ana = {"analysis": {k: ana[k] for k in ("intro","business","highlights","financials","data_quality") if k in ana},
-                       **{k: ana[k] for k in ana if k not in ("intro","business","highlights","financials","data_quality")}}
-            inner = ana.get("analysis", ana)
-            ok, issues = _is_valid(inner)
+            ok, issues = _is_valid(ana)
             if ok:
                 return ana
             print(f"  ⚠  attempt {attempt+1}: incomplete — {issues}")
@@ -118,8 +123,8 @@ def main():
     else:
         targets = set()
         for s in stocks:
-            ana = s.get("analysis", {})
-            ok, issues = _is_valid(ana)
+            rep = s.get("report") or {}
+            ok, issues = _is_valid(rep)
             if not ok:
                 targets.add(s["code"])
                 print(f"  检测到问题: {s['code']} — {issues}")
@@ -162,13 +167,12 @@ def main():
         if not ana:
             print(f"  ❌  跳过 {code}"); continue
 
-        # 写回 stocks 列表
-        inner = ana.get("analysis", ana)
-        stock_entry["analysis"]    = inner
+        # 写回 stocks 列表（新报告 schema；保留旧 analysis 字段不动，前端优先读 report）
+        stock_entry["report"]      = _strip_md({k: ana.get(k) for k in REPORT_KEYS})
         stock_entry["bullets"]     = ana.get("bullets", stock_entry.get("bullets", []))
         stock_entry["name_en"]     = ana.get("name_en") or stock_entry.get("name_en", "")
         stock_entry["industry"]    = ana.get("sector")  or stock_entry.get("industry", "")
-        stock_entry["data_quality"] = inner.get("data_quality", {})
+        stock_entry["data_quality"] = ana.get("data_quality", {})
         fixed += 1
         print(f"  ✅  {code} 修复完成")
 
