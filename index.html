@@ -229,22 +229,23 @@
 
     <!-- ── Horizontal Filter Bar ── -->
     <div class="mb-7 p-5 rounded-2xl border border-line" style="background:var(--bg-2);">
-      <!-- Row 1: Industry + Market -->
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-4">
-        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">行业</span>
-        <div class="flex flex-wrap gap-1.5" id="filter-industry"></div>
-        <div class="w-px h-3.5 bg-line mx-1 hidden md:block self-center shrink-0"></div>
-        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">市场</span>
+      <!-- Row 1: Industry -->
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-3 mb-4">
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0 w-8">行业</span>
+        <div class="flex flex-wrap gap-1.5 flex-1 min-w-0" id="filter-industry"></div>
+      </div>
+      <!-- Row 2: Market -->
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-3 mb-4">
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0 w-8">市场</span>
         <div class="flex flex-wrap gap-1.5" id="filter-market">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="US">美股</div>
           <div class="check-chip" data-val="HK">港股</div>
-          <div class="check-chip" data-val="CN">A 股</div>
         </div>
       </div>
-      <!-- Row 2: Yield + Score + Reset -->
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-3 pt-4 border-t border-line">
-        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0">票息</span>
+      <!-- Row 3: Yield + Score + Reset -->
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-3 pt-4 border-t border-line">
+        <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0 w-8">票息</span>
         <div class="flex flex-wrap gap-1.5" id="filter-yield">
           <div class="check-chip active" data-val="all">全部</div>
           <div class="check-chip" data-val="10-15">10–15%</div>
@@ -459,7 +460,7 @@ function navigate(view,param){
 }
 
 // ═══ Helpers ═══
-const mktLabel=m=>({US:'美股',HK:'港股',CN:'A股'}[m]||m);
+const mktLabel=m=>({US:'美股',HK:'港股'}[m]||m);
 const riskPill=r=>r==='低'?'<span class="pill pill-green">低风险</span>':r==='中'?'<span class="pill pill-gold">中风险</span>':'<span class="pill pill-red">高风险</span>';
 const fmtChg=v=>{const up=v>=0;return`<span class="inline-flex items-center gap-1 rounded-full font-mono font-medium num" style="font-size:11px;padding:3px 9px;background:${up?'rgba(0,200,5,0.11)':'rgba(244,63,94,0.11)'};color:${up?'var(--green)':'var(--red)'};">${up?'↑':'↓'}&thinsp;${up?'+':''}${v.toFixed(1)}%</span>`;};
 
@@ -622,7 +623,7 @@ function renderHeroStats(){
 const ALL_INDUSTRIES=['AI半导体','新能源','消费','金融','医药','互联网'];
 const ALL_RISKS=['低','中','高'];
 const ALL_KI_TYPES=['欧式敲入','美式敲入'];
-const ALL_MARKETS=[{v:'US',l:'美股'},{v:'HK',l:'港股'},{v:'CN',l:'A股'}];
+const ALL_MARKETS=[{v:'US',l:'美股'},{v:'HK',l:'港股'}];
 let filters={industry:'all',yield:'all',market:'all',score:7};
 let sortBy='score';
 

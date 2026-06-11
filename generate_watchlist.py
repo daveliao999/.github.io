@@ -345,7 +345,7 @@ def get_futu_context(futu_code: str, display_code: str) -> str:
     return "\n".join(lines)
 
 
-# ── Claude prompts ────────────────────────────────────────────────────────────
+# ── DeepSeek prompts ──────────────────────────────────────────────────────────
 SYSTEM_PROMPT = """\
 你是一位专业的私人银行 FCN（固定票息票据）结构化产品分析师，服务对象是香港/新加坡的高净值客户。
 
@@ -489,12 +489,12 @@ def main():
     parser.add_argument("--top",          type=int, default=TOP_N)
     parser.add_argument("--dry-run",      action="store_true", help="First 5 stocks only")
     parser.add_argument("--no-sparkline", action="store_true", help="Skip yfinance")
-    parser.add_argument("--no-claude",    action="store_true", help="Skip Kimi API")
+    parser.add_argument("--no-ai",        action="store_true", help="Skip DeepSeek API")
     parser.add_argument("--week",         default=None,        help="Override week e.g. W24")
     args = parser.parse_args()
 
     api_key = os.environ.get("DEEPSEEK_API_KEY")
-    if not api_key and not args.no_claude:
+    if not api_key and not args.no_ai:
         print("❌  DEEPSEEK_API_KEY not set"); sys.exit(1)
 
     client = OpenAI(api_key=api_key, base_url=API_BASE) if api_key else None
@@ -591,7 +591,7 @@ def main():
             s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
         print("\n[2/4] Sparklines skipped (--no-sparkline)")
 
-    # ── 3. Claude analysis ────────────────────────────────────────────────────
+    # ── 3. DeepSeek analysis ──────────────────────────────────────────────────
     def _validate_ana(ana: dict) -> tuple[bool, list]:
         """Check all required fields are present and non-empty."""
         inner = ana.get("analysis", ana)
@@ -605,7 +605,7 @@ def main():
         return len(issues) == 0, issues
 
     analysis_map = {}
-    if not args.no_claude:
+    if not args.no_ai:
         print(f"\n[3/4] Generating analysis ({MODEL})...")
         batches   = [stocks[i:i+BATCH_SIZE] for i in range(0, len(stocks), BATCH_SIZE)]
         completed = 0
@@ -648,7 +648,7 @@ def main():
             else:
                 print(f"  ❌  {s['display_code']} 重试耗尽，保留空分析")
     else:
-        print("\n[3/4] Claude skipped (--no-claude)")
+        print("\n[3/4] DeepSeek skipped (--no-ai)")
 
     # ── 4. Merge and write ────────────────────────────────────────────────────
     def _strip_md_bold(text: str) -> str:
@@ -727,13 +727,6 @@ def main():
             "publishDate": today.strftime("%Y-%m-%d"),
             "nextUpdate":  (today + timedelta(days=7)).strftime("%Y-%m-%d"),
             "featuredIds": featured,
-            "marketSnapshot": {
-                "spx":"","spxChg":"","spxUp":True,
-                "ndx":"","ndxChg":"","ndxUp":True,
-                "hsi":"","hsiChg":"","hsiUp":True,
-                "vix":"","vixChg":"","vixUp":False,
-                "dxy":"","dxyChg":"","dxyUp":True,
-            }
         },
         "stocks": output_stocks
     }

@@ -17,24 +17,7 @@
       "ORCL.US",
       "DELL.US",
       "WDC.US"
-    ],
-    "marketSnapshot": {
-      "spx": "",
-      "spxChg": "",
-      "spxUp": true,
-      "ndx": "",
-      "ndxChg": "",
-      "ndxUp": true,
-      "hsi": "",
-      "hsiChg": "",
-      "hsiUp": true,
-      "vix": "",
-      "vixChg": "",
-      "vixUp": false,
-      "dxy": "",
-      "dxyChg": "",
-      "dxyUp": true
-    }
+    ]
   },
   "stocks": [
     {
