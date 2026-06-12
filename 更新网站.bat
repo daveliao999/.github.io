@@ -21,8 +21,8 @@ if errorlevel 1 goto :err
 
 echo.
 echo [3/4] 提交更改...
-git add watchlist.json 稳健组类型.xlsx 进取组类型.xlsx 市场热度榜.xlsx
-git commit -m "weekly update %date:~0,10%"
+git add -A
+git commit -m "weekly update"
 
 echo.
 echo [4/4] 推送上线...
