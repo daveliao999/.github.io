@@ -18,7 +18,71 @@
       "TSLA.US",
       "CRWV.US",
       "PLTR.US"
-    ]
+    ],
+    "marketHotspot": {
+      "generatedAt": "2026-06-12",
+      "weekRange": "2026/6/8-2026/6/12",
+      "us": {
+        "items": [
+          {
+            "headline": "半导体暴跌，纳指创 2025 年 4 月以来最大单日跌幅",
+            "facts": "6 月 4–5 日纳指单日重挫 4%，芯片板块蒸发约 1 万亿美元市值。导火索是博通未上调 AI 芯片指引，叠加 5 月非农远超预期推高美债收益率。",
+            "stance": "bearish",
+            "impact": "利空半导体及 AI 硬件板块——龙头指引不及预期削弱市场对 AI 资本开支持续性的信心，高利率环境同时压制高估值成长股。属情绪与估值层面回调，基本面未见恶化。",
+            "sources": [
+              {
+                "title": "TheStreet · 美股 6/5",
+                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-05-2026"
+              },
+              {
+                "title": "CNBC · 纳指 6/4",
+                "url": "https://www.cnbc.com/2026/06/04/stock-market-today-live-updates.html"
+              }
+            ]
+          },
+          {
+            "headline": "5 月非农超预期，美联储降息预期大幅降温",
+            "facts": "5 月新增非农就业远超市场预期，美债收益率跳升。市场对美联储维持 3.50–3.75% 利率不变的预期升温，降息概率从约 47% 回落至 27%。",
+            "stance": "neutral",
+            "impact": "对板块影响分化——融资成本预期上行压制高估值成长与利率敏感板块；相对利好银行等受益于高利率息差的金融板块，资金呈现由成长向价值轮动的迹象。",
+            "sources": [
+              {
+                "title": "TheStreet · 美股 6/5",
+                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-05-2026"
+              }
+            ]
+          }
+        ]
+      },
+      "hk": {
+        "items": [
+          {
+            "headline": "恒指收复失地涨 0.6% 至 25,540，科技服务板块飙 12.6%",
+            "facts": "在地缘风险缓和与香港 4 月通胀稳于 1.7% 的背景下，恒指收复前一日跌幅。科技服务板块大涨 12.6%，中芯国际、联想放量领涨，腾讯、舜宇光学、小米跟涨。",
+            "stance": "bullish",
+            "impact": "利好港股科技与半导体板块——风险偏好回升带动资金回流硬件与互联网龙头；通胀温和降低了政策收紧压力，为板块估值修复提供空间。",
+            "sources": [
+              {
+                "title": "腾讯港股 · 恒生指数新闻",
+                "url": "https://gu.qq.com/hkHSI/zs/news"
+              }
+            ]
+          },
+          {
+            "headline": "美伊缓和预期提振风险偏好，资金回流金融与周期板块",
+            "facts": "伊朗对美国最新提案持积极态度，市场对冲突降级的预期升温，带动隔夜美股走强并外溢至港股，投资者风险偏好改善。",
+            "stance": "bullish",
+            "impact": "利好顺周期与金融板块——地缘不确定性下降通常压低避险资产、抬升风险资产估值；但属事件驱动，若局势反复，情绪面利好可能快速逆转。",
+            "sources": [
+              {
+                "title": "腾讯港股 · 恒生指数新闻",
+                "url": "https://gu.qq.com/hkHSI/zs/news"
+              }
+            ]
+          }
+        ]
+      }
+    }
   },
   "stocks": [
     {

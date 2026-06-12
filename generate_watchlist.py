@@ -526,6 +526,117 @@ def analyze_batch(client: OpenAI, batch: list) -> list:
                 return []
     return []
 
+# ── 本周热点分析（美股 + 港股均用 Google News RSS → DeepSeek 综述，免 key）────────
+def _google_news(query, hl, gl, ceid, limit=40):
+    """通用 Google News RSS 抓取。失败返回 []。"""
+    try:
+        import feedparser, urllib.parse
+    except ImportError:
+        print("  ⚠  未安装 feedparser，跳过新闻抓取"); return []
+    url = (f"https://news.google.com/rss/search?q={urllib.parse.quote(query)}"
+           f"&hl={hl}&gl={gl}&ceid={ceid}")
+    try:
+        entries = feedparser.parse(url).entries[:limit]
+    except Exception as e:
+        print(f"  ⚠  新闻获取失败({gl}): {e}"); return []
+    out = []
+    for e in entries:
+        src = getattr(getattr(e, "source", None), "title", "") or ""
+        out.append({"title": getattr(e, "title", ""),
+                    "summary": re.sub(r"<[^>]+>", "", getattr(e, "summary", ""))[:280],
+                    "source": src, "url": getattr(e, "link", "")})
+    return [x for x in out if x["title"]]
+
+def _fetch_us_news(limit=40):
+    """美股近期市场新闻（Google News 英文 RSS）。"""
+    return _google_news("US stock market OR S&P 500 OR Nasdaq OR Federal Reserve OR earnings",
+                        "en-US", "US", "US:en", limit)
+
+def _fetch_hk_news(limit=40):
+    """港股近期市场新闻（Google News 中文 RSS）。"""
+    return _google_news("恒生指数 OR 港股 OR 香港股市 OR 港股通",
+                        "zh-HK", "HK", "HK:zh-Hant", limit)
+
+HOTSPOT_SYSTEM = (
+    "你是港美股市场分析师，为结构化产品客户撰写每周市场简报。"
+    "只能依据用户提供的真实新闻列表，严禁使用你自己记忆中的任何信息，"
+    "严禁编造未在列表中出现的事件、公司、数字或日期。只输出 JSON。"
+)
+
+HOTSPOT_PROMPT = """下面是过去 7 日抓取的真实新闻（美股、港股均来自 Google News）。
+
+【美股新闻】
+{us_news}
+
+【港股新闻】
+{hk_news}
+
+请分别为【美股】和【港股】各挑选 2 条最重要的"市场级/板块级"新闻（不要选个股研报、机构持仓变动这类碎片新闻），输出如下 JSON：
+
+{{
+  "us": {{"items": [
+    {{
+      "headline": "中文标题，结论先行，≤30字",
+      "facts": "事实陈述，40-90字，只能用上方新闻列表中出现的信息，可含具体数字",
+      "stance": "bullish | bearish | neutral",
+      "impact": "板块层面的利好/利空判断 + 传导机制，40-90字",
+      "sources": [{{"title": "来源名 · 简述", "url": "列表中对应新闻的真实 url"}}]
+    }}
+  ]}},
+  "hk": {{"items": [ ...同上 2 条... ]}}
+}}
+
+硬性要求：
+1. facts 与 sources 的信息必须来自上方列表，url 必须是列表中真实出现的链接，不得虚构。
+2. impact 只讲对"板块"或"新闻主角公司"的事实性影响（如何利好/利空及其逻辑）；
+   严禁出现"票息""敲入""敲出""FCN""结构化产品""票据"等任何衍生品定价词汇，
+   严禁预测我们推荐标的的任何衍生品条款变化。
+3. stance 取该新闻对相关板块的总体方向：利多=bullish，利空=bearish，多空分化/中性=neutral。
+4. 每个市场恰好 2 条。只输出 JSON，不要任何额外文字。"""
+
+def get_market_hotspot(client, today):
+    """抓取美股+港股新闻 → DeepSeek 综述 → 返回 marketHotspot dict；任一环节失败返回 None。"""
+    us_raw = _fetch_us_news()
+    hk_raw = _fetch_hk_news()
+    if not us_raw and not hk_raw:
+        print("  ⚠  美股、港股新闻均为空，跳过本周热点分析"); return None
+    if client is None:
+        print("  ⚠  无 DeepSeek client（--no-ai），跳过本周热点分析"); return None
+
+    def _fmt(items, n=30):
+        return "\n".join(
+            f"- {x['title']}（{x.get('source','')}{('·'+x['sentiment']) if x.get('sentiment') else ''}）"
+            f" {x.get('summary','')}\n  url: {x['url']}"
+            for x in items[:n]) or "（无）"
+
+    prompt = HOTSPOT_PROMPT.format(us_news=_fmt(us_raw), hk_news=_fmt(hk_raw))
+    for attempt in range(3):
+        try:
+            resp = client.chat.completions.create(
+                model=MODEL, max_tokens=3500,
+                messages=[{"role": "system", "content": HOTSPOT_SYSTEM},
+                          {"role": "user",   "content": prompt}])
+            txt = resp.choices[0].message.content.strip()
+            txt = re.sub(r'^```(?:json)?\s*', '', txt, flags=re.MULTILINE)
+            txt = re.sub(r'\s*```\s*$', '', txt, flags=re.MULTILINE)
+            m = re.search(r'\{[\s\S]*\}', txt)
+            data = json.loads(m.group()) if m else json.loads(txt)
+            us_items = (data.get("us") or {}).get("items") or []
+            hk_items = (data.get("hk") or {}).get("items") or []
+            if not us_items and not hk_items:
+                raise ValueError("empty items")
+            # 计算本工作周区间（周一至周五）
+            mon = today - timedelta(days=today.weekday())
+            fri = mon + timedelta(days=4)
+            wk = lambda d: f"{d.year}/{d.month}/{d.day}"
+            print(f"  ✅  本周热点：美股 {len(us_items)} 条 · 港股 {len(hk_items)} 条")
+            return {"generatedAt": today.strftime("%Y-%m-%d"),
+                    "weekRange": f"{wk(mon)}-{wk(fri)}",
+                    "us": {"items": us_items}, "hk": {"items": hk_items}}
+        except Exception as e:
+            print(f"  ⚠  热点综述 attempt {attempt+1} 失败: {e}"); time.sleep(6)
+    print("  ❌  本周热点分析生成失败（3 次尝试）"); return None
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate FCN watchlist.json from Excel")
@@ -881,6 +992,19 @@ def main():
             _seen.update(picked); featured.extend(picked)
     else:
         featured = [s['code'] for s in output_stocks[:5]]
+
+    # ── 本周热点分析：生成失败则保留上一版（板块永不留白）──
+    print("\n[+] 生成本周热点分析（美股 Alpha Vantage + 港股 Google News → DeepSeek）...")
+    hotspot = get_market_hotspot(client, today)
+    if hotspot is None and os.path.exists(args.output):
+        try:
+            prev = json.load(open(args.output, encoding="utf-8"))
+            hotspot = (prev.get("meta") or {}).get("marketHotspot")
+            if hotspot:
+                print("  ↪  沿用上一版本周热点分析")
+        except Exception:
+            pass
+
     watchlist = {
         "_generated": {
             "by":    "generate_watchlist.py",
@@ -895,6 +1019,7 @@ def main():
             "publishDate": today.strftime("%Y-%m-%d"),
             "nextUpdate":  (today + timedelta(days=7)).strftime("%Y-%m-%d"),
             "featuredIds": featured,
+            "marketHotspot": hotspot,
         },
         "stocks": output_stocks
     }

@@ -212,6 +212,26 @@
   .fp-more:hover{color:var(--ink);}
   @media(max-width:680px){.fp-h{grid-template-columns:1fr;}.fp-h .fp-item{flex-direction:row;align-items:center;border-right:none;border-bottom:1px solid var(--line-2);padding:10px 0;}.fp-h .fp-item:first-child{padding-left:0;}}
 
+  /* ── 本周热点分析 ── */
+  .hs-col{border:1px solid var(--line);border-radius:2px;background:var(--bg);padding:20px 22px;position:relative;}
+  .hs-col::before{content:'';position:absolute;top:0;left:0;width:36px;height:3px;background:var(--khaki);}
+  .hs-col-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+  .hs-mkt{font-size:15px;font-weight:600;color:var(--ink);}
+  .hs-mkt-en{font-family:var(--font-en);font-size:10px;letter-spacing:0.16em;color:var(--ink-3);text-transform:uppercase;}
+  .hs-item{padding:14px 0;border-bottom:1px solid var(--line-2);}
+  .hs-item:first-of-type{padding-top:0;}
+  .hs-item:last-child{border-bottom:none;padding-bottom:0;}
+  .hs-headline{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45;margin-bottom:6px;}
+  .hs-facts{font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:9px;}
+  .hs-impact{display:flex;gap:8px;font-size:13px;color:var(--ink-2);line-height:1.55;align-items:baseline;}
+  .hs-tag{flex-shrink:0;font-size:11px;font-weight:600;padding:1px 7px;border-radius:2px;white-space:nowrap;}
+  .hs-bull{background:var(--green-soft);color:var(--green-ink);}
+  .hs-bear{background:transparent;color:var(--red);border:1px solid var(--line);}
+  .hs-neutral{background:var(--bg-2);color:var(--ink-3);}
+  .hs-srcs{margin-top:9px;display:flex;flex-wrap:wrap;gap:12px;}
+  .hs-src{font-size:11px;color:var(--ink-3);text-decoration:underline;text-underline-offset:2px;}
+  .hs-src:hover{color:var(--ink);}
+
   /* ── Responsive ── */
   @media(max-width:768px){
     .hide-mobile{display:none!important;}
@@ -247,6 +267,18 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div id="panel-stable" class="float-panel"></div>
         <div id="panel-growth" class="float-panel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 本周热点分析（无数据时自动隐藏）── -->
+  <section id="market-hotspot" class="border-b border-line" style="display:none;">
+    <div class="max-w-[1400px] mx-auto px-6 py-10">
+      <div class="section-label">本周热点分析 · Weekly Market Briefing</div>
+      <p class="text-ink-3 text-sm mt-3 mb-7" id="hotspot-range"></p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="hotspot-us"></div>
+        <div id="hotspot-hk"></div>
       </div>
     </div>
   </section>
@@ -1145,6 +1177,41 @@ function renderStrategySection(){
   document.getElementById('type-tabs').style.display='';
 }
 
+// 本周热点分析：美股 + 港股，过去 7 日重点新闻 + 板块影响（数据来自 meta.marketHotspot）
+function renderMarketHotspot(){
+  const mh=DATA.meta&&DATA.meta.marketHotspot;
+  if(!mh||((!mh.us||!(mh.us.items||[]).length)&&(!mh.hk||!(mh.hk.items||[]).length)))return;
+  const range=document.getElementById('hotspot-range');
+  if(range)range.textContent=`聚焦过去 7 日${mh.weekRange?`（${mh.weekRange}）`:''}美股与港股最重要的市场动向及其板块影响`;
+  const us=document.getElementById('hotspot-us'),hk=document.getElementById('hotspot-hk');
+  us.innerHTML=hotspotColumn('美股','US',mh.us);
+  hk.innerHTML=hotspotColumn('港股','HK',mh.hk);
+  us.style.display=us.innerHTML?'':'none';
+  hk.style.display=hk.innerHTML?'':'none';
+  document.getElementById('market-hotspot').style.display='';
+}
+
+function hotspotColumn(label,mkt,block){
+  if(!block||!(block.items||[]).length)return'';
+  const items=block.items.map(it=>{
+    const st=it.stance==='bullish'?{cls:'hs-bull',txt:'利好'}
+            :it.stance==='bearish'?{cls:'hs-bear',txt:'利空'}
+            :{cls:'hs-neutral',txt:'中性'};
+    const src=(it.sources||[]).map(s=>
+      `<a href="${_esc(s.url)}" target="_blank" rel="noopener" class="hs-src">${_esc(s.title)}</a>`).join('');
+    return`<div class="hs-item">
+      <div class="hs-headline">${_esc(it.headline)}</div>
+      <p class="hs-facts">${_esc(it.facts)}</p>
+      <div class="hs-impact"><span class="hs-tag ${st.cls}">${st.txt}</span><span>${_esc(it.impact)}</span></div>
+      ${src?`<div class="hs-srcs">${src}</div>`:''}
+    </div>`;
+  }).join('');
+  return`<div class="hs-col">
+    <div class="hs-col-head"><span class="hs-mkt">${label}</span><span class="hs-mkt-en">${mkt}</span></div>
+    ${items}
+  </div>`;
+}
+
 // 顶部三大策略浮层：各取票息最高的 3 只；热度横排、稳健/进取竖排
 function renderTopPanels(){
   if(!hasTypes())return;
@@ -1739,6 +1806,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderHeroStats();
   renderStrategySection();
   renderTopPanels();
+  renderMarketHotspot();
   setupFilters();
   renderScreener();
   lucide.createIcons();

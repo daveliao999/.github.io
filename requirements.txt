@@ -4,3 +4,4 @@ yfinance
 openai
 json_repair
 futu-api
+feedparser
