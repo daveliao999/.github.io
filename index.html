@@ -6,98 +6,117 @@
 <title>Olive Asset Management · 私行结构化产品平台</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0A0A0B; --bg-2:#111113; --bg-3:#18181B;
-    --line:#27272A; --line-2:#3F3F46;
-    --ink:#FAFAFA; --ink-2:#A1A1AA; --ink-3:#71717A;
-    --gold:#C9A86A; --gold-2:#E6CC8F;
-    --gold-soft:rgba(201,168,106,0.12);
-    --green:#00C805; --green-soft:rgba(0,200,5,0.10);
-    --red:#F43F5E;
+    /* Noah's ARK tokens — 纯白 · 扁平 · 5 色上限（变量名沿用旧站，值全部来自 tokens.css，禁止自创） */
+    --bg:#FFFFFF; --bg-2:#FAFAFA; --bg-3:#F1F3F5;
+    --line:#E5E7EB; --line-2:#9CA3AA;
+    --ink:#0F1214; --ink-2:#3A3F44; --ink-3:#6B7177;
+    --gold:#C8A96A; --gold-2:#8C7235;
+    --gold-soft:#F4ECDB;
+    --green:#00B050; --green-ink:#007A37; --green-soft:#E8F6EE;
+    --red:#C0392B;
+    --khaki:#E4DDC9; --khaki-ink:#5C5240; --khaki-soft:#F1ECDD;
+    --overlay:rgba(15,18,20,0.55);
+    --font-cn:'PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','HarmonyOS Sans SC','Source Han Sans CN','Noto Sans SC',system-ui,sans-serif;
+    --font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);
+    --font-num:'DIN Next','DIN Pro','Roboto','Inter',sans-serif;
+    --font-mono:'Roboto Mono','SF Mono',Menlo,monospace;
   }
   *{-webkit-font-smoothing:antialiased;box-sizing:border-box;}
-  html,body{background:var(--bg);color:var(--ink);font-family:'Inter','PingFang SC','Microsoft YaHei',sans-serif;margin:0;}
-  .font-display{font-family:'Fraunces','Noto Serif SC',serif;letter-spacing:-0.02em;}
-  .font-serif-cn{font-family:'Noto Serif SC',serif;}
-  .font-mono{font-family:'JetBrains Mono',monospace;}
-  .font-script{font-family:'Great Vibes',cursive;}
-  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
-  .text-gold{color:var(--gold);} .text-gold-2{color:var(--gold-2);}
-  .text-green{color:var(--green);} .text-red{color:var(--red);}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--font-en);margin:0;}
+  .font-display{font-family:var(--font-en);font-weight:600;letter-spacing:-0.01em;}
+  .font-serif-cn{font-family:var(--font-cn);font-weight:700;}
+  .font-mono{font-family:var(--font-mono);}
+  .font-script{font-family:var(--font-en);font-style:italic;}
+  .num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  .text-gold{color:var(--gold-2);} .text-gold-2{color:var(--gold-2);}
+  .text-green{color:var(--green-ink);} .text-red{color:var(--red);}
   .bg-bg{background:var(--bg);} .bg-bg-2{background:var(--bg-2);} .bg-bg-3{background:var(--bg-3);}
   .border-line{border-color:var(--line);}
 
-  /* ── Buttons ── */
-  .btn-gold{background:var(--gold);color:#0A0A0B;font-weight:600;padding:10px 22px;border-radius:999px;font-size:13px;transition:all .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;}
-  .btn-gold:hover{background:var(--gold-2);transform:translateY(-1px);box-shadow:0 8px 20px rgba(201,168,106,0.25);}
-  .btn-outline{border:1px solid var(--line-2);color:var(--ink);padding:10px 22px;border-radius:999px;font-size:13px;background:transparent;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;}
-  .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+  /* ── Buttons（扁平 · 2px 圆角 · 无阴影）── */
+  .btn-gold{background:var(--ink);color:#FFFFFF;font-weight:600;padding:10px 22px;border-radius:2px;font-size:13px;transition:background .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;}
+  .btn-gold:hover{background:var(--ink-2);}
+  .btn-outline{border:1px solid var(--line-2);color:var(--ink);padding:10px 22px;border-radius:2px;font-size:13px;background:transparent;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;}
+  .btn-outline:hover{border-color:var(--ink);}
   .btn-ghost{color:var(--ink-2);padding:8px 14px;font-size:13px;transition:color .15s;background:transparent;border:none;cursor:pointer;display:inline-flex;align-items:center;}
   .btn-ghost:hover{color:var(--ink);}
-  .btn-danger{background:rgba(244,63,94,0.12);color:var(--red);border:1px solid rgba(244,63,94,0.3);padding:6px 12px;border-radius:6px;font-size:12px;transition:all .15s;cursor:pointer;}
-  .btn-danger:hover{background:rgba(244,63,94,0.2);}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid var(--line);padding:6px 12px;border-radius:2px;font-size:12px;transition:all .15s;cursor:pointer;}
+  .btn-danger:hover{border-color:var(--red);}
 
-  /* ── Pills ── */
-  .pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;}
-  .pill-gold{background:var(--gold-soft);color:var(--gold-2);border:1px solid rgba(201,168,106,0.25);}
-  .pill-green{background:var(--green-soft);color:var(--green);border:1px solid rgba(0,200,5,0.25);}
-  .pill-red{background:rgba(244,63,94,0.10);color:var(--red);border:1px solid rgba(244,63,94,0.25);}
-  .pill-dim{background:var(--bg-3);color:var(--ink-2);border:1px solid var(--line);}
+  /* ── Pills（方角标签 · 禁药丸形）── */
+  .pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:2px;font-size:11px;font-weight:500;}
+  .pill-gold{background:var(--gold-soft);color:var(--gold-2);border:1px solid var(--gold-soft);}
+  .pill-green{background:var(--green-soft);color:var(--green-ink);border:1px solid var(--green-soft);}
+  .pill-red{background:transparent;color:var(--red);border:1px solid var(--line);}
+  .pill-dim{background:var(--bg-2);color:var(--ink-3);border:1px solid var(--line);}
 
   /* ── Nav ── */
   .nav-link{color:var(--ink-2);font-size:14px;padding:8px 14px;cursor:pointer;position:relative;transition:color .15s;}
   .nav-link:hover{color:var(--ink);}
-  .nav-link.active{color:var(--ink);}
-  .nav-link.active::after{content:'';position:absolute;bottom:-22px;left:14px;right:14px;height:1px;background:var(--gold);}
+  .nav-link.active{color:var(--ink);font-weight:600;}
+  .nav-link.active::after{content:'';position:absolute;bottom:-22px;left:14px;right:14px;height:2px;background:var(--green);}
 
 
-  /* ── Section label ── */
-  .section-label{font-size:11px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;font-weight:500;}
+  /* ── Section label（英文分类标签 · 灰 · 加宽字距 · 上方祖母绿短线）── */
+  .section-label{font-family:var(--font-en);font-size:11px;letter-spacing:0.2em;color:var(--ink-3);text-transform:uppercase;font-weight:600;}
+  .section-label::before{content:'';display:block;width:32px;height:3px;background:var(--green);margin-bottom:10px;}
 
   /* ── Hero stat cards ── */
-  .stat-card{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px 22px;transition:border-color .2s;}
-  .stat-card:hover{border-color:rgba(201,168,106,0.3);}
-  .stat-num{font-family:'Fraunces',serif;font-weight:500;font-variant-numeric:tabular-nums;}
+  .stat-card{background:var(--bg-2);border:1px solid var(--line);border-radius:2px;padding:18px 22px;transition:border-color .2s;}
+  .stat-card:hover{border-color:var(--line-2);}
+  .stat-num{font-family:var(--font-num);font-weight:700;font-variant-numeric:tabular-nums;}
 
   /* ── Check chips ── */
-  .check-chip{padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:12px;cursor:pointer;user-select:none;transition:all .15s;color:var(--ink-2);background:var(--bg-2);}
-  .check-chip.active{background:var(--gold);color:#0A0A0B;border-color:var(--gold);}
-  .check-chip:not(.active):hover{border-color:var(--gold);color:var(--gold);}
+  .check-chip{padding:6px 14px;border:1px solid var(--line);border-radius:2px;font-size:12px;cursor:pointer;user-select:none;transition:all .15s;color:var(--ink-2);background:var(--bg);}
+  .check-chip.active{background:var(--ink);color:#FFFFFF;border-color:var(--ink);}
+  .check-chip:not(.active):hover{border-color:var(--ink);color:var(--ink);}
 
   /* ── Inputs ── */
   select,input[type="text"],input[type="number"],input[type="password"],textarea{
-    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
-    border-radius:8px;padding:9px 12px;font-size:13px;
+    background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    border-radius:2px;padding:9px 12px;font-size:13px;
     font-family:inherit;width:100%;outline:none;transition:border-color .15s;
   }
   select{appearance:none;-webkit-appearance:none;padding-right:32px;
-    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7177' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat:no-repeat;background-position:right 10px center;
   }
   textarea{resize:vertical;min-height:80px;font-family:inherit;line-height:1.6;}
-  select:focus,input:focus,textarea:focus{border-color:var(--gold);}
+  select:focus,input:focus,textarea:focus{border-color:var(--ink);}
 
   /* ── Range ── */
-  input[type="range"]{-webkit-appearance:none;height:2px;background:var(--line-2);border-radius:2px;outline:none;width:100%;}
-  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--gold);border-radius:50%;cursor:pointer;box-shadow:0 0 0 4px rgba(201,168,106,0.15);}
+  input[type="range"]{-webkit-appearance:none;height:2px;background:var(--line);border-radius:0;outline:none;width:100%;}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--ink);border-radius:50%;cursor:pointer;}
 
   /* ── Views ── */
   .view{display:none;}
   .view.active{display:block;animation:fadeIn .35s cubic-bezier(.4,0,.2,1);}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-  /* ── Stock card ── */
+  /* ── Stock card（扁平 · 2px 圆角 · 无阴影/渐变）── */
   .stock-card{
-    border:1px solid var(--line);border-radius:14px;padding:24px;cursor:pointer;position:relative;overflow:hidden;
-    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(201,168,106,0.055) 0%, transparent 55%), var(--bg);
-    transition:border-color .25s, box-shadow .25s, transform .25s, background .15s;
+    border:1px solid var(--line);border-radius:2px;padding:24px;cursor:pointer;position:relative;overflow:hidden;
+    background:var(--bg);
+    transition:border-color .2s, background .15s;
   }
-  .stock-card:hover{
-    border-color:rgba(201,168,106,0.5);
-    transform:translateY(-2px);
-    box-shadow:0 0 0 1px rgba(201,168,106,0.12), 0 16px 48px rgba(0,0,0,0.45);
+  .stock-card:hover{border-color:var(--line-2);}
+
+  /* ── Stock row（列表式呈现）── */
+  .stock-list{border:1px solid var(--line);border-radius:2px;overflow:hidden;background:var(--bg);}
+  .row-head,.stock-row{display:grid;grid-template-columns:minmax(195px,1.05fr) minmax(0,1.5fr) 150px 180px 110px 22px;gap:18px;align-items:center;}
+  .row-head{padding:11px 24px;font-size:10.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.13em;border-bottom:1px solid var(--line);background:var(--bg-2);}
+  .stock-row{border:none;border-radius:0;padding:18px 24px;}
+  .stock-row+.stock-row{border-top:1px solid var(--line);}
+  .stock-row:nth-child(even){background:var(--bg-2);}
+  .stock-row:hover{border-color:transparent;background:var(--khaki-soft);}
+  .col-coupon{text-align:right;}
+  @media(max-width:1023px){
+    .row-head{display:none;}
+    .stock-row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"id coupon" "pts pts" "mkt terms";row-gap:13px;}
+    .col-id{grid-area:id;} .col-coupon{grid-area:coupon;} .col-pts{grid-area:pts;} .col-mkt{grid-area:mkt;} .col-terms{grid-area:terms;text-align:right;} .col-arrow{display:none;}
   }
 
   /* ── Card entrance animation ── */
@@ -108,25 +127,25 @@
   .card-enter{opacity:0;animation:cardIn .42s cubic-bezier(.22,.68,0,1.2) forwards;}
 
   /* ── IV badge ── */
-  .iv-badge{background:rgba(201,168,106,0.08);border:1px solid rgba(201,168,106,0.2);border-radius:6px;padding:2px 7px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold-2);letter-spacing:0.02em;}
+  .iv-badge{background:var(--gold-soft);border:1px solid var(--gold-soft);border-radius:2px;padding:2px 7px;font-size:11px;font-family:var(--font-num);color:var(--gold-2);letter-spacing:0.02em;}
 
   /* ── Score bar ── */
-  .score-bar-wrap{height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
-  .score-bar-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .8s cubic-bezier(.4,0,.2,1);}
+  .score-bar-wrap{height:3px;background:var(--line);border-radius:0;overflow:hidden;}
+  .score-bar-fill{height:100%;border-radius:0;background:var(--ink-3);transition:width .8s cubic-bezier(.4,0,.2,1);}
 
   /* ── Highlight bullet ── */
   .highlight-bullet{display:flex;gap:8px;align-items:flex-start;}
-  .highlight-bullet::before{content:'·';color:var(--gold);font-weight:bold;flex-shrink:0;line-height:1.4;font-size:16px;}
+  .highlight-bullet::before{content:'·';color:var(--ink-3);font-weight:bold;flex-shrink:0;line-height:1.4;font-size:16px;}
 
   /* ── Data table ── */
   .data-table{width:100%;border-collapse:collapse;}
   .data-table th{text-align:left;font-size:11px;font-weight:500;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.05em;padding:14px 16px;border-bottom:1px solid var(--line);}
   .data-table td{padding:16px 16px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
 
-  /* ── Modals ── */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+  /* ── Modals（遮罩无模糊 · 容器 4px 圆角）── */
+  .modal-backdrop{position:fixed;inset:0;background:var(--overlay);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
   .modal-backdrop.active{display:flex;animation:fadeIn .2s;}
-  .modal-box{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;}
+  .modal-box{background:var(--bg);border:1px solid var(--line);border-radius:4px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;}
   .modal-header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
   .modal-body{padding:24px;overflow-y:auto;}
   .modal-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;}
@@ -134,22 +153,18 @@
   /* ── Toast ── */
   #toast-container{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;min-width:0;}
   #toast-container>*{pointer-events:all;}
-  .toast-item{display:flex;align-items:center;gap:10px;background:var(--bg-2);border:1px solid var(--line-2);padding:12px 16px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:280px;max-width:400px;transition:all .25s;}
+  .toast-item{display:flex;align-items:center;gap:10px;background:var(--ink);color:#FFFFFF;border:1px solid var(--ink);padding:12px 16px;border-radius:2px;min-width:280px;max-width:400px;transition:all .25s;}
 
   /* ── Admin ── */
   .admin-label{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.05em;}
-  .admin-fab{position:fixed;bottom:24px;right:24px;z-index:50;padding:10px 18px;background:var(--gold);color:#000;border-radius:999px;font-size:12px;font-weight:600;box-shadow:0 8px 24px rgba(201,168,106,0.3);display:flex;align-items:center;gap:6px;cursor:pointer;border:none;}
-  .admin-fab:hover{background:var(--gold-2);}
+  .admin-fab{position:fixed;bottom:24px;right:24px;z-index:50;padding:10px 18px;background:var(--ink);color:#FFFFFF;border-radius:2px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;border:none;}
+  .admin-fab:hover{background:var(--ink-2);}
 
-  /* ── Grain ── */
+  /* ── Grain（扁平规范：无纹理）── */
   .grain{position:relative;}
-  .grain::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0.025;
-    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size:200px;
-  }
 
   /* ── Olive mark ── */
-  .olive-mark{border:1.4px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,rgba(230,204,143,0.15),transparent 70%);}
+  .olive-mark{border:1.4px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;background:transparent;}
 
   /* ── Scrollbar ── */
   ::-webkit-scrollbar{width:6px;height:6px;}
@@ -160,15 +175,15 @@
   .payoff-legend-dot{display:inline-block;width:20px;height:2px;border-radius:1px;vertical-align:middle;margin-right:6px;}
 
   /* ── 策略类型（稳健/进取/热度）── */
-  .pill-type-stable{background:rgba(0,200,5,0.10);color:var(--green);border:1px solid rgba(0,200,5,0.25);}
-  .pill-type-growth{background:var(--gold-soft);color:var(--gold-2);border:1px solid rgba(201,168,106,0.25);}
-  .pill-type-hot{background:rgba(244,63,94,0.10);color:#FB7185;border:1px solid rgba(244,63,94,0.25);}
-  .strategy-card{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:26px;cursor:pointer;transition:all .25s var(--ease,ease);position:relative;overflow:hidden;}
-  .strategy-card:hover{transform:translateY(-3px);border-color:var(--strat-color,var(--gold));}
-  .strategy-card .sc-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--strat-color,var(--gold));opacity:.85;}
-  .type-tab{padding:9px 20px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);border:1px solid var(--line);cursor:pointer;transition:all .15s;background:transparent;display:inline-flex;align-items:center;gap:7px;}
+  .pill-type-stable{background:var(--green-soft);color:var(--green-ink);border:1px solid var(--green-soft);}
+  .pill-type-growth{background:var(--gold-soft);color:var(--gold-2);border:1px solid var(--gold-soft);}
+  .pill-type-hot{background:var(--khaki-soft);color:var(--khaki-ink);border:1px solid var(--khaki-soft);}
+  .strategy-card{background:var(--bg);border:1px solid var(--line);border-radius:2px;padding:26px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;}
+  .strategy-card:hover{border-color:var(--strat-color,var(--line-2));}
+  .strategy-card .sc-bar{position:absolute;top:0;left:0;width:32px;height:3px;background:var(--strat-color,var(--green));}
+  .type-tab{padding:9px 20px;border-radius:2px;font-size:13px;font-weight:500;color:var(--ink-2);border:1px solid var(--line);cursor:pointer;transition:all .15s;background:transparent;display:inline-flex;align-items:center;gap:7px;}
   .type-tab:hover{color:var(--ink);border-color:var(--line-2);}
-  .type-tab.active{color:#0A0A0B;background:var(--gold);border-color:var(--gold);font-weight:600;}
+  .type-tab.active{color:#FFFFFF;background:var(--ink);border-color:var(--ink);font-weight:600;}
 
   /* ── Responsive ── */
   @media(max-width:768px){
@@ -180,14 +195,14 @@
 <body>
 
 <!-- ═══════════════ NAV ═══════════════ -->
-<nav class="sticky top-0 z-40 bg-bg-2/90 backdrop-blur-xl border-b border-line">
+<nav class="sticky top-0 z-40 bg-bg border-b border-line">
   <div class="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-3 items-center">
     <div class="flex items-center">
       <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('screener')">
         <div class="olive-mark w-9 h-9">
           <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C9A86A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C9A86A" stroke-width="1" stroke-linecap="round" fill="none"/>
+            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C8A96A" stroke-width="1" stroke-linecap="round" fill="none"/>
           </svg>
         </div>
         <div class="leading-none">
@@ -206,9 +221,7 @@
 
   <!-- Hero -->
   <section class="border-b border-line grain relative overflow-hidden" style="min-height:78vh;display:flex;flex-direction:column;justify-content:center;">
-    <!-- 背景光晕 -->
-    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:900px;height:520px;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,106,0.09) 0%,transparent 68%);pointer-events:none;z-index:0;"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,106,0.25),transparent);"></div>
+    <!-- 扁平规范：无背景光晕/渐变，层次只来自发丝线 -->
 
     <div class="max-w-[1400px] mx-auto px-6 py-24 relative z-10 w-full">
       <div class="section-label mb-6">FCN 标的筛选 · 智能推荐</div>
@@ -231,7 +244,7 @@
       </div>
 
       <!-- Stats Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line rounded-xl overflow-hidden border border-line" id="hero-stats"></div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line rounded-sm overflow-hidden border border-line" id="hero-stats"></div>
     </div>
   </section>
 
@@ -251,7 +264,7 @@
     <div class="mb-6 flex items-center gap-2.5 flex-wrap" id="type-tabs" style="display:none;"></div>
 
     <!-- ── Horizontal Filter Bar ── -->
-    <div class="mb-7 p-5 rounded-2xl border border-line" style="background:var(--bg-2);">
+    <div class="mb-7 p-5 rounded border border-line" style="background:var(--bg-2);">
       <!-- Row 1: Industry -->
       <div class="flex flex-wrap items-center gap-x-4 gap-y-3 mb-4">
         <span class="text-[10px] tracking-[0.15em] text-ink-3 uppercase shrink-0 w-8">行业</span>
@@ -299,8 +312,8 @@
       </select>
     </div>
 
-    <!-- 2-column card grid -->
-    <div id="screener-results" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+    <!-- 列表式标的呈现 -->
+    <div id="screener-results"></div>
   </div>
 </div>
 
@@ -485,21 +498,19 @@ function navigate(view,param){
 // ═══ Helpers ═══
 const mktLabel=m=>({US:'美股',HK:'港股'}[m]||m);
 const riskPill=r=>r==='低'?'<span class="pill pill-green">低风险</span>':r==='中'?'<span class="pill pill-gold">中风险</span>':'<span class="pill pill-red">高风险</span>';
-const fmtChg=v=>{const up=v>=0;return`<span class="inline-flex items-center gap-1 rounded-full font-mono font-medium num" style="font-size:11px;padding:3px 9px;background:${up?'rgba(0,200,5,0.11)':'rgba(244,63,94,0.11)'};color:${up?'var(--green)':'var(--red)'};">${up?'↑':'↓'}&thinsp;${up?'+':''}${v.toFixed(1)}%</span>`;};
+const fmtChg=v=>{const up=v>=0;return`<span class="num" style="font-size:11px;font-weight:600;color:${up?'var(--green-ink)':'var(--red)'};">${up?'+':'−'}${Math.abs(v).toFixed(1)}%</span>`;};
 
 // ═══ Sparkline SVG ═══
 function sparklineSVG(data,w=88,h=30){
   if(!data||data.length<2)return'';
-  const id='sg'+(++_sgId);
-  const isUp=data[data.length-1]>=data[0];
-  const col=isUp?'var(--green)':'var(--red)';
+  // 扁平规范：单一暖色系线条、无渐变填充；涨跌语义由旁边的涨跌幅文字承担
+  const col='#B8A88A';
   const mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1;
   const px=2,py=3;
   const pts=data.map((v,i)=>[px+i/(data.length-1)*(w-2*px),h-py-(v-mn)/rng*(h-2*py)]);
   const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-  const fill=line+` L${pts.at(-1)[0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
   const dot=pts[pts.length-1];
-  return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity="0.3"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><path d="${fill}" fill="url(#${id})"/><path d="${line}" stroke="${col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${dot[0].toFixed(1)}" cy="${dot[1].toFixed(1)}" r="2.5" fill="${col}"/></svg>`;
+  return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none"><path d="${line}" stroke="${col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${dot[0].toFixed(1)}" cy="${dot[1].toFixed(1)}" r="2.5" fill="var(--ink)"/></svg>`;
 }
 
 // ═══ Score Ring SVG ═══
@@ -507,8 +518,8 @@ function scoreRingSVG(score){
   const pct=Math.max(0,Math.min(1,score/10));
   const r=16,cx=20,cy=20,circ=2*Math.PI*r;
   const dash=(pct*circ).toFixed(1);
-  const col=score>=8.5?'var(--gold)':score>=7.5?'var(--ink-2)':'var(--ink-3)';
-  return`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="${cx}" cy="${cy}" r="${r}" stroke="var(--line)" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="${r}" stroke="${col}" stroke-width="2.5" stroke-dasharray="${dash} ${circ.toFixed(1)}" stroke-dashoffset="${(circ*0.25).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/><text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="10" font-family="'Fraunces',serif" font-weight="500">${score.toFixed(1)}</text></svg>`;
+  const col=score>=8.5?'var(--green-ink)':score>=7.5?'var(--ink-2)':'var(--ink-3)';
+  return`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="${cx}" cy="${cy}" r="${r}" stroke="var(--line)" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="${r}" stroke="${col}" stroke-width="2.5" stroke-dasharray="${dash} ${circ.toFixed(1)}" stroke-dashoffset="${(circ*0.25).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/><text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="10" font-family="'Roboto','Inter',sans-serif" font-weight="600">${score.toFixed(1)}</text></svg>`;
 }
 
 // ═══ Score Breakdown Bars ═══
@@ -518,7 +529,7 @@ function scoreBreakdownHTML(sb){
   return dims.map(([lbl,key])=>{
     const v=sb[key]||0;
     const pct=((v/10)*100).toFixed(0);
-    const col=v>=8.5?'var(--gold)':v>=7?'#A1A1AA':'#71717A';
+    const col=v>=8.5?'var(--green-ink)':v>=7?'var(--ink-3)':'#9CA3AA';
     return`<div class="flex items-center gap-3 text-xs">
       <span class="text-ink-3 w-12 flex-shrink-0">${lbl}</span>
       <div class="flex-1 score-bar-wrap"><div class="score-bar-fill" style="width:${pct}%;background:${col}"></div></div>
@@ -546,24 +557,24 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
   [40,60,80,100,120].forEach(p=>{
     const x=px(p).toFixed(1);
     svg+=`<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 3"/>`;
-    svg+=`<text x="${x}" y="${MT+cH+14}" text-anchor="middle" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${p}%</text>`;
+    svg+=`<text x="${x}" y="${MT+cH+14}" text-anchor="middle" fill="var(--ink-3)" font-size="9" font-family="Roboto Mono,monospace">${p}%</text>`;
   });
   const retTicks=[-40,-20,0,tc].filter((v,i,a)=>a.indexOf(v)===i);
   retTicks.forEach(r=>{
     const y=py(r).toFixed(1);
     svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="var(--line)" stroke-width="${r===0?'1':'0.5'}" stroke-dasharray="${r===0?'':'3 3'}"/>`;
-    svg+=`<text x="${ML-6}" y="${parseFloat(y)+3.5}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${r>0?'+':''}${r}%</text>`;
+    svg+=`<text x="${ML-6}" y="${parseFloat(y)+3.5}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="Roboto Mono,monospace">${r>0?'+':''}${r}%</text>`;
   });
 
   // Loss fill
   const be=+(strike*(1-tc/100)).toFixed(1);
   if(be>pMin){
     const lpts=[[be,0],[pMin,worstY],[pMin,0]];
-    svg+=`<path d="${lpts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(244,63,94,0.07)"/>`;
+    svg+=`<path d="${lpts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(192,57,43,0.06)"/>`;
   }
   // Gain fill (worst case above zero)
   const gainPts=[[pMax,tc],[strike,tc],[be,0],[pMax,0]];
-  svg+=`<path d="${gainPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(0,200,5,0.05)"/>`;
+  svg+=`<path d="${gainPts.map((p,i)=>`${i?'L':'M'}${px(p[0]).toFixed(1)},${py(p[1]).toFixed(1)}`).join(' ')} Z" fill="rgba(0,176,80,0.05)"/>`;
 
   // KI line
   svg+=`<line x1="${px(ki).toFixed(1)}" y1="${MT}" x2="${px(ki).toFixed(1)}" y2="${MT+cH}" stroke="var(--red)" stroke-width="1" stroke-dasharray="5 3" opacity="0.7"/>`;
@@ -605,7 +616,7 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
 // ═══ Noah's ARK 报告页（详情视图）═══════════════════════════════
 // tokens.css 原文内联（body 选择器改为 .report-body 以适配 Shadow DOM）
 const REPORT_CSS=`
-:host,.report-body{--ink:#FAFAFA;--bg:#111113;--surface-1:#18181B;--fg-1:#C9CBD1;--fg-2:#A1A1AA;--fg-3:#71717A;--line-1:#27272A;--line-2:#1E1E21;--khaki:rgba(201,168,106,0.40);--khaki-ink:#D8C9A4;--khaki-soft:rgba(201,168,106,0.07);--accent-green:#00C805;--accent-green-ink:#4ADE80;--accent-green-soft:rgba(0,200,5,0.08);--accent-gold:#C9A86A;--accent-gold-ink:#E6CC8F;--accent-gold-soft:rgba(201,168,106,0.10);--pos:var(--accent-green);--neg:#F43F5E;--warn:var(--accent-gold);--font-cn:'Inter','PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','Noto Sans SC',system-ui,sans-serif;--font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);--font-num:'JetBrains Mono','DIN Next','Roboto','Inter',sans-serif;--font-mono:'JetBrains Mono','Roboto Mono','SF Mono',Menlo,monospace;}
+:host,.report-body{--ink:#0F1214;--bg:#FFFFFF;--surface-1:#FAFAFA;--fg-1:#3A3F44;--fg-2:#6B7177;--fg-3:#9CA3AA;--line-1:#E5E7EB;--line-2:#F1F3F5;--khaki:#E4DDC9;--khaki-ink:#5C5240;--khaki-soft:#F1ECDD;--accent-green:#00B050;--accent-green-ink:#007A37;--accent-green-soft:#E8F6EE;--accent-gold:#C8A96A;--accent-gold-ink:#8C7235;--accent-gold-soft:#F4ECDB;--pos:var(--accent-green);--neg:#C0392B;--warn:var(--accent-gold);--font-cn:'PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','HarmonyOS Sans SC','Source Han Sans CN','Noto Sans SC',system-ui,sans-serif;--font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);--font-num:'DIN Next','DIN Pro','Roboto','Inter',sans-serif;--font-mono:'Roboto Mono','SF Mono',Menlo,monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
 .report-body{background:transparent;color:var(--ink);font-family:var(--font-cn);line-height:1.55;padding:8px 0 24px;-webkit-font-smoothing:antialiased;}
 .wrap{max-width:980px;margin:0 auto;}
@@ -698,17 +709,6 @@ tbody tr:nth-child(even) td{background:var(--surface-1);}
 .navstep .nd{color:var(--fg-2);font-size:11px;line-height:1.5;}
 .navarrow{flex:none;display:flex;align-items:flex-start;justify-content:center;padding-top:9px;color:var(--accent-gold-ink);font-weight:700;font-size:15px;}
 @media(max-width:768px){.hero{flex-direction:column;}.terms{grid-template-columns:repeat(2,1fr);}.kpis{grid-template-columns:repeat(2,1fr)!important;}.twocol,.health{grid-template-columns:1fr;}.navflow{flex-wrap:wrap;}}
-/* ── 暗金主题覆盖：主强调改为香槟金，绿色仅保留正向语义（达标/敲出/看多）── */
-.tick,.card h2::before,.modlabel::before,.r-head::before{background:var(--accent-gold);}
-.conc{background:var(--accent-gold-soft);border-left-color:var(--accent-gold);}
-.hero .l{background:var(--accent-gold-soft);}
-.hero .l::before{background:var(--accent-gold);}
-.hero .tag{color:var(--accent-gold-ink);}
-.hero .big{color:var(--accent-gold-ink);}
-.navtag{color:var(--accent-gold-ink);background:var(--accent-gold-soft);}
-.navtag.risk{color:var(--fg-2);background:var(--surface-1);}
-.modlabel .t{color:var(--accent-gold-ink);}
-.navarrow{color:var(--accent-gold-ink);}
 `;
 
 // —— 报告页工具 ——
@@ -737,20 +737,20 @@ function reportChartSVG(s){
   const tickFmt=v=>step>=1?Math.round(v).toLocaleString('en-US'):v.toFixed(step>=0.1?1:2);
   for(let p=Math.ceil(PMIN/step)*step;p<=PMAX;p+=step){
     const yy=Y(p).toFixed(1);
-    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="#27272A" stroke-width="1"/>`;
-    svg+=`<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="12" fill="#71717A">${tickFmt(p)}</text>`;
+    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="#E5E7EB" stroke-width="1"/>`;
+    svg+=`<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="12" fill="#6B7177">${tickFmt(p)}</text>`;
   }
   // 月份刻度
   const seen=new Set();let last=-999;
   dates.forEach((d,i)=>{
     const ym=d.slice(0,7);
     if(!seen.has(ym)){seen.add(ym);
-      if(X(i)-last>=60){svg+=`<text x="${X(i).toFixed(1)}" y="${H-30}" text-anchor="middle" font-size="11.5" fill="#71717A">${d.slice(2,7).replace('-','/')}</text>`;last=X(i);}}
+      if(X(i)-last>=60){svg+=`<text x="${X(i).toFixed(1)}" y="${H-30}" text-anchor="middle" font-size="11.5" fill="#6B7177">${d.slice(2,7).replace('-','/')}</text>`;last=X(i);}}
   });
   // 价格面积 + 折线
   const pts=px.map((p,i)=>`${X(i).toFixed(1)},${Y(p).toFixed(1)}`).join(' ');
-  svg+=`<polygon points="${X(0).toFixed(1)},${y1.toFixed(1)} ${pts} ${X(N-1).toFixed(1)},${y1.toFixed(1)}" fill="rgba(201,168,106,0.05)"/>`;
-  svg+=`<polyline points="${pts}" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linejoin="round"/>`;
+  svg+=`<polygon points="${X(0).toFixed(1)},${y1.toFixed(1)} ${pts} ${X(N-1).toFixed(1)},${y1.toFixed(1)}" fill="rgba(228,221,201,0.35)"/>`;
+  svg+=`<polyline points="${pts}" fill="none" stroke="#B8A88A" stroke-width="2" stroke-linejoin="round"/>`;
   // 三条关键价位线
   const rl=(p,color,ink,label)=>{
     const yy=Y(p).toFixed(1);
@@ -758,12 +758,12 @@ function reportChartSVG(s){
     svg+=`<text x="${x1+10}" y="${(+yy-3).toFixed(1)}" font-size="12.5" font-weight="700" fill="${ink}">${label}</text>`;
     svg+=`<text x="${x1+10}" y="${(+yy+13).toFixed(1)}" font-size="13" font-weight="700" fill="${ink}">${_rfmt(p,sym)}</text>`;
   };
-  rl(KO,"#00C805","#00C805","KO 敲出线");
-  rl(STK,"#C9A86A","#E6CC8F","接货价 / 执行价");
-  rl(KI,"#F43F5E","#F43F5E","KI 敲入线");
+  rl(KO,"#00B050","#007A37","KO 敲出线");
+  rl(STK,"#C8A96A","#8C7235","接货价 / 执行价");
+  rl(KI,"#C0392B","#C0392B","KI 敲入线");
   const cx=X(N-1),cy=Y(CUR);
-  svg+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="#FAFAFA"/>`;
-  svg+=`<text x="${(cx-8).toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="end" font-size="12.5" font-weight="700" fill="#FAFAFA">现价 ${_rfmt(CUR,sym)}</text>`;
+  svg+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="#0F1214"/>`;
+  svg+=`<text x="${(cx-8).toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="end" font-size="12.5" font-weight="700" fill="#0F1214">现价 ${_rfmt(CUR,sym)}</text>`;
   return svg+'</svg>';
 }
 
@@ -948,29 +948,24 @@ function priceHistorySVG(s){
   const Y=v=>MT+(yMax-v)/(yMax-yMin)*cH;
   const id='ph'+(++_sgId);
 
-  let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" fill="none" style="max-width:100%">
-    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.16"/>
-      <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
-    </linearGradient></defs>`;
+  let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" fill="none" style="max-width:100%">`;
 
   // Y 轴刻度 + 网格
   const step=(yMax-yMin)/4;
   for(let k=0;k<=4;k++){
     const v=yMin+step*k,y=Y(v).toFixed(1);
     svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 4"/>`;
-    svg+=`<text x="${ML-7}" y="${+y+3}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${fp(v)}</text>`;
+    svg+=`<text x="${ML-7}" y="${+y+3}" text-anchor="end" fill="var(--ink-3)" font-size="9" font-family="Roboto Mono,monospace">${fp(v)}</text>`;
   }
   // X 轴年月刻度
   [0,0.25,0.5,0.75,1].forEach(f=>{
     const i=Math.round(f*(n-1)),x=X(i).toFixed(1);
-    svg+=`<text x="${x}" y="${MT+cH+16}" text-anchor="${f===0?'start':f===1?'end':'middle'}" fill="var(--ink-3)" font-size="9" font-family="JetBrains Mono,monospace">${dates[i].slice(0,7).replace('-','/')}</text>`;
+    svg+=`<text x="${x}" y="${MT+cH+16}" text-anchor="${f===0?'start':f===1?'end':'middle'}" fill="var(--ink-3)" font-size="9" font-family="Roboto Mono,monospace">${dates[i].slice(0,7).replace('-','/')}</text>`;
   });
 
-  // 走势面积 + 线
+  // 走势线（扁平规范：无渐变面积）
   const pts=closes.map((v,i)=>[X(i),Y(v)]);
   const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-  svg+=`<path d="${line} L${pts[n-1][0].toFixed(1)},${MT+cH} L${pts[0][0].toFixed(1)},${MT+cH} Z" fill="url(#${id})"/>`;
 
   // 价位水平线 + 右侧标签（标签防重叠：自上而下保持 ≥13px 间距）
   const labs=lvls.map(l=>({...l,y:Y(l.v)})).sort((a,b)=>a.y-b.y);
@@ -981,11 +976,11 @@ function priceHistorySVG(s){
     svg+=`<line x1="${ML}" y1="${y}" x2="${ML+cW}" y2="${y}" stroke="${l.col}" stroke-width="1" ${l.solid?'':'stroke-dasharray="5 3"'} opacity="${l.solid?0.55:0.75}"/>`;
     if(Math.abs(l.ly-l.y)>2)
       svg+=`<line x1="${ML+cW}" y1="${y}" x2="${ML+cW+8}" y2="${l.ly.toFixed(1)}" stroke="${l.col}" stroke-width="0.6" opacity="0.5"/>`;
-    svg+=`<text x="${ML+cW+11}" y="${(l.ly+3).toFixed(1)}" fill="${l.col}" font-size="9.5">${l.lbl} <tspan font-family="JetBrains Mono,monospace" opacity="0.85">${fp(l.v)}</tspan></text>`;
+    svg+=`<text x="${ML+cW+11}" y="${(l.ly+3).toFixed(1)}" fill="${l.col}" font-size="9.5">${l.lbl} <tspan font-family="Roboto Mono,monospace" opacity="0.85">${fp(l.v)}</tspan></text>`;
   });
 
-  svg+=`<path d="${line}" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
-  svg+=`<circle cx="${pts[n-1][0].toFixed(1)}" cy="${pts[n-1][1].toFixed(1)}" r="3" fill="var(--gold)" stroke="var(--bg)" stroke-width="1.5"/>`;
+  svg+=`<path d="${line}" stroke="#B8A88A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  svg+=`<circle cx="${pts[n-1][0].toFixed(1)}" cy="${pts[n-1][1].toFixed(1)}" r="3" fill="var(--ink)" stroke="var(--bg)" stroke-width="1.5"/>`;
 
   // 坐标轴
   svg+=`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT+cH}" stroke="var(--line-2)" stroke-width="1"/>`;
@@ -1001,7 +996,7 @@ function priceHistoryCard(s){
   const fp=p=>p>=1000?Math.round(p).toLocaleString('en-US'):p>=100?p.toFixed(1):p.toFixed(2);
   const shortHist=closes.length<480?`<div class="text-ink-3 border-l border-line pl-4">上市于 ${ph.dates[0].slice(0,7).replace('-','/')}，历史不足 2 年</div>`:'';
   return`
-        <div class="border border-line rounded-xl p-6 bg-bg-2 mb-8">
+        <div class="border border-line rounded-sm p-6 bg-bg-2 mb-8">
           <div class="section-label mb-1">2 年股价走势 · 关键价位</div>
           <div class="text-xs text-ink-3 mb-4">期初价 <span class="num text-ink-2">${fp(init)} ${s.currency}</span>（${s.initialPriceDate} 收盘）· 价位线按期初价折算</div>
           ${priceHistorySVG(s)}
@@ -1069,11 +1064,11 @@ let sortBy='score';
 
 // ═══ 策略类型（稳健/进取/热度）═══
 const TYPES={
-  '稳健':{label:'稳健型',en:'CONSERVATIVE',icon:'shield',pill:'pill-type-stable',color:'var(--green)',
+  '稳健':{label:'稳健型',en:'CONSERVATIVE',icon:'shield',pill:'pill-type-stable',color:'var(--green-ink)',
           desc:'蓝筹标的 · 厚敲入缓冲',who:'适合首次配置 FCN 或低波动偏好的客户'},
-  '进取':{label:'进取型',en:'AGGRESSIVE',icon:'zap',pill:'pill-type-growth',color:'var(--gold)',
+  '进取':{label:'进取型',en:'AGGRESSIVE',icon:'zap',pill:'pill-type-growth',color:'var(--gold-2)',
           desc:'高票息优先 · 高波动标的',who:'适合追求票息最大化的高风险偏好客户'},
-  '热度':{label:'市场热度型',en:'MOMENTUM',icon:'flame',pill:'pill-type-hot',color:'#FB7185',
+  '热度':{label:'市场热度型',en:'MOMENTUM',icon:'flame',pill:'pill-type-hot',color:'var(--khaki-ink)',
           desc:'本周资金焦点 · 事件驱动',who:'适合关注市场节奏的波段思维客户'},
 };
 const stockTypes=s=>s.types||[];
@@ -1220,15 +1215,19 @@ function renderScreener(){
 
   if(!list.length){
     document.getElementById('screener-results').innerHTML=`
-      <div class="text-center py-20 text-ink-3 border border-line rounded-xl">
+      <div class="text-center py-20 text-ink-3 border border-line rounded-sm">
         <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-3 opacity-40"></i>
         <div>没有符合条件的标的，请放宽筛选条件</div>
       </div>`;
     lucide.createIcons();
     return;
   }
-  document.getElementById('screener-results').innerHTML=list.map(s=>stockCard(s)).join('');
-  document.querySelectorAll('.stock-card').forEach((el,i)=>{
+  document.getElementById('screener-results').innerHTML=`
+    <div class="stock-list">
+      <div class="row-head"><span>标的</span><span>投资要点</span><span>近 6 月行情</span><span>行权 / 敲入 / 敲出</span><span style="text-align:right">年化票息</span><span></span></div>
+      ${list.map(s=>stockRow(s)).join('')}
+    </div>`;
+  document.querySelectorAll('#screener-results .stock-card').forEach((el,i)=>{
     // click
     el.addEventListener('click',()=>navigate('detail',el.dataset.code));
     // ② 错开入场动画
@@ -1248,76 +1247,49 @@ function renderScreener(){
   lucide.createIcons();
 }
 
-function stockCard(s){
-  const hl=(s.bullets||s.highlights||[]).slice(0,2).map(h=>`<div class="highlight-bullet text-[13px] text-ink-2 leading-relaxed">${h}</div>`).join('');
-  const spk=sparklineSVG(s.sparkline,148,46);
+function stockRow(s){
+  const hl=(s.bullets||s.highlights||[]).slice(0,2).map(h=>`<div class="highlight-bullet text-[12.5px] text-ink-2 leading-relaxed">${h}</div>`).join('');
+  const spk=sparklineSVG(s.sparkline,118,34);
   const chg=s.priceChange!==undefined?fmtChg(s.priceChange):'';
-  const iv30=s.iv30?`<span class="iv-badge">IV ${s.iv30}%</span>`:'';
-  return`<div class="stock-card" data-code="${s.code}" style="padding:28px 28px;">
-    <div class="grid lg:grid-cols-[1fr_180px] gap-6 items-stretch">
+  const px=s.price?`<span class="num text-ink-2 text-[12px]">${s.currency==='HKD'?'HK$':'$'}${s.price}</span>`:'';
+  return`<div class="stock-card stock-row" data-code="${s.code}">
 
-      <!-- Left: info -->
-      <div class="min-w-0 flex flex-col gap-3">
-        <div>
-          <div class="flex items-baseline gap-2.5 flex-wrap mb-2">
-            <h3 class="font-display text-2xl font-medium leading-tight">${s.name}</h3>
-            <span class="text-ink-3 text-sm num font-mono">${s.code}</span>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            ${typePills(s)}
-            <span class="pill pill-dim">${mktLabel(s.market)}</span>
-            <span class="pill pill-dim">${s.industry}</span>
-            ${riskPill(s.risk)}
-            ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
-            ${iv30}
-          </div>
-        </div>
-
-        <div class="space-y-1.5 flex-1">${hl}</div>
-
-        <!-- Sparkline row -->
-        <div class="flex items-center gap-3 pt-2 border-t border-line">
-          <div class="flex items-center gap-2.5">
-            <span class="text-[10px] text-ink-3 tracking-widest font-mono">6M</span>
-            ${spk}
-            ${chg}
-          </div>
-          <span class="ml-auto text-gold text-xs flex items-center gap-1 shrink-0">
-            查看详细分析 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </span>
-        </div>
+    <!-- 标的 -->
+    <div class="col-id min-w-0">
+      <div class="flex items-baseline gap-2 flex-wrap mb-1.5">
+        <h3 class="font-display text-lg font-medium leading-tight">${s.name}</h3>
+        <span class="text-ink-3 text-[12px] num font-mono">${s.code}</span>
       </div>
-
-      <!-- Right: coupon hero + metadata -->
-      <div class="lg:border-l border-line lg:pl-6 flex flex-col justify-between gap-4">
-        <!-- Big coupon -->
-        <div>
-          <div class="text-[10px] text-ink-3 tracking-[0.18em] uppercase mb-1">年化票息</div>
-          <div class="font-display num text-gold" style="font-size:clamp(2.8rem,4vw,3.8rem);line-height:1;">
-            ${s.coupon}<span class="text-gold-2" style="font-size:0.4em;vertical-align:0.3em;margin-left:0.06em;opacity:0.85;">%</span>
-          </div>
-        </div>
-
-        <!-- Score ring（无评分数据时隐藏） -->
-        ${s.score!=null?`<div class="flex items-center gap-2">
-          ${scoreRingSVG(s.score)}
-          <span class="text-[11px] text-ink-3">综合评分</span>
-        </div>`:''}
-
-        <!-- Key params -->
-        <div class="space-y-1.5 text-[12px]">
-          <div class="flex justify-between">
-            <span class="text-ink-3">行权 / 敲入 / 敲出</span>
-            <span class="num font-medium">${s.strike}% / ${s.ki}% / ${s.ko||100}%</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-ink-3">期限</span>
-            <span class="num font-medium">${s.tenor}M · ${s.kiType.replace('敲入','')}</span>
-          </div>
-        </div>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        ${typePills(s)}
+        <span class="pill pill-dim">${mktLabel(s.market)}</span>
+        ${riskPill(s.risk)}
+        ${s.tag?`<span class="pill pill-gold">${s.tag}</span>`:''}
       </div>
-
     </div>
+
+    <!-- 投资要点 -->
+    <div class="col-pts min-w-0 space-y-1">${hl}</div>
+
+    <!-- 行情 -->
+    <div class="col-mkt">
+      ${spk}
+      <div class="flex items-center gap-2 mt-1.5">${px}${chg}</div>
+    </div>
+
+    <!-- 条款 -->
+    <div class="col-terms">
+      <div class="num font-medium text-[13px]">${s.strike}% / ${s.ki}% / ${s.ko||100}%</div>
+      <div class="text-ink-3 text-[11.5px] mt-1">${s.tenor}M · ${s.kiType.replace('敲入','')}${s.iv30?` · IV ${s.iv30}%`:''} · ${s.industry}</div>
+    </div>
+
+    <!-- 票息 -->
+    <div class="col-coupon">
+      <div class="font-display num text-gold" style="font-size:1.9rem;line-height:1;">${s.coupon}<span class="text-gold-2" style="font-size:0.5em;opacity:0.85;">%</span></div>
+      ${s.score!=null?`<div class="text-[11px] text-ink-3 mt-1">评分 ${s.score}</div>`:''}
+    </div>
+
+    <div class="col-arrow text-gold"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
   </div>`;
 }
 
@@ -1344,7 +1316,7 @@ function renderFeatured(){
   document.getElementById('featured-avg-coupon').textContent=avgC;
 
   document.getElementById('featured-list').innerHTML=picks.map((s,i)=>`
-    <div class="stock-card rounded-none first:rounded-t-xl last:rounded-b-xl border-x-0 first:border-t last:border-b border-line py-10 px-6 stock-card-featured" data-code="${s.code}" style="border-radius:0;border-left:1px solid var(--line);border-right:1px solid var(--line);">
+    <div class="stock-card rounded-none first:rounded-t-sm last:rounded-b-sm border-x-0 first:border-t last:border-b border-line py-10 px-6 stock-card-featured" data-code="${s.code}" style="border-radius:0;border-left:1px solid var(--line);border-right:1px solid var(--line);">
       <div class="grid lg:grid-cols-[1fr_300px] gap-10">
         <div>
           <div class="flex items-center gap-3 mb-5">
@@ -1366,7 +1338,7 @@ function renderFeatured(){
             <span>查看完整分析</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
           </div>
         </div>
-        <div class="border border-line rounded-xl p-6 self-start bg-bg-2">
+        <div class="border border-line rounded-sm p-6 self-start bg-bg-2">
           <div class="text-[11px] tracking-[0.15em] text-ink-3 uppercase mb-1">年化票息</div>
           <div class="font-display text-5xl text-gold num mb-1">${s.coupon}<span class="text-xl">%</span></div>
           <div class="text-[11px] text-ink-3 mb-6">推荐 FCN 结构</div>
@@ -1459,7 +1431,7 @@ function renderAdminStocks(body){
       <div class="text-sm text-ink-2">共 <span class="text-ink font-medium">${DATA.stocks.length}</span> 个标的</div>
       <button class="btn-gold text-xs flex items-center gap-1.5" onclick="openStockEdit(null)"><i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增标的</button>
     </div>
-    <div class="border border-line rounded-lg overflow-hidden">
+    <div class="border border-line rounded-sm overflow-hidden">
       <table class="data-table">
         <thead><tr><th>标的</th><th>市场</th><th>行业</th><th class="text-right">票息</th><th class="text-right">IV30</th><th class="text-right">评分</th><th class="text-right">操作</th></tr></thead>
         <tbody>${DATA.stocks.map(s=>`
@@ -1495,7 +1467,7 @@ function renderAdminFeatured(body){
           ${DATA.stocks.map(s=>{
             const idx=DATA.meta.featuredIds.indexOf(s.code);
             const isFeatured=idx!==-1;
-            return`<label class="flex items-center gap-3 p-3 border border-line rounded-lg cursor-pointer hover:border-gold/40 transition-colors">
+            return`<label class="flex items-center gap-3 p-3 border border-line rounded-sm cursor-pointer hover:border-gold/40 transition-colors">
               <input type="checkbox" ${isFeatured?'checked':''} onchange="toggleFeatured('${s.code}',this.checked)" class="w-4 h-4 accent-yellow-500">
               <div class="font-display text-base w-10 num text-gold">${isFeatured?String(idx+1).padStart(2,'0'):'—'}</div>
               <div class="flex-1"><div class="font-medium text-sm">${s.name} <span class="text-ink-3 text-xs ml-1 num">${s.code}</span></div><div class="text-xs text-ink-3">${s.industry} · ${mktLabel(s.market)}</div></div>
@@ -1512,14 +1484,14 @@ function renderAdminHelp(body){
   body.innerHTML=`
     <div class="space-y-5 text-[14px] text-ink-2 leading-relaxed">
       <h3 class="font-display text-xl text-ink mb-2">使用流程</h3>
-      <div class="border border-line rounded-lg p-5 space-y-4">
+      <div class="border border-line rounded-sm p-5 space-y-4">
         ${[['01','自动生成（推荐）','每周运行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">python generate_watchlist.py</code> — 脚本自动调用 Claude API 分析50个标的，输出新的 watchlist.json。'],
           ['02','手动编辑数据','在「标的管理」中新增、删除、修改标的；在「本周精选」中选择本周推荐标的并排序。编辑过程会自动保存到浏览器本地，刷新不丢失。'],
           ['03','导出 watchlist.json','点击顶部「导出 watchlist.json」按钮，浏览器会下载最新的 watchlist.json 文件。'],
           ['04','推送到 GitHub','执行：<code class="font-mono text-gold-2 bg-bg-3 px-2 py-0.5 rounded text-xs">git add watchlist.json && git commit -m "W23 weekly update" && git push</code><br>GitHub Pages 通常 1-2 分钟后自动更新。']].map(([n,t,d])=>`
           <div class="flex gap-4"><div class="font-display text-2xl text-gold num shrink-0">${n}</div><div><div class="text-ink font-medium mb-1">${t}</div><p class="text-[13px]">${d}</p></div></div>`).join('')}
       </div>
-      <div class="border border-gold/30 bg-gold/5 rounded-lg p-4 flex items-start gap-3">
+      <div class="border border-gold/30 bg-gold/5 rounded-sm p-4 flex items-start gap-3">
         <i data-lucide="info" class="w-5 h-5 text-gold mt-0.5 flex-shrink-0"></i>
         <p class="text-sm">只有「推送 watchlist.json 到 GitHub」之后，客户访问的网站才会看到新数据。每周只需 git push 一个文件。</p>
       </div>
@@ -1659,7 +1631,7 @@ function showLoadingSkeleton(){
   const grid=document.getElementById('screener-grid');
   if(!grid)return;
   grid.innerHTML=Array.from({length:6},()=>`
-    <div class="bg-bg-2 border border-line rounded-xl p-5 animate-pulse">
+    <div class="bg-bg-2 border border-line rounded-sm p-5 animate-pulse">
       <div class="flex justify-between mb-3">
         <div class="h-4 bg-bg-3 rounded w-24"></div>
         <div class="h-4 bg-bg-3 rounded w-12"></div>
