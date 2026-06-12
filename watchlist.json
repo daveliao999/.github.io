@@ -1132,7 +1132,7 @@
     },
     {
       "code": "META.US",
-      "name": "Meta Platforms",
+      "name": "Meta",
       "name_en": "Meta Platforms, Inc.",
       "industry": "广告/AI",
       "market": "US",
@@ -25414,7 +25414,7 @@
     },
     {
       "code": "ARM.US",
-      "name": "Arm 控股",
+      "name": "Arm Holdings",
       "name_en": "Arm Holdings plc",
       "industry": "AI 半导体 IP",
       "market": "US",
@@ -28745,7 +28745,7 @@
     },
     {
       "code": "NBIS.US",
-      "name": "奈比斯",
+      "name": "Nebius",
       "name_en": "Nebius Group N.V.",
       "industry": "AI 云",
       "market": "US",
@@ -29673,7 +29673,7 @@
     },
     {
       "code": "CRDO.US",
-      "name": "Credo Technology Group Holding Ltd",
+      "name": "Credo Tech",
       "name_en": "Credo Technology Group Holding Ltd",
       "industry": "AI 互联",
       "market": "US",
@@ -30783,7 +30783,7 @@
     },
     {
       "code": "CRWV.US",
-      "name": "CoreWeave, Inc.",
+      "name": "CoreWeave",
       "name_en": "CoreWeave, Inc.",
       "industry": "AI 算力",
       "market": "US",
@@ -31500,7 +31500,7 @@
     },
     {
       "code": "VRT.US",
-      "name": "Vertiv Holdings Co",
+      "name": "Vertiv",
       "name_en": "Vertiv Holdings Co",
       "industry": "数据中心冷却",
       "market": "US",
@@ -32610,7 +32610,7 @@
     },
     {
       "code": "VST.US",
-      "name": "Vistra 能源",
+      "name": "Vistra",
       "name_en": "Vistra Corp.",
       "industry": "AI 电力",
       "market": "US",
@@ -33719,7 +33719,7 @@
     },
     {
       "code": "PLTR.US",
-      "name": "Palantir 科技",
+      "name": "Palantir",
       "name_en": "Palantir Technologies Inc.",
       "industry": "AI 软件",
       "market": "US",
@@ -34829,7 +34829,7 @@
     },
     {
       "code": "COIN.US",
-      "name": "Coinbase 交易所",
+      "name": "Coinbase",
       "name_en": "Coinbase Global, Inc.",
       "industry": "加密",
       "market": "US",
@@ -39029,7 +39029,7 @@
     },
     {
       "code": "06869.HK",
-      "name": "长飞光纤光缆股份有限公司",
+      "name": "长飞光纤",
       "name_en": "Yangtze Optical Fibre And Cable Joint Stock Limited Company",
       "industry": "AI 光通信",
       "market": "HK",
@@ -40121,7 +40121,7 @@
     },
     {
       "code": "09626.HK",
-      "name": "哔哩哔哩股份有限公司",
+      "name": "哔哩哔哩",
       "name_en": "Bilibili Inc.",
       "industry": "视频社区",
       "market": "HK",
@@ -41213,7 +41213,7 @@
     },
     {
       "code": "09992.HK",
-      "name": "泡泡玛特国际集团有限公司",
+      "name": "泡泡玛特",
       "name_en": "Pop Mart International Group Limited",
       "industry": "潮玩 IP",
       "market": "HK",
@@ -48951,7 +48951,7 @@
     },
     {
       "code": "COHR.US",
-      "name": "相干公司",
+      "name": "Coherent",
       "name_en": "Coherent Corp.",
       "industry": "AI 光通信",
       "market": "US",
@@ -50061,7 +50061,7 @@
     },
     {
       "code": "SNOW.US",
-      "name": "雪花公司",
+      "name": "Snowflake",
       "name_en": "Snowflake Inc.",
       "industry": "数据云",
       "market": "US",

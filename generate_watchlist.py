@@ -420,7 +420,7 @@ BATCH_PROMPT = """\
 
 {{
   "ticker": "与输入一致的股票代码",
-  "name": "公司中文全称",
+  "name": "公司常用名：仅当存在官方或媒体广泛使用的中文名时用中文（如：亚马逊、英伟达、戴尔科技）；没有通用中文名的公司直接原样返回英文常用名（如：Coherent、Snowflake、Palantir、CoreWeave）。严禁自行直译/音译造名（如「相干公司」「雪花公司」），严禁中英混搭（如「Palantir 科技」），不要带 Inc./Corp./Ltd. 等后缀",
   "name_en": "Company English Name",
   "sector": "行业分类（如：AI半导体、互联网、新能源、金融等）",
   "tagline": "一句话定位（≤16字，将拼在报告大标题后，如「AI 存储周期的最大受益者」）",
