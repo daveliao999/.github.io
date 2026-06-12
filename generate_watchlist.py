@@ -31,14 +31,16 @@ from openai import OpenAI
 import json_repair
 
 # ── Config ────────────────────────────────────────────────────────────────────
-EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"   # 单文件模式（旧流程兜底）
+# 所有路径相对本脚本所在目录，团队成员 clone 到任何位置都能直接跑
+_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"   # 单文件模式（旧流程兜底，仅 Dave 机器）
 # 三种策略类型 → 三个 Excel（不存在的文件自动跳过；同一标的出现在多个文件 = 多类型）
 EXCEL_INPUTS = {
-    "稳健": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\稳健组类型.xlsx",
-    "进取": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\进取组类型.xlsx",
-    "热度": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\市场热度榜.xlsx",
+    "稳健": os.path.join(_DIR, "稳健组类型.xlsx"),
+    "进取": os.path.join(_DIR, "进取组类型.xlsx"),
+    "热度": os.path.join(_DIR, "市场热度榜.xlsx"),
 }
-OUTPUT_PATH  = r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\watchlist.json"
+OUTPUT_PATH  = os.path.join(_DIR, "watchlist.json")
 TOP_N        = 30   # 单文件模式每次取多少只
 TOP_N_PER_TYPE = 10 # 三类型模式每个 Excel 取多少只
 MODEL        = "deepseek-v4-pro"
@@ -540,9 +542,16 @@ def main():
     parser.add_argument("--week",         default=None,        help="Override week e.g. W24")
     args = parser.parse_args()
 
+    # key 优先级：环境变量 > 脚本目录下 deepseek_key.txt（已 gitignore，绝不能提交到公开仓库）
     api_key = os.environ.get("DEEPSEEK_API_KEY")
+    if not api_key:
+        _key_file = os.path.join(_DIR, "deepseek_key.txt")
+        if os.path.exists(_key_file):
+            with open(_key_file, encoding="utf-8") as kf:
+                api_key = kf.read().strip()
     if not api_key and not args.no_ai:
-        print("❌  DEEPSEEK_API_KEY not set"); sys.exit(1)
+        print("❌  未找到 DeepSeek key：请设置环境变量 DEEPSEEK_API_KEY，"
+              "或在本目录创建 deepseek_key.txt 并粘贴 key"); sys.exit(1)
 
     client = OpenAI(api_key=api_key, base_url=API_BASE) if api_key else None
     today    = datetime.today()

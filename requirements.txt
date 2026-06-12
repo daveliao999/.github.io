@@ -1,0 +1,6 @@
+pandas
+openpyxl
+yfinance
+openai
+json_repair
+futu-api
