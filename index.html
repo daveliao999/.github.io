@@ -198,17 +198,9 @@
 <nav class="sticky top-0 z-40 bg-bg border-b border-line">
   <div class="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-3 items-center">
     <div class="flex items-center">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('screener')">
-        <div class="olive-mark w-9 h-9">
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-            <path d="M16 6 C 10 6, 6 10, 6 16 C 6 22, 10 26, 16 26 C 20 26, 24 23, 24 18 C 24 14, 21 11, 17 11 C 14 11, 12 13, 12 16 C 12 18, 14 20, 16 20" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-            <path d="M9 8 Q 11 6.5, 13 7.5" stroke="#C8A96A" stroke-width="1" stroke-linecap="round" fill="none"/>
-          </svg>
-        </div>
-        <div class="leading-none">
-          <div class="font-script text-[20px] text-gold-2" style="line-height:1">Olive</div>
-          <div class="text-[9px] text-ink-3 tracking-[0.22em] mt-1">资产管理</div>
-        </div>
+      <div class="cursor-pointer leading-none" onclick="navigate('screener')">
+        <div class="text-[16px] font-semibold" style="color:var(--ink);line-height:1;">FCN 标的筛选平台</div>
+        <div class="text-[10px] text-ink-3 mt-1.5 num" id="nav-sub">结构化产品组</div>
       </div>
     </div>
     <div class="flex items-center justify-end gap-3">
@@ -220,21 +212,21 @@
 <div id="view-screener" class="view active">
 
   <!-- Hero -->
-  <section class="border-b border-line grain relative overflow-hidden" style="min-height:78vh;display:flex;flex-direction:column;justify-content:center;">
+  <section class="border-b border-line grain relative overflow-hidden">
     <!-- 扁平规范：无背景光晕/渐变，层次只来自发丝线 -->
 
-    <div class="max-w-[1400px] mx-auto px-6 py-24 relative z-10 w-full">
-      <div class="section-label mb-6">FCN 标的筛选 · 智能推荐</div>
+    <div class="max-w-[1400px] mx-auto px-6 py-12 relative z-10 w-full">
+      <div class="section-label mb-4">FCN 标的筛选 · 智能推荐</div>
 
-      <h1 class="font-display font-medium leading-[0.95] mb-7" style="font-size:clamp(2.4rem,7vw,6rem);white-space:nowrap;">
+      <h1 class="font-display font-medium leading-[1.05] mb-4" style="font-size:clamp(1.6rem,3.6vw,3rem);white-space:nowrap;">
         每周精选 <span class="text-gold italic">最高票息标的</span>
       </h1>
 
-      <p class="text-ink-2 max-w-lg mb-10 leading-relaxed" style="font-size:1.05rem;">
+      <p class="text-ink-2 max-w-lg mb-6 leading-relaxed" style="font-size:1rem;">
         基于 10 维度量化评分，从全球 300+ 标的中自动筛选<br class="hidden md:block">最适合 FCN 结构的底层资产，每周更新。
       </p>
 
-      <div class="flex items-center gap-3 mb-20">
+      <div class="flex items-center gap-3 mb-10">
         <button class="btn-gold" style="font-size:14px;padding:12px 28px;" onclick="document.getElementById('screener-results').scrollIntoView({behavior:'smooth'})">
           <i data-lucide="trending-up" class="w-4 h-4 mr-2"></i>查看本周标的
         </button>
@@ -1658,6 +1650,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     console.warn('watchlist.json load failed:', e);
     Toast.show('数据加载失败，请检查 watchlist.json 是否存在', 'error', 6000);
   }
+  renderNavSub();
   renderHeroStats();
   renderStrategySection();
   setupFilters();
@@ -1665,6 +1658,18 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   lucide.createIcons();
   checkAdminMode();
 });
+
+// 导航栏小字：结构化产品组 + 本周工作周（周一至周五，按 publishDate 推算，每周自动更新）
+function renderNavSub(){
+  const el=document.getElementById('nav-sub');
+  if(!el||!DATA.meta||!DATA.meta.publishDate)return;
+  const d=new Date(DATA.meta.publishDate+'T12:00:00');
+  if(isNaN(d))return;
+  const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()+6)%7));
+  const fri=new Date(mon);fri.setDate(mon.getDate()+4);
+  const f=x=>`${x.getFullYear()}/${x.getMonth()+1}/${x.getDate()}`;
+  el.textContent=`结构化产品组 ${f(mon)}-${f(fri)}`;
+}
 </script>
 </body>
 </html>
