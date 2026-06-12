@@ -185,6 +185,33 @@
   .type-tab:hover{color:var(--ink);border-color:var(--line-2);}
   .type-tab.active{color:#FFFFFF;background:var(--ink);border-color:var(--ink);font-weight:600;}
 
+  /* ── 顶部三大策略浮层 ── */
+  .float-panel{border:1px solid var(--line);border-radius:2px;background:var(--bg);padding:22px 24px 14px;position:relative;display:flex;flex-direction:column;}
+  .float-panel::before{content:'';position:absolute;top:0;left:0;width:36px;height:3px;background:var(--fp-color,var(--green));}
+  .fp-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
+  .fp-title{font-size:15px;font-weight:600;color:var(--ink);}
+  .fp-en{font-family:var(--font-en);font-size:10px;letter-spacing:0.16em;color:var(--ink-3);text-transform:uppercase;}
+  .fp-list{flex:1;}
+  .fp-h{display:grid;grid-template-columns:repeat(3,1fr);}
+  .fp-h .fp-item{flex-direction:column;align-items:flex-start;gap:6px;border-right:1px solid var(--line);padding:4px 20px;}
+  .fp-h .fp-item:first-child{padding-left:0;}
+  .fp-h .fp-item:last-child{border-right:none;}
+  .fp-v .fp-item{border-bottom:1px solid var(--line-2);}
+  .fp-v .fp-item:last-child{border-bottom:none;}
+  .fp-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;cursor:pointer;transition:background .15s;}
+  .fp-item:hover{background:var(--khaki-soft);}
+  .fp-nm{font-size:14px;font-weight:500;color:var(--ink);}
+  .fp-code{font-size:11px;color:var(--ink-3);margin-top:1px;}
+  .fp-coupon-wrap{display:flex;flex-direction:column;}
+  .fp-v .fp-coupon-wrap{align-items:flex-end;}
+  .fp-coupon{font-size:23px;font-weight:700;line-height:1;white-space:nowrap;}
+  .fp-pct{font-size:13px;font-weight:600;margin-left:1px;}
+  .fp-cap{font-size:10px;color:var(--ink-3);margin-top:3px;white-space:nowrap;letter-spacing:0.02em;}
+  .fp-foot{display:flex;justify-content:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
+  .fp-more{font-size:12px;color:var(--ink-2);display:inline-flex;align-items:center;gap:4px;cursor:pointer;background:none;border:none;font-family:inherit;transition:color .15s;}
+  .fp-more:hover{color:var(--ink);}
+  @media(max-width:680px){.fp-h{grid-template-columns:1fr;}.fp-h .fp-item{flex-direction:row;align-items:center;border-right:none;border-bottom:1px solid var(--line-2);padding:10px 0;}.fp-h .fp-item:first-child{padding-left:0;}}
+
   /* ── Responsive ── */
   @media(max-width:768px){
     .hide-mobile{display:none!important;}
@@ -210,6 +237,19 @@
 
 <!-- ═══════════════ VIEW: SCREENER ═══════════════ -->
 <div id="view-screener" class="view active">
+
+  <!-- ── 顶部三大策略浮层（无类型数据时自动隐藏）── -->
+  <section id="top-panels" class="border-b border-line" style="display:none;">
+    <div class="max-w-[1400px] mx-auto px-6 py-10">
+      <!-- 市场热度型：横向 3 标的 -->
+      <div id="panel-hot" class="float-panel mb-5"></div>
+      <!-- 稳健型 · 进取型：并列，纵向 3 标的 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div id="panel-stable" class="float-panel"></div>
+        <div id="panel-growth" class="float-panel"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- Hero -->
   <section class="border-b border-line grain relative overflow-hidden">
@@ -343,7 +383,6 @@
 <footer class="border-t border-line mt-12">
   <div class="max-w-[1400px] mx-auto px-6 py-6 text-[11px] text-ink-3 leading-relaxed">
     <p><strong class="text-ink-2">重要风险披露 ·</strong> 固定票息票据（FCN）属于结构化衍生产品，含有股票挂钩风险。投资者可能损失全部本金。本平台内容仅供合资格投资者参考，不构成投资建议或要约。所展示历史数据不代表未来表现。投资前请仔细阅读产品条款与风险披露文件，并咨询专业顾问。</p>
-    <p class="mt-3">© 2026 Olive Asset Management · 保留所有权利</p>
   </div>
 </footer>
 
@@ -1106,6 +1145,52 @@ function renderStrategySection(){
   document.getElementById('type-tabs').style.display='';
 }
 
+// 顶部三大策略浮层：各取票息最高的 3 只；热度横排、稳健/进取竖排
+function renderTopPanels(){
+  if(!hasTypes())return;
+  const topN=(t,n=3)=>DATA.stocks.filter(s=>stockTypes(s).includes(t))
+    .sort((a,b)=>b.coupon-a.coupon).slice(0,n);
+  const fill=(id,t,dir)=>{
+    const el=document.getElementById(id);
+    const list=topN(t);
+    if(!list.length){el.style.display='none';return;}
+    el.style.setProperty('--fp-color',TYPES[t].color);
+    el.innerHTML=panelHTML(t,list,dir);
+  };
+  fill('panel-hot','热度','h');
+  fill('panel-stable','稳健','v');
+  fill('panel-growth','进取','v');
+  document.getElementById('top-panels').style.display='';
+  // 顶部浮层已涵盖三策略入口 → 隐藏下方旧的策略入口卡（类型 Tabs 仍保留用于筛选）
+  document.getElementById('strategy-section').style.display='none';
+  lucide.createIcons();
+}
+
+function panelHTML(t,list,dir){
+  const cfg=TYPES[t];
+  const items=list.map(s=>`
+    <div class="fp-item" onclick="navigate('detail','${s.code}')">
+      <div class="fp-name">
+        <div class="fp-nm">${s.name}</div>
+        <div class="fp-code num">${s.code}</div>
+      </div>
+      <div class="fp-coupon-wrap">
+        <div class="fp-coupon num" style="color:${cfg.color}">${s.coupon}<span class="fp-pct">%</span></div>
+        <div class="fp-cap">指示性年化票息</div>
+      </div>
+    </div>`).join('');
+  return `
+    <div class="fp-head">
+      <i data-lucide="${cfg.icon}" class="w-4 h-4" style="color:${cfg.color}"></i>
+      <span class="fp-title">${cfg.label}</span>
+      <span class="fp-en">${cfg.en}</span>
+    </div>
+    <div class="fp-list ${dir==='h'?'fp-h':'fp-v'}">${items}</div>
+    <div class="fp-foot">
+      <button class="fp-more" onclick="selectType('${t}')">更多 <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+    </div>`;
+}
+
 function renderTypeTabs(present){
   present=present||Object.keys(TYPES).filter(t=>DATA.stocks.some(s=>stockTypes(s).includes(t)));
   const tabs=[['all','全部',null],...present.map(t=>[t,TYPES[t].label,TYPES[t].icon])];
@@ -1653,6 +1738,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderNavSub();
   renderHeroStats();
   renderStrategySection();
+  renderTopPanels();
   setupFilters();
   renderScreener();
   lucide.createIcons();
