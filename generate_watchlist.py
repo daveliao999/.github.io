@@ -31,9 +31,16 @@ from openai import OpenAI
 import json_repair
 
 # ── Config ────────────────────────────────────────────────────────────────────
-EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"
+EXCEL_PATH   = r"C:\Users\liy22223\Desktop\FCN筛选器v1\screener\FCN_Results.xlsx"   # 单文件模式（旧流程兜底）
+# 三种策略类型 → 三个 Excel（不存在的文件自动跳过；同一标的出现在多个文件 = 多类型）
+EXCEL_INPUTS = {
+    "稳健": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\稳健组类型.xlsx",
+    "进取": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\进取组类型.xlsx",
+    "热度": r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\市场热度榜.xlsx",
+}
 OUTPUT_PATH  = r"C:\Users\liy22223\Desktop\FCN筛选器v1\watchlist\watchlist.json"
-TOP_N        = 30
+TOP_N        = 30   # 单文件模式每次取多少只
+TOP_N_PER_TYPE = 10 # 三类型模式每个 Excel 取多少只
 MODEL        = "deepseek-v4-pro"
 API_BASE     = "https://api.deepseek.com"
 BATCH_SIZE   = 3
@@ -520,9 +527,13 @@ def analyze_batch(client: OpenAI, batch: list) -> list:
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate FCN watchlist.json from Excel")
-    parser.add_argument("--excel",        default=EXCEL_PATH)
+    parser.add_argument("--excel",        default=None, help="单文件模式（不打类型标签）")
+    parser.add_argument("--excel-stable", default=None, help="稳健型 Excel 路径")
+    parser.add_argument("--excel-growth", default=None, help="进取型 Excel 路径")
+    parser.add_argument("--excel-hot",    default=None, help="市场热度型 Excel 路径")
     parser.add_argument("--output",       default=OUTPUT_PATH)
-    parser.add_argument("--top",          type=int, default=TOP_N)
+    parser.add_argument("--top",          type=int, default=None,
+                        help=f"每个数据源取前 N 只（默认：单文件 {TOP_N}，三类型每类 {TOP_N_PER_TYPE}）")
     parser.add_argument("--dry-run",      action="store_true", help="First 5 stocks only")
     parser.add_argument("--no-sparkline", action="store_true", help="Skip yfinance")
     parser.add_argument("--no-ai",        action="store_true", help="Skip DeepSeek API")
@@ -538,75 +549,151 @@ def main():
     iso_wk   = today.isocalendar()[1]
     week_str = args.week or f"W{iso_wk:02d} {today.year}"
 
-    # ── 1. Read Excel ─────────────────────────────────────────────────────────
-    print(f"\n[1/4] Reading Excel: {args.excel}")
-    if not Path(args.excel).exists():
-        print(f"❌  Not found: {args.excel}"); sys.exit(1)
+    # ── 1. Read Excel(s) ──────────────────────────────────────────────────────
+    if args.excel:                       # 显式单文件模式
+        sources = [(None, args.excel)]
+        per_n = 5 if args.dry_run else (args.top or TOP_N)
+    else:                                # 三类型模式（默认）
+        sources = [
+            ("稳健", args.excel_stable or EXCEL_INPUTS["稳健"]),
+            ("进取", args.excel_growth or EXCEL_INPUTS["进取"]),
+            ("热度", args.excel_hot    or EXCEL_INPUTS["热度"]),
+        ]
+        if not any(Path(p).exists() for _, p in sources):
+            print(f"  三类型 Excel 均不存在，回退单文件模式: {EXCEL_PATH}")
+            sources = [(None, EXCEL_PATH)]
+            per_n = 5 if args.dry_run else (args.top or TOP_N)
+        else:
+            per_n = 2 if args.dry_run else (args.top or TOP_N_PER_TYPE)
 
-    df = pd.read_excel(args.excel)
-    col_map = {}
-    for col in df.columns:
-        c = col.replace('\n', ' ').strip()
-        if c == 'Code':                            col_map[col] = 'code'
-        elif c == 'Name':                          col_map[col] = 'name'
-        elif c == 'Mkt':                           col_map[col] = 'market'
-        elif c == 'Price':                         col_map[col] = 'price'
-        elif 'Mkt Cap' in c:                       col_map[col] = 'market_cap'
-        elif 'IV 6M' in c:                         col_map[col] = 'iv6m'
-        elif 'Analyst' in c and 'Upside' in c:     col_map[col] = 'analyst_upside'
-        elif 'DISPLAY' in c and 'SCORE' in c:      col_map[col] = 'display_score'
-        elif 'Avg Vol' in c:                       col_map[col] = 'avg_vol'
-        elif c in ('Coupon%', 'Coupon', '票息%'):  col_map[col] = 'manual_coupon'
-        elif c in ('Strike%', 'Strike', '行权价%'): col_map[col] = 'manual_strike'
-        elif c in ('KI%', 'KI', '敲入价%'):        col_map[col] = 'manual_ki'
-        elif c in ('KI Type', 'KIType', '敲入类型'): col_map[col] = 'manual_ki_type'
-        elif c in ('Tenor', 'Tenor(M)', '期限'):   col_map[col] = 'manual_tenor'
-        elif c in ('KO%', 'KO', '敲出价%', '敲出价'): col_map[col] = 'manual_ko'
-        elif 'Catalyst' in c:                      col_map[col] = 'catalyst_raw'
-        elif 'Max 1D Drop' in c:                   col_map[col] = 'max_drop'
-        elif 'Price/50DMA' in c:                   col_map[col] = 'sma50_ratio'
-        elif '50DMA Slope' in c:                   col_map[col] = 'sma50_slope'
-        elif 'Option OI' in c:                     col_map[col] = 'option_oi'
-        elif c == 'IV Src':                        col_map[col] = 'iv_src'
-    df = df.rename(columns=col_map)
+    def _parse_terms_excel(df, n):
+        """条款式 Excel（区域/代码/名称/行业/执行价/敲入价/敲入类型/敲出价/票息）。
+        无市场数据 → price/mktcap 由 yfinance 运行时补，条款为小数（0.8→80%）。"""
+        out = []
+        for _, row in df.head(n).iterrows():
+            region = str(row['区域']).strip()
+            raw    = str(row['代码']).strip().split('.')[0]
+            if region.startswith('港'):
+                mkt, futu = 'HK', 'HK.' + raw.zfill(5)
+            else:
+                mkt, futu = 'US', 'US.' + raw.upper()
+            industry = None
+            for c in ('子板块', '行业', '板块'):
+                if c in df.columns and _opt_str(row.get(c)):
+                    industry = _opt_str(row.get(c)); break
+            pct = lambda v: round(v * 100, 2) if v is not None and v < 2 else v
+            out.append({
+                "futu_code":      futu,
+                "display_code":   to_display_code(futu),
+                "yf_code":        to_yf_code(futu),
+                "name":           str(row.get('名称', raw)),
+                "market":         mkt,
+                "price":          0.0,        # 运行时由 yfinance 补
+                "market_cap":     0.0,        # 运行时由 yfinance 补
+                "currency":       "USD" if mkt == "US" else "HKD",
+                "iv_pct":         0.0,        # 条款式输入无 IV
+                "analyst_upside": 0.0,
+                "display_score":  0.0,        # 无评分体系 → 前端自动隐藏评分 UI
+                "avg_vol":        0.0,
+                "industry_hint":  industry,
+                "manual_coupon":  pct(_opt_float(row.get('票息'))),
+                "manual_strike":  pct(_opt_float(row.get('执行价'))),
+                "manual_ki":      pct(_opt_float(row.get('敲入价'))),
+                "manual_ko":      pct(_opt_float(row.get('敲出价'))),
+                "manual_ki_type": _opt_str(row.get('敲入类型')),
+                "manual_tenor":   None,       # 统一 6 个月
+                "catalyst_raw":   None, "max_drop": None, "sma50_ratio": None,
+                "sma50_slope":    None, "option_oi": None, "iv_src": 'manual',
+            })
+        return out
 
-    n = 5 if args.dry_run else args.top
-    df = df.head(n)
-    print(f"  Loaded top {len(df)} stocks (Excel already sorted by score)")
+    def _parse_excel(path, n):
+        """读一个筛选结果 Excel → stock dict 列表（不含类型标签）。"""
+        df = pd.read_excel(path)
+        if '代码' in [str(c).strip() for c in df.columns]:
+            return _parse_terms_excel(df, n)     # 条款式格式
+        col_map = {}
+        for col in df.columns:
+            c = col.replace('\n', ' ').strip()
+            if c == 'Code':                            col_map[col] = 'code'
+            elif c == 'Name':                          col_map[col] = 'name'
+            elif c == 'Mkt':                           col_map[col] = 'market'
+            elif c == 'Price':                         col_map[col] = 'price'
+            elif 'Mkt Cap' in c:                       col_map[col] = 'market_cap'
+            elif 'IV 6M' in c:                         col_map[col] = 'iv6m'
+            elif 'Analyst' in c and 'Upside' in c:     col_map[col] = 'analyst_upside'
+            elif 'DISPLAY' in c and 'SCORE' in c:      col_map[col] = 'display_score'
+            elif 'Avg Vol' in c:                       col_map[col] = 'avg_vol'
+            elif c in ('Coupon%', 'Coupon', '票息%'):  col_map[col] = 'manual_coupon'
+            elif c in ('Strike%', 'Strike', '行权价%'): col_map[col] = 'manual_strike'
+            elif c in ('KI%', 'KI', '敲入价%'):        col_map[col] = 'manual_ki'
+            elif c in ('KI Type', 'KIType', '敲入类型'): col_map[col] = 'manual_ki_type'
+            elif c in ('Tenor', 'Tenor(M)', '期限'):   col_map[col] = 'manual_tenor'
+            elif c in ('KO%', 'KO', '敲出价%', '敲出价'): col_map[col] = 'manual_ko'
+            elif 'Catalyst' in c:                      col_map[col] = 'catalyst_raw'
+            elif 'Max 1D Drop' in c:                   col_map[col] = 'max_drop'
+            elif 'Price/50DMA' in c:                   col_map[col] = 'sma50_ratio'
+            elif '50DMA Slope' in c:                   col_map[col] = 'sma50_slope'
+            elif 'Option OI' in c:                     col_map[col] = 'option_oi'
+            elif c == 'IV Src':                        col_map[col] = 'iv_src'
+        df = df.rename(columns=col_map)
+        df = df.head(n)
+        out = []
+        for _, row in df.iterrows():
+            futu   = str(row['code']).strip()
+            mkt    = str(row.get('market', 'US')).strip()
+            iv_raw = float(row.get('iv6m', 0) or 0)
+            iv_pct = round(iv_raw * 100 if iv_raw < 2 else iv_raw, 2)
+            out.append({
+                "futu_code":      futu,
+                "display_code":   to_display_code(futu),
+                "yf_code":        to_yf_code(futu),
+                "name":           str(row.get('name', futu)),
+                "market":         mkt,
+                "price":          round(float(row.get('price', 0) or 0), 2),
+                "market_cap":     round(float(row.get('market_cap', 0) or 0), 2),
+                "currency":       "USD" if mkt == "US" else ("HKD" if mkt == "HK" else "CNY"),
+                "iv_pct":         iv_pct,
+                "analyst_upside": float(row.get('analyst_upside', 0) or 0),
+                "display_score":  float(row.get('display_score', 0) or 0),
+                "avg_vol":        float(row.get('avg_vol', 0) or 0),
+                "manual_coupon":  _opt_float(row.get('manual_coupon')),
+                "manual_strike":  _opt_float(row.get('manual_strike')),
+                "manual_ki":      _opt_float(row.get('manual_ki')),
+                "manual_ki_type": _opt_str(row.get('manual_ki_type')),
+                "manual_tenor":   _opt_int(row.get('manual_tenor')),
+                # Method A: extra screener fields for LLM context
+                "catalyst_raw":   _opt_float(row.get('catalyst_raw')),
+                "max_drop":       _opt_float(row.get('max_drop')),
+                "sma50_ratio":    _opt_float(row.get('sma50_ratio')),
+                "sma50_slope":    _opt_float(row.get('sma50_slope')),
+                "option_oi":      _opt_float(row.get('option_oi')),
+                "iv_src":         _opt_str(row.get('iv_src')) or 'futu',
+                "manual_ko":      _opt_float(row.get('manual_ko')),
+            })
+        return out
 
-    stocks = []
-    for _, row in df.iterrows():
-        futu   = str(row['code']).strip()
-        mkt    = str(row.get('market', 'US')).strip()
-        iv_raw = float(row.get('iv6m', 0) or 0)
-        iv_pct = round(iv_raw * 100 if iv_raw < 2 else iv_raw, 2)
-        stocks.append({
-            "futu_code":      futu,
-            "display_code":   to_display_code(futu),
-            "yf_code":        to_yf_code(futu),
-            "name":           str(row.get('name', futu)),
-            "market":         mkt,
-            "price":          round(float(row.get('price', 0) or 0), 2),
-            "market_cap":     round(float(row.get('market_cap', 0) or 0), 2),
-            "currency":       "USD" if mkt == "US" else ("HKD" if mkt == "HK" else "CNY"),
-            "iv_pct":         iv_pct,
-            "analyst_upside": float(row.get('analyst_upside', 0) or 0),
-            "display_score":  float(row.get('display_score', 0) or 0),
-            "avg_vol":        float(row.get('avg_vol', 0) or 0),
-            "manual_coupon":  _opt_float(row.get('manual_coupon')),
-            "manual_strike":  _opt_float(row.get('manual_strike')),
-            "manual_ki":      _opt_float(row.get('manual_ki')),
-            "manual_ki_type": _opt_str(row.get('manual_ki_type')),
-            "manual_tenor":   _opt_int(row.get('manual_tenor')),
-            # Method A: extra screener fields for LLM context
-            "catalyst_raw":   _opt_float(row.get('catalyst_raw')),
-            "max_drop":       _opt_float(row.get('max_drop')),
-            "sma50_ratio":    _opt_float(row.get('sma50_ratio')),
-            "sma50_slope":    _opt_float(row.get('sma50_slope')),
-            "option_oi":      _opt_float(row.get('option_oi')),
-            "iv_src":         _opt_str(row.get('iv_src')) or 'futu',
-            "manual_ko":      _opt_float(row.get('manual_ko')),
-        })
+    print("\n[1/4] Reading Excel(s)...")
+    stocks, by_code, excel_names = [], {}, []
+    for stype, path in sources:
+        if not Path(path).exists():
+            print(f"  ⚠  跳过{('「' + stype + '」') if stype else ''}：文件不存在 {path}")
+            continue
+        rows = _parse_excel(path, per_n)
+        excel_names.append(Path(path).name)
+        print(f"  {stype or '默认'}: {Path(path).name} → {len(rows)} 只")
+        for s in rows:
+            key = s['futu_code']
+            if key in by_code:
+                if stype and stype not in by_code[key]['types']:
+                    by_code[key]['types'].append(stype)
+            else:
+                s['types'] = [stype] if stype else []
+                by_code[key] = s
+                stocks.append(s)
+    if not stocks:
+        print("❌  没有读到任何标的，请检查 Excel 路径"); sys.exit(1)
+    print(f"  Loaded {len(stocks)} stocks（去重后；同标的多类型已合并）")
 
     # ── 2. yfinance sparklines ────────────────────────────────────────────────
     if not args.no_sparkline:
@@ -615,6 +702,16 @@ def main():
             s['sparkline']        = get_sparkline(s['yf_code'])
             s['priceChange']      = get_price_change(s['yf_code'])
             s['price_history']    = get_price_history(s['yf_code'])
+            # 条款式 Excel 不含价格/市值 → 运行时补
+            if not s['price'] and s['price_history'].get('initialPrice'):
+                s['price'] = s['price_history']['initialPrice']
+            if not s['market_cap']:
+                try:
+                    fi = yf.Ticker(s['yf_code']).fast_info
+                    mc = getattr(fi, 'market_cap', None)
+                    if mc: s['market_cap'] = round(mc / 1e9, 2)
+                except Exception:
+                    pass
             s['yf_context']       = get_realtime_context(s['yf_code'], s['display_code'])
             s['futu_context']     = get_futu_context(s['futu_code'], s['display_code'])
             print(f"  [{i+1:2d}/{len(stocks)}] {s['display_code']:<14} "
@@ -713,14 +810,19 @@ def main():
         if s['manual_ko']      is not None: fcn['ko']     = s['manual_ko']
         if s['manual_ki_type'] is not None: fcn['kiType'] = s['manual_ki_type']
         if s['manual_tenor']   is not None: fcn['tenor']  = s['manual_tenor']
+        # 条款式输入无 IV → 风险等级按实际票息推导（票息是波动率的市场定价）
+        if not s['iv_pct'] and fcn['coupon']:
+            fcn['risk'] = '高' if fcn['coupon'] >= 30 else ('中' if fcn['coupon'] >= 15 else '低')
 
-        score_10 = round(s['display_score'] / score_max * 10, 1)
+        # 条款式输入无评分体系 → score/scoreBreakdown 置 null，前端自动隐藏
+        has_score = bool(s['display_score'])
+        score_10 = round(s['display_score'] / score_max * 10, 1) if has_score else None
         score_bd = {
             "fundamental": min(round(s['display_score'] / score_max * 10, 1), 10),
             "volatility":  min(round(s['iv_pct'] / 120 * 10, 1), 10),
             "liquidity":   min(round(min(s['avg_vol'], 5000) / 5000 * 10, 1), 10),
             "momentum":    min(round(max(s['analyst_upside'] * 20, 0), 1), 10),
-        }
+        } if has_score else None
 
         if rank == 0:     tag = "本周精选"
         elif s['iv_pct'] >= 70: tag = "高 IV"
@@ -731,8 +833,9 @@ def main():
             "code":           code,
             "name":           ana.get("name") or s['name'],
             "name_en":        ana.get("name_en", ""),
-            "industry":       ana.get("sector", ""),
+            "industry":       s.get('industry_hint') or ana.get("sector", ""),
             "market":         s['market'],
+            "types":          s.get('types', []),
             "price":          s['price'],
             "marketCap":      s['market_cap'],
             "currency":       s['currency'],
@@ -760,14 +863,22 @@ def main():
             "data_quality":   ana.get("data_quality", {}),
         })
 
-    featured = [s['code'] for s in output_stocks[:5]]
+    if any(s.get('types') for s in output_stocks):
+        # 三类型模式：每个类型精选 2 只
+        featured, _seen = [], set()
+        for t in ("稳健", "进取", "热度"):
+            picked = [s['code'] for s in output_stocks
+                      if t in (s.get('types') or []) and s['code'] not in _seen][:2]
+            _seen.update(picked); featured.extend(picked)
+    else:
+        featured = [s['code'] for s in output_stocks[:5]]
     watchlist = {
         "_generated": {
             "by":    "generate_watchlist.py",
             "model": MODEL,
             "at":    today.isoformat(),
             "count": len(output_stocks),
-            "excel": Path(args.excel).name,
+            "excel": " + ".join(excel_names),
         },
         "meta": {
             "week":        week_str,

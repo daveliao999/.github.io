@@ -156,7 +156,7 @@ def main():
             "market_cap":    stock_entry["marketCap"],
             "currency":      stock_entry["currency"],
             "iv_pct":        stock_entry["iv30"],
-            "display_score": stock_entry["score"] * 10,   # 近似反推
+            "display_score": (stock_entry.get("score") or 0) * 10,   # 近似反推；无评分为 0
         }
 
         s["futu_context"] = get_futu_context(futu_c, code)
