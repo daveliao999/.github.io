@@ -82,6 +82,146 @@
           }
         ]
       }
+    },
+    "sectorHeatmap": {
+      "generatedAt": "2026-06-15",
+      "weekRange": "2026/6/15-2026/6/19",
+      "us": [
+        {
+          "name": "工业",
+          "name_en": "Industrials",
+          "change": 8.47,
+          "n": 8
+        },
+        {
+          "name": "必需消费",
+          "name_en": "Consumer Staples",
+          "change": 3.36,
+          "n": 6
+        },
+        {
+          "name": "科技",
+          "name_en": "Technology",
+          "change": 3.16,
+          "n": 8
+        },
+        {
+          "name": "材料",
+          "name_en": "Materials",
+          "change": 3.13,
+          "n": 7
+        },
+        {
+          "name": "金融",
+          "name_en": "Financials",
+          "change": 2.9,
+          "n": 8
+        },
+        {
+          "name": "地产",
+          "name_en": "Real Estate",
+          "change": 1.71,
+          "n": 7
+        },
+        {
+          "name": "可选消费",
+          "name_en": "Consumer Disc.",
+          "change": 1.49,
+          "n": 9
+        },
+        {
+          "name": "医疗",
+          "name_en": "Health Care",
+          "change": 1.37,
+          "n": 6
+        },
+        {
+          "name": "能源",
+          "name_en": "Energy",
+          "change": 0.45,
+          "n": 5
+        },
+        {
+          "name": "公用",
+          "name_en": "Utilities",
+          "change": 0.29,
+          "n": 5
+        },
+        {
+          "name": "通信",
+          "name_en": "Communication",
+          "change": -0.38,
+          "n": 5
+        }
+      ],
+      "hk": [
+        {
+          "name": "工业",
+          "name_en": "Industrials",
+          "change": 9.02,
+          "n": 9
+        },
+        {
+          "name": "材料",
+          "name_en": "Materials",
+          "change": 8.37,
+          "n": 8
+        },
+        {
+          "name": "金融",
+          "name_en": "Financials",
+          "change": 4.6,
+          "n": 7
+        },
+        {
+          "name": "科技",
+          "name_en": "Technology",
+          "change": 3.88,
+          "n": 9
+        },
+        {
+          "name": "医疗",
+          "name_en": "Health Care",
+          "change": 2.57,
+          "n": 6
+        },
+        {
+          "name": "必需消费",
+          "name_en": "Consumer Staples",
+          "change": 2.37,
+          "n": 8
+        },
+        {
+          "name": "地产",
+          "name_en": "Real Estate",
+          "change": 1.2,
+          "n": 5
+        },
+        {
+          "name": "通信",
+          "name_en": "Communication",
+          "change": -0.54,
+          "n": 5
+        },
+        {
+          "name": "公用",
+          "name_en": "Utilities",
+          "change": -0.99,
+          "n": 3
+        },
+        {
+          "name": "可选消费",
+          "name_en": "Consumer Disc.",
+          "change": -3.27,
+          "n": 11
+        },
+        {
+          "name": "能源",
+          "name_en": "Energy",
+          "change": -5.8,
+          "n": 5
+        }
+      ]
     }
   },
   "stocks": [

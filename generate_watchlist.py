@@ -637,6 +637,105 @@ def get_market_hotspot(client, today):
             print(f"  ⚠  热点综述 attempt {attempt+1} 失败: {e}"); time.sleep(6)
     print("  ❌  本周热点分析生成失败（3 次尝试）"); return None
 
+# ── 市场热点图：板块过去一周表现（富途行业板块原生数据）──────────────────────────
+# 11 个 GICS 板块 → 富途行业子板块代码；板块过去 5 个交易日涨跌幅按成交额加权聚合。
+# 美股 + 港股均取富途 INDUSTRY 板块的日 K（板块本身是可报价标的），免 ETF/篮子代理。
+_HEATMAP_SECTORS = [
+    ("科技",   "Technology"),     ("通信",   "Communication"),
+    ("可选消费","Consumer Disc."), ("必需消费","Consumer Staples"),
+    ("医疗",   "Health Care"),     ("金融",   "Financials"),
+    ("工业",   "Industrials"),     ("能源",   "Energy"),
+    ("材料",   "Materials"),       ("公用",   "Utilities"),
+    ("地产",   "Real Estate"),
+]
+_HEATMAP_US = {
+    "科技":   ["2015","2016","2470","2508","2252","2492","2275","2072"],
+    "通信":   ["2004","2088","2253","2491","2497"],
+    "可选消费":["2431","2225","2468","2106","2276","2494","2046","2240","2460"],
+    "必需消费":["2108","2095","2459","2264","2003","2427"],
+    "医疗":   ["2069","2513","2280","2011","2246","2220"],
+    "金融":   ["2481","2456","2260","2249","2490","2484","2512","2261"],
+    "工业":   ["2089","2102","2267","2500","2463","2474","2219","2090"],
+    "能源":   ["2058","2224","2060","2226","2257"],
+    "材料":   ["2020","2068","2110","2101","2510","2034","2237"],
+    "公用":   ["2472","2488","2489","2458","2462"],
+    "地产":   ["2140","2141","2466","2457","2482","2038","2511"],
+}
+_HEATMAP_HK = {
+    "科技":   ["1013","1360","1100","1359","1274","1052","1053","23364","23363"],
+    "通信":   ["23360","1054","1029","1027","1026"],
+    "可选消费":["23361","1083","1040","1041","1049","1277","1270","1069","1071","1034","1056"],
+    "必需消费":["1010","1070","1080","1072","1356","1062","1001","23850"],
+    "医疗":   ["1050","1067","1284","1012","1086","1357"],
+    "金融":   ["1079","1003","1068","1030","1004","23362","1007"],
+    "工业":   ["1063","1065","1066","1005","1076","1074","1073","1025","1095"],
+    "能源":   ["1042","1043","1044","1016","1358"],
+    "材料":   ["1046","1075","1077","1078","1084","1028","1033","1006"],
+    "公用":   ["1051","1045","1039"],
+    "地产":   ["1019","1020","1311","1090","1089"],
+}
+
+def _heatmap_one_market(ctx, mkt: str, mapping: dict) -> list:
+    """订阅板块日 K + 快照成交额 → 各 GICS 板块成交额加权 5 日涨跌幅。"""
+    from futu import RET_OK, KLType, AuType, SubType
+    codes = [f"{mkt}.LIST{n}" for ns in mapping.values() for n in ns]
+    ctx.subscribe(codes, [SubType.K_DAY])
+    time.sleep(2)
+    # 成交额（批量快照，单次上限 400）用作板块内子行业权重
+    turnover = {}
+    for i in range(0, len(codes), 400):
+        ret, snap = ctx.get_market_snapshot(codes[i:i+400])
+        if ret == RET_OK and snap is not None:
+            for _, row in snap.iterrows():
+                turnover[row["code"]] = float(row.get("turnover") or 0)
+    # 5 日涨跌幅（实时日 K，不消耗历史 K 线额度）
+    ret5 = {}
+    for c in codes:
+        ret, df = ctx.get_cur_kline(c, 6, KLType.K_DAY, AuType.QFQ)
+        if ret == RET_OK and df is not None and len(df) >= 2:
+            cl = df["close"]
+            base = cl.iloc[-6] if len(df) >= 6 else cl.iloc[0]
+            if base:
+                ret5[c] = (cl.iloc[-1] / base - 1) * 100
+    out = []
+    for cn, en in _HEATMAP_SECTORS:
+        num = den = 0.0; used = 0
+        for n in mapping.get(cn, []):
+            c = f"{mkt}.LIST{n}"
+            if c in ret5:
+                w = turnover.get(c, 0) or 1.0
+                num += ret5[c] * w; den += w; used += 1
+        if den > 0:
+            out.append({"name": cn, "name_en": en,
+                        "change": round(float(num / den), 2), "n": used})
+    out.sort(key=lambda x: x["change"], reverse=True)
+    return out
+
+def get_sector_heatmap(today):
+    """美股 + 港股各 GICS 板块过去一周表现（富途行业板块）。失败返回 None。"""
+    print("[+] 生成市场热点图（富途行业板块 → 板块周涨跌幅，成交额加权）...")
+    try:
+        from futu import OpenQuoteContext
+        ctx = OpenQuoteContext(host="127.0.0.1", port=11111)
+    except Exception as e:
+        print(f"  ⚠  Futu 连接失败，跳过市场热点图: {e}"); return None
+    try:
+        us = _heatmap_one_market(ctx, "US", _HEATMAP_US)
+        hk = _heatmap_one_market(ctx, "HK", _HEATMAP_HK)
+    except Exception as e:
+        print(f"  ⚠  市场热点图获取失败: {e}"); us = hk = []
+    finally:
+        try: ctx.close()
+        except Exception: pass
+    if not us and not hk:
+        print("  ⚠  美股、港股板块数据均为空，跳过市场热点图"); return None
+    mon = today - timedelta(days=today.weekday())
+    fri = mon + timedelta(days=4)
+    wk = lambda d: f"{d.year}/{d.month}/{d.day}"
+    print(f"  ✅  市场热点图：美股 {len(us)} 个 · 港股 {len(hk)} 个板块")
+    return {"generatedAt": today.strftime("%Y-%m-%d"),
+            "weekRange": f"{wk(mon)}-{wk(fri)}", "us": us, "hk": hk}
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate FCN watchlist.json from Excel")
@@ -1005,6 +1104,17 @@ def main():
         except Exception:
             pass
 
+    # ── 市场热点图：生成失败则保留上一版（板块永不留白）──
+    heatmap = get_sector_heatmap(today)
+    if heatmap is None and os.path.exists(args.output):
+        try:
+            prev = json.load(open(args.output, encoding="utf-8"))
+            heatmap = (prev.get("meta") or {}).get("sectorHeatmap")
+            if heatmap:
+                print("  ↪  沿用上一版市场热点图")
+        except Exception:
+            pass
+
     watchlist = {
         "_generated": {
             "by":    "generate_watchlist.py",
@@ -1020,6 +1130,7 @@ def main():
             "nextUpdate":  (today + timedelta(days=7)).strftime("%Y-%m-%d"),
             "featuredIds": featured,
             "marketHotspot": hotspot,
+            "sectorHeatmap": heatmap,
         },
         "stocks": output_stocks
     }

@@ -232,6 +232,21 @@
   .hs-src{font-size:11px;color:var(--ink-3);text-decoration:underline;text-underline-offset:2px;}
   .hs-src:hover{color:var(--ink);}
 
+  /* ── 市场热点图（板块周表现热力图）── */
+  .sh-block{margin-bottom:6px;}
+  .sh-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+  .sh-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;}
+  .sh-tile{border:1px solid var(--line);border-radius:6px;padding:20px 18px;display:flex;flex-direction:column;gap:11px;min-height:112px;justify-content:center;position:relative;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease;}
+  .sh-tile:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.09);}
+  .sh-name{font-size:16px;font-weight:600;color:var(--ink);line-height:1.1;display:flex;align-items:baseline;flex-wrap:wrap;gap:5px;}
+  .sh-name-en{font-family:var(--font-en);font-size:10px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;font-weight:500;}
+  .sh-chg{font-size:29px;font-weight:700;color:var(--ink);font-family:var(--font-en);letter-spacing:-.02em;line-height:1;}
+  .sh-legend{display:flex;align-items:center;gap:10px;margin-top:22px;font-size:11px;color:var(--ink-3);flex-wrap:wrap;}
+  .sh-legend-bar{height:8px;width:180px;border-radius:4px;background:linear-gradient(90deg,rgba(200,60,55,.55),rgba(200,60,55,.12),var(--bg-2),rgba(34,150,94,.12),rgba(34,150,94,.55));}
+  @media(max-width:900px){.sh-grid{grid-template-columns:repeat(4,minmax(0,1fr));}.sh-tile{padding:18px 16px;min-height:98px;}.sh-chg{font-size:26px;}}
+  @media(max-width:600px){.sh-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  @media(max-width:420px){.sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.sh-chg{font-size:23px;}}
+
   /* ── Responsive ── */
   @media(max-width:768px){
     .hide-mobile{display:none!important;}
@@ -279,6 +294,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div id="hotspot-us"></div>
         <div id="hotspot-hk"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 市场热点图：板块过去一周表现（无数据时自动隐藏）── -->
+  <section id="sector-heatmap" class="border-b border-line" style="display:none;">
+    <div class="max-w-[1400px] mx-auto px-6 py-10">
+      <div class="section-label">市场热点图 · Sector Performance</div>
+      <p class="text-ink-3 text-sm mt-3 mb-7" id="heatmap-range"></p>
+      <div class="grid grid-cols-1 gap-8">
+        <div id="heatmap-us"></div>
+        <div id="heatmap-hk"></div>
+      </div>
+      <div class="sh-legend">
+        <span>跌</span><span class="sh-legend-bar"></span><span>涨</span>
+        <span style="margin-left:14px;">板块涨跌幅为过去 5 个交易日表现，数据来源：富途行业板块（成交额加权）</span>
       </div>
     </div>
   </section>
@@ -1212,6 +1243,42 @@ function hotspotColumn(label,mkt,block){
   </div>`;
 }
 
+// 市场热点图：美股 + 港股各板块过去 5 个交易日表现（数据来自 meta.sectorHeatmap）
+function renderSectorHeatmap(){
+  const sh=DATA.meta&&DATA.meta.sectorHeatmap;
+  if(!sh||((!(sh.us||[]).length)&&(!(sh.hk||[]).length)))return;
+  const range=document.getElementById('heatmap-range');
+  if(range)range.textContent=`美股与港股各主要板块过去 5 个交易日表现${sh.weekRange?`（${sh.weekRange}）`:''}，一眼看清资金轮动方向`;
+  const us=document.getElementById('heatmap-us'),hk=document.getElementById('heatmap-hk');
+  us.innerHTML=heatmapGrid('美股','US',sh.us);
+  hk.innerHTML=heatmapGrid('港股','HK',sh.hk);
+  us.style.display=us.innerHTML?'':'none';
+  hk.style.display=hk.innerHTML?'':'none';
+  document.getElementById('sector-heatmap').style.display='';
+}
+
+// 涨跌幅 → 背景色：绿涨红跌，±4% 封顶决定深浅
+function heatColor(chg){
+  const x=Math.max(-4,Math.min(4,Number(chg)||0))/4;
+  const a=(0.10+0.45*Math.abs(x)).toFixed(3);
+  return x>=0?`rgba(34,150,94,${a})`:`rgba(200,60,55,${a})`;
+}
+
+function heatmapGrid(label,mkt,arr){
+  if(!arr||!arr.length)return'';
+  const tiles=arr.map(s=>{
+    const c=Number(s.change)||0,sign=c>0?'+':'';
+    return`<div class="sh-tile" style="background:${heatColor(c)}" title="${_esc(s.name)} ${s.name_en||''}: ${sign}${c.toFixed(2)}%">
+      <span class="sh-name">${_esc(s.name)}<span class="sh-name-en">${_esc(s.name_en||'')}</span></span>
+      <span class="sh-chg">${sign}${c.toFixed(1)}%</span>
+    </div>`;
+  }).join('');
+  return`<div class="sh-block">
+    <div class="sh-head"><span class="hs-mkt">${label}</span><span class="hs-mkt-en">${mkt}</span></div>
+    <div class="sh-grid">${tiles}</div>
+  </div>`;
+}
+
 // 顶部三大策略浮层：各取票息最高的 3 只；热度横排、稳健/进取竖排
 function renderTopPanels(){
   if(!hasTypes())return;
@@ -1807,6 +1874,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderStrategySection();
   renderTopPanels();
   renderMarketHotspot();
+  renderSectorHeatmap();
   setupFilters();
   renderScreener();
   lucide.createIcons();
