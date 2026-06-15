@@ -1115,6 +1115,18 @@ def main():
         except Exception:
             pass
 
+    # ── 财经日历：脚本不抓取（investing.com 有反爬），保留上一版 ──
+    # 数据由每周更新时用 WebFetch 抓 investing.com 写入 meta.calendar，此处仅负责不覆盖
+    calendar = None
+    if os.path.exists(args.output):
+        try:
+            _prevc = json.load(open(args.output, encoding="utf-8"))
+            calendar = (_prevc.get("meta") or {}).get("calendar")
+            if calendar:
+                print("  ↪  保留现有财经日历（由每周 WebFetch investing.com 写入）")
+        except Exception:
+            pass
+
     watchlist = {
         "_generated": {
             "by":    "generate_watchlist.py",
@@ -1131,6 +1143,7 @@ def main():
             "featuredIds": featured,
             "marketHotspot": hotspot,
             "sectorHeatmap": heatmap,
+            "calendar": calendar,
         },
         "stocks": output_stocks
     }

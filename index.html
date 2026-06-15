@@ -247,6 +247,39 @@
   @media(max-width:600px){.sh-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
   @media(max-width:420px){.sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.sh-chg{font-size:23px;}}
 
+  /* ── 财经日历（按日期议程式展示）── */
+  .cal-sub{display:flex;align-items:baseline;gap:12px;margin:6px 0 6px;}
+  .cal-sub:not(:first-child){margin-top:30px;padding-top:24px;border-top:1px solid var(--line);}
+  .cal-sub-t{font-size:15px;font-weight:600;color:var(--ink);position:relative;padding-left:12px;}
+  .cal-sub-t::before{content:'';position:absolute;left:0;top:3px;bottom:3px;width:3px;background:var(--khaki);}
+  .cal-sub-r{font-family:var(--font-en);font-size:11px;letter-spacing:.08em;color:var(--ink-3);}
+  .cal-day{display:flex;gap:20px;padding:15px 4px;border-bottom:1px solid var(--line-2);}
+  .cal-day:last-child{border-bottom:none;}
+  .cal-day-d{flex-shrink:0;width:78px;display:flex;flex-direction:column;gap:2px;padding-top:2px;}
+  .cal-d-md{font-family:var(--font-en);font-size:21px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;}
+  .cal-d-wk{font-size:11px;color:var(--ink-3);}
+  .cal-d-today{display:inline-block;font-size:10px;font-weight:600;color:var(--khaki-ink,#5C5240);background:var(--khaki-soft);border-radius:2px;padding:0 5px;width:fit-content;margin-top:2px;}
+  .cal-events{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px;}
+  .cal-ev{display:flex;align-items:flex-start;gap:10px;}
+  .cal-ev-ic{flex-shrink:0;font-size:15px;line-height:1.3;width:20px;text-align:center;}
+  .cal-ev-main{flex:1;min-width:0;}
+  .cal-ev-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.4;}
+  .cal-ev-sub{font-size:11px;color:var(--ink-3);line-height:1.45;margin-top:1px;}
+  .cal-ev-cap{color:var(--ink-3);font-weight:400;font-size:11px;}
+  .cal-ev-val{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:1px;text-align:right;min-width:62px;}
+  .cal-tk{flex-shrink:0;font-family:var(--font-en);font-size:11px;font-weight:700;color:var(--ink);background:var(--khaki-soft);border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-right:4px;}
+  .cal-val{font-family:var(--font-en);font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;}
+  .cal-prev{font-size:10px;color:var(--ink-3);white-space:nowrap;}
+  .cal-star{color:#C8A96A;margin-left:5px;font-size:12px;}
+  .cal-tag{display:inline-block;font-size:10px;font-weight:600;padding:0 5px;border-radius:2px;margin-top:2px;}
+  .cal-tag-up{background:var(--green-soft);color:var(--green-ink);}
+  .cal-tag-dn{background:#FBEAE8;color:#C0392B;}
+  .cal-tag-eq{background:var(--bg-3);color:var(--ink-3);}
+  .imp-hi{color:#C0392B;font-size:8px;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
+  .imp-md{color:#C8A96A;font-size:8px;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
+  .cal-empty{padding:18px;text-align:center;color:var(--ink-3);font-size:12px;}
+  @media(max-width:600px){.cal-day{gap:12px;}.cal-day-d{width:52px;}.cal-d-md{font-size:17px;}.cal-ev-val{min-width:0;}}
+
   /* ── Responsive ── */
   @media(max-width:768px){
     .hide-mobile{display:none!important;}
@@ -311,6 +344,15 @@
         <span>跌</span><span class="sh-legend-bar"></span><span>涨</span>
         <span style="margin-left:14px;">板块涨跌幅为过去 5 个交易日表现，数据来源：富途行业板块（成交额加权）</span>
       </div>
+    </div>
+  </section>
+
+  <!-- ── 财经日历：未来两周预告 + 本周回顾（无数据时自动隐藏）── -->
+  <section id="calendar" class="border-b border-line" style="display:none;">
+    <div class="max-w-[1400px] mx-auto px-6 py-10">
+      <div class="section-label">财经日历 · Economic &amp; Earnings Calendar</div>
+      <p class="text-ink-3 text-sm mt-3 mb-7">未来两周重要财报与经济数据预告，及本周已公布数据回顾。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
+      <div id="cal-body"></div>
     </div>
   </section>
 
@@ -1279,6 +1321,77 @@ function heatmapGrid(label,mkt,arr){
   </div>`;
 }
 
+// 财经日历：未来两周财报+经济数据预告，本周回顾（数据来自 meta.calendar）
+const _CAL_FLAG={US:'🇺🇸',CN:'🇨🇳',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵',GB:'🇬🇧',UK:'🇬🇧',KR:'🇰🇷',TW:'🇹🇼',IN:'🇮🇳'};
+function _calFlag(c){return _CAL_FLAG[String(c||'').toUpperCase()]||'🌐';}
+function _calMD(d){const m=String(d||'').match(/(\d{4})-(\d{2})-(\d{2})/);return m?`${+m[2]}/${+m[3]}`:_esc(d);}
+function _calImp(lv){lv=+lv||0;return lv>=3?'<span class="imp-hi">●●●</span>':lv===2?'<span class="imp-md">●●</span>':'';}
+function _calNum(v){const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?null:n;}
+function _calCmp(actual,forecast){const a=_calNum(actual),f=_calNum(forecast);if(a==null||f==null)return'';
+  if(a>f)return'<span class="cal-tag cal-tag-up">高于预期</span>';
+  if(a<f)return'<span class="cal-tag cal-tag-dn">低于预期</span>';
+  return'<span class="cal-tag cal-tag-eq">符合预期</span>';}
+
+function renderCalendar(){
+  const c=DATA.meta&&DATA.meta.calendar;
+  if(!c)return;
+  const hasP=((c.econPreview||[]).length)||((c.earnPreview||[]).length);
+  const hasR=((c.econReview||[]).length)||((c.earnReview||[]).length);
+  if(!hasP&&!hasR)return;
+  const watch=new Set((DATA.stocks||[]).map(s=>String(s.code||'').split('.')[0].toUpperCase()));
+  document.getElementById('cal-body').innerHTML=
+    (hasP?calBlock('未来两周 · 重要预告',c.previewRange,c.econPreview,c.earnPreview,false,watch):'')
+   +(hasR?calBlock('本周 · 数据回顾',c.reviewRange,c.econReview,c.earnReview,true,watch):'');
+  document.getElementById('calendar').style.display='';
+}
+
+function _calDayLabel(d){
+  const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);if(!m)return _esc(d);
+  const wk=['周日','周一','周二','周三','周四','周五','周六'][new Date(+m[1],+m[2]-1,+m[3]).getDay()];
+  const isToday=new Date().toISOString().slice(0,10)===d;
+  return`<span class="cal-d-md">${+m[2]}/${+m[3]}</span><span class="cal-d-wk">${wk}</span>${isToday?'<span class="cal-d-today">今日</span>':''}`;
+}
+
+function calBlock(title,range,econ,earn,isReview,watch){
+  const evs=[];
+  (econ||[]).forEach(e=>evs.push(Object.assign({_type:'econ'},e)));
+  (earn||[]).forEach(e=>evs.push(Object.assign({_type:'earn'},e)));
+  const head=`<div class="cal-sub"><span class="cal-sub-t">${_esc(title)}</span>${range?`<span class="cal-sub-r">${_esc(range)}</span>`:''}</div>`;
+  if(!evs.length)return head+'<div class="cal-empty">本期暂无数据</div>';
+  const byDate={};
+  evs.forEach(e=>{(byDate[e.date]=byDate[e.date]||[]).push(e);});
+  const days=Object.keys(byDate).sort().map(d=>{
+    // 同一天：经济数据在前、财报在后；经济按重要性降序
+    const rows=byDate[d].sort((a,b)=>
+        (a._type===b._type)?((+b.importance||0)-(+a.importance||0)):(a._type==='econ'?-1:1))
+      .map(e=>calEvent(e,isReview,watch)).join('');
+    return`<div class="cal-day"><div class="cal-day-d">${_calDayLabel(d)}</div><div class="cal-events">${rows}</div></div>`;
+  }).join('');
+  return head+days;
+}
+
+function calEvent(e,isReview,watch){
+  if(e._type==='econ'){
+    const val=isReview
+      ?`<span class="cal-val">${_esc(e.actual??'—')}</span><span class="cal-prev">预期 ${_esc(e.forecast??'—')}</span>${_calCmp(e.actual,e.forecast)}`
+      :`<span class="cal-val">${_esc(e.forecast??'—')}</span><span class="cal-prev">前值 ${_esc(e.previous??'—')}</span>`;
+    return`<div class="cal-ev">
+      <span class="cal-ev-ic">${_calFlag(e.country)}</span>
+      <div class="cal-ev-main"><div class="cal-ev-name">${_esc(e.event)}${_calImp(e.importance)}</div>${e.note?`<div class="cal-ev-sub">${_esc(e.note)}</div>`:''}</div>
+      <div class="cal-ev-val">${val}</div>
+    </div>`;
+  }
+  const star=watch.has(String(e.ticker||'').toUpperCase())?'<span class="cal-star" title="我们覆盖的标的">★</span>':'';
+  const val=isReview
+    ?`<span class="cal-val">${_esc(e.epsActual??'—')}</span><span class="cal-prev">预期 ${_esc(e.epsEst??'—')}</span>${_calCmp(e.epsActual,e.epsEst)}`
+    :`<span class="cal-val">EPS ${_esc(e.epsEst??'—')}</span>${e.revEst?`<span class="cal-prev">营收 ${_esc(e.revEst)}</span>`:''}`;
+  return`<div class="cal-ev">
+    <span class="cal-ev-ic">${_calFlag(e.market||e.country)}</span>
+    <div class="cal-ev-main"><div class="cal-ev-name"><span class="cal-tk">${_esc(e.ticker)}</span>${_esc(e.name)}${star}${e.mktCap?`<span class="cal-ev-cap"> · 市值 ${_esc(e.mktCap)}</span>`:''}<span class="cal-ev-sub" style="display:inline;"> · 财报</span></div></div>
+    <div class="cal-ev-val">${val}</div>
+  </div>`;
+}
+
 // 顶部三大策略浮层：各取票息最高的 3 只；热度横排、稳健/进取竖排
 function renderTopPanels(){
   if(!hasTypes())return;
@@ -1875,6 +1988,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderTopPanels();
   renderMarketHotspot();
   renderSectorHeatmap();
+  renderCalendar();
   setupFilters();
   renderScreener();
   lucide.createIcons();

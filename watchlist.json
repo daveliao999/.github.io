@@ -222,6 +222,159 @@
           "n": 5
         }
       ]
+    },
+    "calendar": {
+      "generatedAt": "2026-06-15",
+      "previewRange": "6/15 - 6/28",
+      "reviewRange": "6/8 - 6/12",
+      "econPreview": [
+        {
+          "date": "2026-06-17",
+          "country": "US",
+          "event": "FOMC 利率决议",
+          "importance": 3,
+          "forecast": "3.50%-3.75%",
+          "previous": "3.50%-3.75%",
+          "note": "Kevin Warsh 任主席首会，市场预期按兵不动（CME 98% 概率不变）"
+        },
+        {
+          "date": "2026-06-15",
+          "country": "US",
+          "event": "纽约联储制造业指数 (6月)",
+          "importance": 2,
+          "forecast": "13.20",
+          "previous": "19.60"
+        },
+        {
+          "date": "2026-06-15",
+          "country": "US",
+          "event": "工业产出 MoM (5月)",
+          "importance": 2,
+          "forecast": "0.3%",
+          "previous": "0.7%"
+        },
+        {
+          "date": "2026-06-15",
+          "country": "US",
+          "event": "NAHB 房产市场指数 (6月)",
+          "importance": 2,
+          "forecast": "36",
+          "previous": "37"
+        },
+        {
+          "date": "2026-06-18",
+          "country": "US",
+          "event": "初请失业金人数",
+          "importance": 2,
+          "forecast": "—",
+          "previous": "—"
+        },
+        {
+          "date": "2026-06-15",
+          "country": "KR",
+          "event": "出口 YoY",
+          "importance": 2,
+          "forecast": "53.2%",
+          "previous": "48.0%"
+        }
+      ],
+      "econReview": [
+        {
+          "date": "2026-06-10",
+          "country": "US",
+          "event": "CPI YoY (5月)",
+          "importance": 3,
+          "actual": "4.2%",
+          "forecast": "4.2%",
+          "previous": "3.8%",
+          "note": "三连升，2023年4月来最高；能源因伊朗冲突飙升"
+        },
+        {
+          "date": "2026-06-10",
+          "country": "US",
+          "event": "核心 CPI YoY (5月)",
+          "importance": 3,
+          "actual": "2.9%",
+          "forecast": "2.9%",
+          "previous": "2.8%",
+          "note": "月环比 +0.2%，低于 0.3% 预期"
+        }
+      ],
+      "earnPreview": [
+        {
+          "date": "2026-06-16",
+          "ticker": "LZB",
+          "name": "La-Z-Boy",
+          "market": "US",
+          "epsEst": "0.82",
+          "revEst": "569M",
+          "mktCap": "1.6B"
+        },
+        {
+          "date": "2026-06-16",
+          "ticker": "WLY",
+          "name": "John Wiley & Sons",
+          "market": "US",
+          "epsEst": "1.55",
+          "revEst": "451M",
+          "mktCap": "2.3B"
+        },
+        {
+          "date": "2026-06-17",
+          "ticker": "JBL",
+          "name": "Jabil",
+          "market": "US",
+          "epsEst": "3.08",
+          "revEst": "8.55B",
+          "mktCap": "40.6B"
+        },
+        {
+          "date": "2026-06-17",
+          "ticker": "KMX",
+          "name": "CarMax",
+          "market": "US",
+          "epsEst": "0.96",
+          "revEst": "7.39B",
+          "mktCap": "7.3B"
+        },
+        {
+          "date": "2026-06-18",
+          "ticker": "ACN",
+          "name": "Accenture",
+          "market": "US",
+          "epsEst": "3.72",
+          "revEst": "18.78B",
+          "mktCap": "104.5B"
+        },
+        {
+          "date": "2026-06-18",
+          "ticker": "KR",
+          "name": "Kroger",
+          "market": "US",
+          "epsEst": "1.58",
+          "revEst": "45.35B",
+          "mktCap": "39.6B"
+        },
+        {
+          "date": "2026-06-23",
+          "ticker": "FDX",
+          "name": "FedEx",
+          "market": "US",
+          "epsEst": "5.93",
+          "revEst": "24.0B",
+          "mktCap": ""
+        },
+        {
+          "date": "2026-06-23",
+          "ticker": "CCL",
+          "name": "Carnival",
+          "market": "US",
+          "epsEst": "0.34",
+          "revEst": "6.69B",
+          "mktCap": ""
+        }
+      ],
+      "earnReview": []
     }
   },
   "stocks": [
