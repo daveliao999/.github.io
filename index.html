@@ -275,8 +275,12 @@
   .cal-tag-up{background:var(--green-soft);color:var(--green-ink);}
   .cal-tag-dn{background:#FBEAE8;color:#C0392B;}
   .cal-tag-eq{background:var(--bg-3);color:var(--ink-3);}
-  .imp-hi{color:#C0392B;font-size:8px;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
-  .imp-md{color:#C8A96A;font-size:8px;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
+  .cal-imp{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:1px 7px;border-radius:3px;margin-right:8px;vertical-align:middle;letter-spacing:.04em;line-height:1.7;white-space:nowrap;}
+  .cal-imp-dot{font-size:7px;letter-spacing:.5px;opacity:.9;}
+  .cal-imp-3{background:#C0392B;color:#fff;box-shadow:0 1px 3px rgba(192,57,43,.3);}
+  .cal-imp-2{background:#F4ECDB;color:#8C7235;border:1px solid #E4DDC9;}
+  .cal-imp-1{background:var(--bg-3);color:var(--ink-3);}
+  .cal-ev.is-hi .cal-ev-name{font-weight:600;}
   .cal-empty{padding:18px;text-align:center;color:var(--ink-3);font-size:12px;}
   @media(max-width:600px){.cal-day{gap:12px;}.cal-day-d{width:52px;}.cal-d-md{font-size:17px;}.cal-ev-val{min-width:0;}}
 
@@ -351,7 +355,24 @@
   <section id="calendar" class="border-b border-line" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
       <div class="section-label">财经日历 · Economic &amp; Earnings Calendar</div>
-      <p class="text-ink-3 text-sm mt-3 mb-7">未来两周重要财报与经济数据预告，及本周已公布数据回顾。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
+      <p class="text-ink-3 text-sm mt-3 mb-3">未来两周重要财报与经济数据预告，及本周已公布数据回顾。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
+      <div class="mb-7" style="border:1px solid var(--line);border-radius:6px;background:var(--bg-2);padding:15px 18px;">
+        <div class="text-xs font-semibold text-ink-2 mb-3" style="letter-spacing:.06em;">经济数据重要性说明</div>
+        <div class="flex flex-col gap-2.5 text-xs text-ink-2" style="line-height:1.5;">
+          <div class="flex items-center gap-2.5">
+            <span class="cal-imp cal-imp-3" style="flex-shrink:0;margin-right:0;">高 <span class="cal-imp-dot">●●●</span></span>
+            <span>市场高度关注，常引发显著波动 —— 如 FOMC 利率决议、CPI 通胀、非农就业</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span class="cal-imp cal-imp-2" style="flex-shrink:0;margin-right:0;">中 <span class="cal-imp-dot">●●</span></span>
+            <span>对市场有一定影响，值得留意 —— 如工业产出、零售销售、PMI、初请失业金</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span class="cal-imp cal-imp-1" style="flex-shrink:0;margin-right:0;">低 <span class="cal-imp-dot">●</span></span>
+            <span>对市场影响较小，本日历不收录 —— 如次要、区域性或滞后类指标</span>
+          </div>
+        </div>
+      </div>
       <div id="cal-body"></div>
     </div>
   </section>
@@ -1382,7 +1403,11 @@ function heatmapGrid(label,mkt,arr){
 const _CAL_FLAG={US:'🇺🇸',CN:'🇨🇳',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵',GB:'🇬🇧',UK:'🇬🇧',KR:'🇰🇷',TW:'🇹🇼',IN:'🇮🇳'};
 function _calFlag(c){return _CAL_FLAG[String(c||'').toUpperCase()]||'🌐';}
 function _calMD(d){const m=String(d||'').match(/(\d{4})-(\d{2})-(\d{2})/);return m?`${+m[2]}/${+m[3]}`:_esc(d);}
-function _calImp(lv){lv=+lv||0;return lv>=3?'<span class="imp-hi">●●●</span>':lv===2?'<span class="imp-md">●●</span>':'';}
+function _calImp(lv){lv=+lv||0;
+  if(lv>=3)return'<span class="cal-imp cal-imp-3">高 <span class="cal-imp-dot">●●●</span></span>';
+  if(lv===2)return'<span class="cal-imp cal-imp-2">中 <span class="cal-imp-dot">●●</span></span>';
+  if(lv===1)return'<span class="cal-imp cal-imp-1">低 <span class="cal-imp-dot">●</span></span>';
+  return'';}
 function _calNum(v){const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?null:n;}
 function _calCmp(actual,forecast){const a=_calNum(actual),f=_calNum(forecast);if(a==null||f==null)return'';
   if(a>f)return'<span class="cal-tag cal-tag-up">高于预期</span>';
@@ -1432,9 +1457,10 @@ function calEvent(e,isReview,watch){
     const val=isReview
       ?`<span class="cal-val">${_esc(e.actual??'—')}</span><span class="cal-prev">预期 ${_esc(e.forecast??'—')}</span>${_calCmp(e.actual,e.forecast)}`
       :`<span class="cal-val">${_esc(e.forecast??'—')}</span><span class="cal-prev">前值 ${_esc(e.previous??'—')}</span>`;
-    return`<div class="cal-ev">
+    const hi=(+e.importance||0)>=3?' is-hi':'';
+    return`<div class="cal-ev${hi}">
       <span class="cal-ev-ic">${_calFlag(e.country)}</span>
-      <div class="cal-ev-main"><div class="cal-ev-name">${_esc(e.event)}${_calImp(e.importance)}</div>${e.note?`<div class="cal-ev-sub">${_esc(e.note)}</div>`:''}</div>
+      <div class="cal-ev-main"><div class="cal-ev-name">${_calImp(e.importance)}${_esc(e.event)}</div>${e.note?`<div class="cal-ev-sub">${_esc(e.note)}</div>`:''}</div>
       <div class="cal-ev-val">${val}</div>
     </div>`;
   }
