@@ -1115,15 +1115,19 @@ def main():
         except Exception:
             pass
 
-    # ── 财经日历：脚本不抓取（investing.com 有反爬），保留上一版 ──
-    # 数据由每周更新时用 WebFetch 抓 investing.com 写入 meta.calendar，此处仅负责不覆盖
-    calendar = None
+    # ── 财经日历 + 市场估值：脚本不抓取（无干净 API / 反爬），保留上一版 ──
+    # 这两段由更新时用 Web 研究写入 meta.calendar / meta.marketValuation，此处仅负责不覆盖
+    calendar = market_valuation = None
     if os.path.exists(args.output):
         try:
             _prevc = json.load(open(args.output, encoding="utf-8"))
-            calendar = (_prevc.get("meta") or {}).get("calendar")
+            _pm = _prevc.get("meta") or {}
+            calendar = _pm.get("calendar")
+            market_valuation = _pm.get("marketValuation")
             if calendar:
                 print("  ↪  保留现有财经日历（由每周 WebFetch investing.com 写入）")
+            if market_valuation:
+                print("  ↪  保留现有市场估值数据（按月研究更新）")
         except Exception:
             pass
 
@@ -1144,6 +1148,7 @@ def main():
             "marketHotspot": hotspot,
             "sectorHeatmap": heatmap,
             "calendar": calendar,
+            "marketValuation": market_valuation,
         },
         "stocks": output_stocks
     }

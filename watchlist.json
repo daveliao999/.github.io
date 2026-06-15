@@ -375,6 +375,69 @@
         }
       ],
       "earnReview": []
+    },
+    "marketValuation": {
+      "generatedAt": "2026-06",
+      "asOf": "2026年6月",
+      "source": "估值：Siblis Research / 中证指数 / 各官方指数公司；市值：各交易所 / World Population Review（2026年6月）",
+      "markets": [
+        {
+          "region": "美国",
+          "region_en": "US",
+          "index": "标普500",
+          "pe": 32.0,
+          "dividendYield": 1.1,
+          "marketCap": 78.0
+        },
+        {
+          "region": "中国",
+          "region_en": "CN",
+          "index": "沪深300",
+          "pe": 15.1,
+          "dividendYield": 2.2,
+          "marketCap": 17.8
+        },
+        {
+          "region": "欧洲",
+          "region_en": "EU",
+          "index": "STOXX 600（除英国）",
+          "pe": 18.2,
+          "dividendYield": 2.4,
+          "marketCap": 12.5
+        },
+        {
+          "region": "日本",
+          "region_en": "JP",
+          "index": "日经225",
+          "pe": 17.9,
+          "dividendYield": 1.4,
+          "marketCap": 8.7
+        },
+        {
+          "region": "香港",
+          "region_en": "HK",
+          "index": "恒生指数",
+          "pe": 13.7,
+          "dividendYield": 3.1,
+          "marketCap": 7.3
+        },
+        {
+          "region": "印度",
+          "region_en": "IN",
+          "index": "Nifty 50",
+          "pe": 20.0,
+          "dividendYield": 1.2,
+          "marketCap": 4.9
+        },
+        {
+          "region": "英国",
+          "region_en": "UK",
+          "index": "富时100",
+          "pe": 14.9,
+          "dividendYield": 3.0,
+          "marketCap": 4.0
+        }
+      ]
     }
   },
   "stocks": [
