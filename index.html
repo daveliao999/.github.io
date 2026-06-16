@@ -285,26 +285,6 @@
   .cal-empty{padding:18px;text-align:center;color:var(--ink-3);font-size:12px;}
   @media(max-width:600px){.cal-day{gap:12px;}.cal-day-d{width:52px;}.cal-d-md{font-size:17px;}.cal-ev-val{min-width:0;}}
 
-  /* ── 市场估值气泡图 ── */
-  .mv-wrap{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:center;}
-  .mv-chart svg{width:100%;height:auto;display:block;}
-  .mv-axis{stroke:var(--ink-3);stroke-width:1;}
-  .mv-grid{stroke:var(--line-2);stroke-width:1;}
-  .mv-axislab{fill:var(--ink-2);font-size:12px;font-weight:500;}
-  .mv-tick{fill:var(--ink-3);font-size:10px;}
-  .mv-blab{font-weight:700;font-size:13px;}
-  .mv-bidx{fill:var(--ink-3);font-size:9px;}
-  .mv-bubble:hover circle{fill-opacity:.5;}
-  .mv-table{width:100%;border-collapse:collapse;font-size:13px;}
-  .mv-table th{text-align:left;font-size:10px;letter-spacing:.08em;color:var(--ink-3);text-transform:uppercase;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);}
-  .mv-table td{padding:9px 10px;border-bottom:1px solid var(--line-2);}
-  .mv-table tr:last-child td{border-bottom:none;}
-  .mv-table tbody tr:hover{background:var(--khaki-soft);}
-  .mv-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle;}
-  .mv-mkt{font-weight:500;color:var(--ink);}
-  .mv-idx{color:var(--ink-3);font-size:11px;margin-left:5px;}
-  .mv-num{font-family:var(--font-en);font-weight:600;text-align:right;color:var(--ink);white-space:nowrap;}
-  @media(max-width:900px){.mv-wrap{grid-template-columns:1fr;gap:18px;}}
 
   /* ── Responsive ── */
   @media(max-width:768px){
@@ -370,20 +350,6 @@
         <span>跌</span><span class="sh-legend-bar"></span><span>涨</span>
         <span style="margin-left:14px;">板块涨跌幅为过去 5 个交易日表现，数据来源：富途行业板块（成交额加权）</span>
       </div>
-    </div>
-  </section>
-
-  <!-- ── 市场估值对比气泡图（无数据时自动隐藏）── -->
-  <section id="market-valuation" class="border-b border-line" style="display:none;">
-    <div class="max-w-[1400px] mx-auto px-6 py-10">
-      <div class="section-label">市场估值对比 · Global Market Valuation</div>
-      <p class="text-ink-3 text-sm mt-3 mb-1">主要市场估值气泡图：横轴 = 市盈率 PE（越靠右越贵）、纵轴 = 股息率（越靠上派息越高）、气泡大小 = 总市值。<span id="mv-asof"></span></p>
-      <p class="text-ink-3 mt-1" style="font-size:11px;line-height:1.6;">口径说明：PE 为代表性指数的 trailing（过去 12 个月）市盈率；股息率为指数级总股息率；总市值为该市场全部上市公司合计（欧洲为除英国的发达欧洲）。各指标采同一 trailing 口径，跨市场可比。</p>
-      <div class="mv-wrap mt-6">
-        <div class="mv-chart" id="mv-chart"></div>
-        <div id="mv-table"></div>
-      </div>
-      <p class="text-ink-3 mt-6" style="font-size:11px;line-height:1.6;" id="mv-source"></p>
     </div>
   </section>
 
@@ -1438,60 +1404,6 @@ function heatmapGrid(label,mkt,arr){
   </div>`;
 }
 
-// 市场估值气泡图：横轴 PE、纵轴股息率、气泡大小=总市值（数据来自 meta.marketValuation）
-const MV_PAL={'美国':'#C0392B','中国':'#C8A96A','日本':'#3E7CB1','香港':'#5C8A5A','印度':'#A6611A','英国':'#7E6FA8','欧洲':'#4D6A75'};
-const MV_FALLBACK=['#C0392B','#C8A96A','#3E7CB1','#5C8A5A','#A6611A','#7E6FA8','#4D6A75'];
-function _mvColor(m,i){return MV_PAL[m.region]||MV_FALLBACK[i%MV_FALLBACK.length];}
-
-function renderMarketValuation(){
-  const mv=DATA.meta&&DATA.meta.marketValuation;
-  if(!mv||!(mv.markets||[]).length)return;
-  const asof=document.getElementById('mv-asof');if(asof)asof.textContent=mv.asOf?`（数据截至 ${mv.asOf}）`:'';
-  document.getElementById('mv-chart').innerHTML=mvBubbleSVG(mv.markets);
-  document.getElementById('mv-table').innerHTML=mvTable(mv.markets);
-  const src=document.getElementById('mv-source');if(src&&mv.source)src.textContent='数据来源：'+mv.source+'　·　市场级估值为慢变量，按月更新';
-  document.getElementById('market-valuation').style.display='';
-}
-
-function mvBubbleSVG(ms){
-  const W=940,H=520,ml=66,mr=42,mt=26,mb=58,pw=W-ml-mr,ph=H-mt-mb;
-  const pes=ms.map(m=>+m.pe),ys=ms.map(m=>+m.dividendYield),caps=ms.map(m=>+m.marketCap);
-  const xmin=Math.floor((Math.min(...pes)-2)/5)*5,xmax=Math.ceil((Math.max(...pes)+2)/5)*5;
-  const ymin=0,ymax=Math.ceil((Math.max(...ys)+0.4)/0.5)*0.5,maxCap=Math.max(...caps);
-  const X=v=>ml+(v-xmin)/(xmax-xmin)*pw, Y=v=>mt+ph-(v-ymin)/(ymax-ymin)*ph;
-  const R=c=>Math.max(15,Math.sqrt(c/maxCap)*58);
-  let g='';
-  for(let t=xmin;t<=xmax+1e-9;t+=5){const x=X(t);g+=`<line class="mv-grid" x1="${x}" y1="${mt}" x2="${x}" y2="${mt+ph}"/><text class="mv-tick" x="${x}" y="${mt+ph+16}" text-anchor="middle">${t}</text>`;}
-  for(let t=ymin;t<=ymax+1e-9;t+=0.5){const y=Y(t);g+=`<line class="mv-grid" x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}"/><text class="mv-tick" x="${ml-9}" y="${y+3}" text-anchor="end">${t.toFixed(1)}</text>`;}
-  g+=`<line class="mv-axis" x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ph}"/><line class="mv-axis" x1="${ml}" y1="${mt+ph}" x2="${ml+pw}" y2="${mt+ph}"/>`;
-  g+=`<text class="mv-axislab" x="${ml+pw/2}" y="${H-12}" text-anchor="middle">市盈率 PE　越靠右越贵 →</text>`;
-  g+=`<text class="mv-axislab" x="${-(mt+ph/2)}" y="16" text-anchor="middle" transform="rotate(-90)">股息率 %　越靠上派息越高 ↑</text>`;
-  ms.map((m,i)=>({m,i})).sort((a,b)=>b.m.marketCap-a.m.marketCap).forEach(({m,i})=>{
-    const cx=X(+m.pe),cy=Y(+m.dividendYield),r=R(+m.marketCap),col=_mvColor(m,i),inside=r>=26;
-    g+=`<g class="mv-bubble"><title>${_esc(m.region)} ${_esc(m.index||'')}\nPE ${(+m.pe).toFixed(1)}　股息率 ${(+m.dividendYield).toFixed(2)}%　总市值 $${(+m.marketCap).toFixed(1)} 万亿</title>`;
-    g+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" fill-opacity="0.32" stroke="${col}" stroke-width="1.6"/>`;
-    if(inside){
-      g+=`<text class="mv-blab" x="${cx}" y="${cy-1}" text-anchor="middle" fill="${col}">${_esc(m.region)}</text>`;
-      g+=`<text class="mv-bidx" x="${cx}" y="${cy+13}" text-anchor="middle">$${(+m.marketCap).toFixed(0)}T</text>`;
-    }else{
-      g+=`<text class="mv-blab" x="${cx}" y="${cy-r-5}" text-anchor="middle" fill="${col}">${_esc(m.region)}</text>`;
-    }
-    g+=`</g>`;
-  });
-  return`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
-}
-
-function mvTable(ms){
-  const rows=ms.map((m,i)=>({m,i})).sort((a,b)=>b.m.marketCap-a.m.marketCap).map(({m,i})=>`
-    <tr>
-      <td><span class="mv-dot" style="background:${_mvColor(m,i)}"></span><span class="mv-mkt">${_esc(m.region)}</span><span class="mv-idx">${_esc(m.index||'')}</span></td>
-      <td class="mv-num">${(+m.pe).toFixed(1)}</td>
-      <td class="mv-num">${(+m.dividendYield).toFixed(2)}%</td>
-      <td class="mv-num">$${(+m.marketCap).toFixed(1)}T</td>
-    </tr>`).join('');
-  return`<table class="mv-table"><thead><tr><th>市场 / 指数</th><th style="text-align:right;">PE</th><th style="text-align:right;">股息率</th><th style="text-align:right;">总市值</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-
 // 财经日历：未来两周财报+经济数据预告，本周回顾（数据来自 meta.calendar）
 const _CAL_FLAG={US:'🇺🇸',CN:'🇨🇳',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵',GB:'🇬🇧',UK:'🇬🇧',KR:'🇰🇷',TW:'🇹🇼',IN:'🇮🇳'};
 function _calFlag(c){return _CAL_FLAG[String(c||'').toUpperCase()]||'🌐';}
@@ -2176,7 +2088,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderTopPanels();
   renderMarketHotspot();
   renderSectorHeatmap();
-  renderMarketValuation();
   renderCalendar();
   setupFilters();
   renderScreener();
