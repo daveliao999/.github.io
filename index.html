@@ -33,14 +33,14 @@
   /* ── 暗色主题（变量名与亮色一一对应；金/绿/红提亮以保证暗底可读性）── */
   html[data-theme="dark"] {
     color-scheme:dark;
-    --bg:#0E1113; --bg-2:#15191C; --bg-3:#1C2226;
-    --line:#252B30; --line-2:#3C454D;
+    --bg:#0E1113; --bg-2:#14181B; --bg-3:#1B2024;
+    --line:#262C32; --line-2:#3C454D;
     --ink:#ECEEF0; --ink-2:#AEB6BD; --ink-3:#7E868D;
     --gold:#C8A96A; --gold-2:#D9BE84;
-    --gold-soft:#2A2417;
-    --green:#00B050; --green-ink:#37C77A; --green-soft:#11271C;
+    --gold-soft:#262015;
+    --green:#00B050; --green-ink:#37C77A; --green-soft:#122621;
     --red:#E36A57;
-    --khaki:#4A4334; --khaki-ink:#C9BC9A; --khaki-soft:#211D14;
+    --khaki:#4A4334; --khaki-ink:#C9BC9A; --khaki-soft:#181C20;
     --overlay:rgba(0,0,0,0.66);
     --on-accent:#0E1113;  /* 暗色下主按钮变浅底，前景翻为深色 */
   }
@@ -818,7 +818,7 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
 // tokens.css 原文内联（body 选择器改为 .report-body 以适配 Shadow DOM）
 const REPORT_CSS=`
 :host,.report-body{--ink:#0F1214;--bg:#FFFFFF;--surface-1:#FAFAFA;--fg-1:#3A3F44;--fg-2:#6B7177;--fg-3:#9CA3AA;--line-1:#E5E7EB;--line-2:#F1F3F5;--khaki:#E4DDC9;--khaki-ink:#5C5240;--khaki-soft:#F1ECDD;--accent-green:#00B050;--accent-green-ink:#007A37;--accent-green-soft:#E8F6EE;--accent-gold:#C8A96A;--accent-gold-ink:#8C7235;--accent-gold-soft:#F4ECDB;--pos:var(--accent-green);--neg:#C0392B;--warn:var(--accent-gold);--font-cn:'PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','HarmonyOS Sans SC','Source Han Sans CN','Noto Sans SC',system-ui,sans-serif;--font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);--font-num:'DIN Next','DIN Pro','Roboto','Inter',sans-serif;--font-mono:'Roboto Mono','SF Mono',Menlo,monospace;}
-:host([data-theme="dark"]),.report-body[data-theme="dark"]{--ink:#ECEEF0;--bg:#0E1113;--surface-1:#15191C;--fg-1:#AEB6BD;--fg-2:#7E868D;--fg-3:#5A626A;--line-1:#252B30;--line-2:#1C2226;--khaki:#4A4334;--khaki-ink:#C9BC9A;--khaki-soft:#211D14;--accent-green:#00B050;--accent-green-ink:#37C77A;--accent-green-soft:#11271C;--accent-gold:#C8A96A;--accent-gold-ink:#D9BE84;--accent-gold-soft:#2A2417;--pos:var(--accent-green);--neg:#E36A57;--warn:var(--accent-gold);}
+:host([data-theme="dark"]),:host([data-theme="dark"]) .report-body,.report-body[data-theme="dark"]{--ink:#ECEEF0;--bg:#0E1113;--surface-1:#14181B;--fg-1:#AEB6BD;--fg-2:#7E868D;--fg-3:#5A626A;--line-1:#262C32;--line-2:#1B2024;--khaki:#4A4334;--khaki-ink:#C9BC9A;--khaki-soft:#181C20;--accent-green:#00B050;--accent-green-ink:#37C77A;--accent-green-soft:#122621;--accent-gold:#C8A96A;--accent-gold-ink:#D9BE84;--accent-gold-soft:#262015;--pos:var(--accent-green);--neg:#E36A57;--warn:var(--accent-gold);}
 *{box-sizing:border-box;margin:0;padding:0;}
 .report-body{background:transparent;color:var(--ink);font-family:var(--font-cn);line-height:1.55;padding:8px 0 24px;-webkit-font-smoothing:antialiased;}
 .wrap{max-width:980px;margin:0 auto;}
@@ -939,33 +939,33 @@ function reportChartSVG(s){
   const tickFmt=v=>step>=1?Math.round(v).toLocaleString('en-US'):v.toFixed(step>=0.1?1:2);
   for(let p=Math.ceil(PMIN/step)*step;p<=PMAX;p+=step){
     const yy=Y(p).toFixed(1);
-    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="#E5E7EB" stroke-width="1"/>`;
-    svg+=`<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="12" fill="#6B7177">${tickFmt(p)}</text>`;
+    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" style="stroke:var(--line-1)" stroke-width="1"/>`;
+    svg+=`<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="12" style="fill:var(--fg-2)">${tickFmt(p)}</text>`;
   }
   // 月份刻度
   const seen=new Set();let last=-999;
   dates.forEach((d,i)=>{
     const ym=d.slice(0,7);
     if(!seen.has(ym)){seen.add(ym);
-      if(X(i)-last>=60){svg+=`<text x="${X(i).toFixed(1)}" y="${H-30}" text-anchor="middle" font-size="11.5" fill="#6B7177">${d.slice(2,7).replace('-','/')}</text>`;last=X(i);}}
+      if(X(i)-last>=60){svg+=`<text x="${X(i).toFixed(1)}" y="${H-30}" text-anchor="middle" font-size="11.5" style="fill:var(--fg-2)">${d.slice(2,7).replace('-','/')}</text>`;last=X(i);}}
   });
   // 价格面积 + 折线
   const pts=px.map((p,i)=>`${X(i).toFixed(1)},${Y(p).toFixed(1)}`).join(' ');
-  svg+=`<polygon points="${X(0).toFixed(1)},${y1.toFixed(1)} ${pts} ${X(N-1).toFixed(1)},${y1.toFixed(1)}" fill="rgba(228,221,201,0.35)"/>`;
-  svg+=`<polyline points="${pts}" fill="none" stroke="#B8A88A" stroke-width="2" stroke-linejoin="round"/>`;
+  svg+=`<polygon points="${X(0).toFixed(1)},${y1.toFixed(1)} ${pts} ${X(N-1).toFixed(1)},${y1.toFixed(1)}" style="fill:var(--accent-gold);fill-opacity:.12"/>`;
+  svg+=`<polyline points="${pts}" fill="none" style="stroke:var(--accent-gold)" stroke-width="2" stroke-linejoin="round"/>`;
   // 三条关键价位线
   const rl=(p,color,ink,label)=>{
     const yy=Y(p).toFixed(1);
-    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="${color}" stroke-width="1.7" stroke-dasharray="5 4"/>`;
-    svg+=`<text x="${x1+10}" y="${(+yy-3).toFixed(1)}" font-size="12.5" font-weight="700" fill="${ink}">${label}</text>`;
-    svg+=`<text x="${x1+10}" y="${(+yy+13).toFixed(1)}" font-size="13" font-weight="700" fill="${ink}">${_rfmt(p,sym)}</text>`;
+    svg+=`<line x1="${L}" y1="${yy}" x2="${x1}" y2="${yy}" style="stroke:${color}" stroke-width="1.7" stroke-dasharray="5 4"/>`;
+    svg+=`<text x="${x1+10}" y="${(+yy-3).toFixed(1)}" font-size="12.5" font-weight="700" style="fill:${ink}">${label}</text>`;
+    svg+=`<text x="${x1+10}" y="${(+yy+13).toFixed(1)}" font-size="13" font-weight="700" style="fill:${ink}">${_rfmt(p,sym)}</text>`;
   };
-  rl(KO,"#00B050","#007A37","KO 敲出线");
-  rl(STK,"#C8A96A","#8C7235","接货价 / 执行价");
-  rl(KI,"#C0392B","#C0392B","KI 敲入线");
+  rl(KO,"var(--accent-green)","var(--accent-green-ink)","KO 敲出线");
+  rl(STK,"var(--accent-gold)","var(--accent-gold-ink)","接货价 / 执行价");
+  rl(KI,"var(--neg)","var(--neg)","KI 敲入线");
   const cx=X(N-1),cy=Y(CUR);
-  svg+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="#0F1214"/>`;
-  svg+=`<text x="${(cx-8).toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="end" font-size="12.5" font-weight="700" fill="#0F1214">现价 ${_rfmt(CUR,sym)}</text>`;
+  svg+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" style="fill:var(--ink)"/>`;
+  svg+=`<text x="${(cx-8).toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="end" font-size="12.5" font-weight="700" style="fill:var(--ink)">现价 ${_rfmt(CUR,sym)}</text>`;
   return svg+'</svg>';
 }
 
