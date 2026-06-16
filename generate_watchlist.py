@@ -526,7 +526,7 @@ def analyze_batch(client: OpenAI, batch: list) -> list:
                 return []
     return []
 
-# ── 本周热点分析（美股 + 港股均用 Google News RSS → DeepSeek 综述，免 key）────────
+# ── 每日市场热点（美股 + 港股均用 Google News RSS → DeepSeek 综述，免 key）────────
 def _google_news(query, hl, gl, ceid, limit=40):
     """通用 Google News RSS 抓取。失败返回 []。"""
     try:
@@ -563,7 +563,7 @@ HOTSPOT_SYSTEM = (
     "严禁编造未在列表中出现的事件、公司、数字或日期。只输出 JSON。"
 )
 
-HOTSPOT_PROMPT = """下面是过去 7 日抓取的真实新闻（美股、港股均来自 Google News）。
+HOTSPOT_PROMPT = """下面是最近 1-2 个交易日抓取的真实新闻（美股、港股均来自 Google News）。
 
 【美股新闻】
 {us_news}
@@ -599,9 +599,9 @@ def get_market_hotspot(client, today):
     us_raw = _fetch_us_news()
     hk_raw = _fetch_hk_news()
     if not us_raw and not hk_raw:
-        print("  ⚠  美股、港股新闻均为空，跳过本周热点分析"); return None
+        print("  ⚠  美股、港股新闻均为空，跳过每日市场热点"); return None
     if client is None:
-        print("  ⚠  无 DeepSeek client（--no-ai），跳过本周热点分析"); return None
+        print("  ⚠  无 DeepSeek client（--no-ai），跳过每日市场热点"); return None
 
     def _fmt(items, n=30):
         return "\n".join(
@@ -625,17 +625,13 @@ def get_market_hotspot(client, today):
             hk_items = (data.get("hk") or {}).get("items") or []
             if not us_items and not hk_items:
                 raise ValueError("empty items")
-            # 计算本工作周区间（周一至周五）
-            mon = today - timedelta(days=today.weekday())
-            fri = mon + timedelta(days=4)
-            wk = lambda d: f"{d.year}/{d.month}/{d.day}"
-            print(f"  ✅  本周热点：美股 {len(us_items)} 条 · 港股 {len(hk_items)} 条")
+            print(f"  ✅  每日热点：美股 {len(us_items)} 条 · 港股 {len(hk_items)} 条")
             return {"generatedAt": today.strftime("%Y-%m-%d"),
-                    "weekRange": f"{wk(mon)}-{wk(fri)}",
+                    "date": f"{today.year}/{today.month}/{today.day}",
                     "us": {"items": us_items}, "hk": {"items": hk_items}}
         except Exception as e:
             print(f"  ⚠  热点综述 attempt {attempt+1} 失败: {e}"); time.sleep(6)
-    print("  ❌  本周热点分析生成失败（3 次尝试）"); return None
+    print("  ❌  每日市场热点生成失败（3 次尝试）"); return None
 
 # ── 市场热点图：板块过去一周表现（富途行业板块原生数据）──────────────────────────
 # 11 个 GICS 板块 → 富途行业子板块代码；板块过去 5 个交易日涨跌幅按成交额加权聚合。
@@ -1092,15 +1088,15 @@ def main():
     else:
         featured = [s['code'] for s in output_stocks[:5]]
 
-    # ── 本周热点分析：生成失败则保留上一版（板块永不留白）──
-    print("\n[+] 生成本周热点分析（美股 Alpha Vantage + 港股 Google News → DeepSeek）...")
+    # ── 每日市场热点：生成失败则保留上一版（板块永不留白）──
+    print("\n[+] 生成每日市场热点（美股 + 港股 Google News → DeepSeek）...")
     hotspot = get_market_hotspot(client, today)
     if hotspot is None and os.path.exists(args.output):
         try:
             prev = json.load(open(args.output, encoding="utf-8"))
             hotspot = (prev.get("meta") or {}).get("marketHotspot")
             if hotspot:
-                print("  ↪  沿用上一版本周热点分析")
+                print("  ↪  沿用上一版每日市场热点")
         except Exception:
             pass
 

@@ -328,7 +328,7 @@
   <!-- ── 本周热点分析（无数据时自动隐藏）── -->
   <section id="market-hotspot" class="border-b border-line" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
-      <div class="section-label">本周热点分析 · Weekly Market Briefing</div>
+      <div class="section-label">每日市场热点 · Daily Market Briefing</div>
       <p class="text-ink-3 text-sm mt-3 mb-7" id="hotspot-range"></p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div id="hotspot-us"></div>
@@ -1338,7 +1338,7 @@ function renderMarketHotspot(){
   const mh=DATA.meta&&DATA.meta.marketHotspot;
   if(!mh||((!mh.us||!(mh.us.items||[]).length)&&(!mh.hk||!(mh.hk.items||[]).length)))return;
   const range=document.getElementById('hotspot-range');
-  if(range)range.textContent=`聚焦过去 7 日${mh.weekRange?`（${mh.weekRange}）`:''}美股与港股最重要的市场动向及其板块影响`;
+  if(range){const d=mh.date||mh.generatedAt||mh.weekRange||'';range.textContent=`聚焦${d?` ${d} `:''}美股与港股最新市场动向及其板块影响　·　每日更新`;}
   const us=document.getElementById('hotspot-us'),hk=document.getElementById('hotspot-hk');
   us.innerHTML=hotspotColumn('美股','US',mh.us);
   hk.innerHTML=hotspotColumn('港股','HK',mh.hk);

@@ -20,35 +20,31 @@
       "PLTR.US"
     ],
     "marketHotspot": {
-      "generatedAt": "2026-06-12",
-      "weekRange": "2026/6/8-2026/6/12",
+      "generatedAt": "2026-06-16",
+      "date": "2026/6/16",
       "us": {
         "items": [
           {
-            "headline": "半导体暴跌，纳指创 2025 年 4 月以来最大单日跌幅",
-            "facts": "6 月 4–5 日纳指单日重挫 4%，芯片板块蒸发约 1 万亿美元市值。导火索是博通未上调 AI 芯片指引，叠加 5 月非农远超预期推高美债收益率。",
-            "stance": "bearish",
-            "impact": "利空半导体及 AI 硬件板块——龙头指引不及预期削弱市场对 AI 资本开支持续性的信心，高利率环境同时压制高估值成长股。属情绪与估值层面回调，基本面未见恶化。",
+            "headline": "美伊达成停战协议，油价回落，美股风险偏好回升",
+            "facts": "特朗普宣布美国与伊朗达成结束冲突的协议，国际油价回落至约 $80；周一三大指数齐涨，标普涨 1.65% 至 7,554，道指涨 0.92%。",
+            "stance": "bullish",
+            "impact": "地缘紧张缓解叠加油价回落，有助纾解此前因能源飙升推高的通胀压力，对整体风险资产偏正面，对能源板块则构成短期利空。",
             "sources": [
               {
-                "title": "TheStreet · 美股 6/5",
-                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-05-2026"
-              },
-              {
-                "title": "CNBC · 纳指 6/4",
-                "url": "https://www.cnbc.com/2026/06/04/stock-market-today-live-updates.html"
+                "title": "CNBC · 6/15 美股收评",
+                "url": "https://www.cnbc.com/2026/06/14/stock-market-today-live-updates.html"
               }
             ]
           },
           {
-            "headline": "5 月非农超预期，美联储降息预期大幅降温",
-            "facts": "5 月新增非农就业远超市场预期，美债收益率跳升。市场对美联储维持 3.50–3.75% 利率不变的预期升温，降息概率从约 47% 回落至 27%。",
-            "stance": "neutral",
-            "impact": "对板块影响分化——融资成本预期上行压制高估值成长与利率敏感板块；相对利好银行等受益于高利率息差的金融板块，资金呈现由成长向价值轮动的迹象。",
+            "headline": "科技半导体领涨纳指创近三月最佳，市场聚焦周三 FOMC",
+            "facts": "纳指周一大涨 3.07% 至 26,684，为 3 月底以来最佳；SpaceX 上市后续涨近 20%，AI 与半导体板块走强。本周三（6/17）美联储利率决议在即。",
+            "stance": "bullish",
+            "impact": "AI 与半导体主题资金延续强势，板块情绪高涨；但 FOMC 决议与近期偏高的 CPI 仍是不确定因素，决议前市场波动或加大。",
             "sources": [
               {
-                "title": "TheStreet · 美股 6/5",
-                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-05-2026"
+                "title": "CNBC · 6/15 美股收评",
+                "url": "https://www.cnbc.com/2026/06/14/stock-market-today-live-updates.html"
               }
             ]
           }
@@ -57,26 +53,26 @@
       "hk": {
         "items": [
           {
-            "headline": "恒指收复失地涨 0.6% 至 25,540，科技服务板块飙 12.6%",
-            "facts": "在地缘风险缓和与香港 4 月通胀稳于 1.7% 的背景下，恒指收复前一日跌幅。科技服务板块大涨 12.6%，中芯国际、联想放量领涨，腾讯、舜宇光学、小米跟涨。",
+            "headline": "港股温和收涨，恒生科技指数领涨 1.3%",
+            "facts": "恒生指数 6/15 收报 24,842.67，涨 0.50%（+124.57 点）；恒生科技指数涨 1.28% 至 4,765.58，恒生中国企业指数基本持平。",
             "stance": "bullish",
-            "impact": "利好港股科技与半导体板块——风险偏好回升带动资金回流硬件与互联网龙头；通胀温和降低了政策收紧压力，为板块估值修复提供空间。",
+            "impact": "科技与互联网权重股带动指数，反映外围风险偏好回升向港股传导；中资股表现分化，资金更偏向科技龙头。",
             "sources": [
               {
-                "title": "腾讯港股 · 恒生指数新闻",
-                "url": "https://gu.qq.com/hkHSI/zs/news"
+                "title": "Investing.com · 恒生指数",
+                "url": "https://www.investing.com/indices/hang-sen-40"
               }
             ]
           },
           {
-            "headline": "美伊缓和预期提振风险偏好，资金回流金融与周期板块",
-            "facts": "伊朗对美国最新提案持积极态度，市场对冲突降级的预期升温，带动隔夜美股走强并外溢至港股，投资者风险偏好改善。",
-            "stance": "bullish",
-            "impact": "利好顺周期与金融板块——地缘不确定性下降通常压低避险资产、抬升风险资产估值；但属事件驱动，若局势反复，情绪面利好可能快速逆转。",
+            "headline": "国际油价回落，港股油气板块承压、整体情绪受提振",
+            "facts": "受美伊停战推动，国际油价回落至约 $80；油价下行通常施压中海油、中石油等港股油气权重，但地缘风险下降提振整体风险偏好。",
+            "stance": "neutral",
+            "impact": "油价下行对港股油气板块构成利空，对航空、航运等成本端及整体市场情绪偏正面，板块分化或加剧。",
             "sources": [
               {
-                "title": "腾讯港股 · 恒生指数新闻",
-                "url": "https://gu.qq.com/hkHSI/zs/news"
+                "title": "Trading Economics · 香港股市",
+                "url": "https://tradingeconomics.com/hong-kong/stock-market"
               }
             ]
           }
