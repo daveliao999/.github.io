@@ -357,7 +357,7 @@
   <section id="calendar" class="border-b border-line" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
       <div class="section-label">财经日历 · Economic &amp; Earnings Calendar</div>
-      <p class="text-ink-3 text-sm mt-3 mb-3">未来两周重要财报与经济数据预告，及本周已公布数据回顾。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
+      <p class="text-ink-3 text-sm mt-3 mb-3">未来两周重要财报与经济数据预告，及本周已公布数据回顾。财报仅显示市值 ≥ $100B（美股）/ HK$100B（港股）的大型公司。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
       <div class="mb-7" style="border:1px solid var(--line);border-radius:6px;background:var(--bg-2);padding:15px 18px;">
         <div class="text-xs font-semibold text-ink-2 mb-3" style="letter-spacing:.06em;">经济数据重要性说明</div>
         <div class="flex flex-col gap-2.5 text-xs text-ink-2" style="line-height:1.5;">
@@ -1414,6 +1414,17 @@ function _calImp(lv){lv=+lv||0;
   if(lv===1)return'<span class="cal-imp cal-imp-1">低 <span class="cal-imp-dot">●</span></span>';
   return'';}
 function _calNum(v){const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?null:n;}
+// 财报显示门槛：市值 ≥ 100B（美股 USD / 港股 HKD，按各自币种）
+const CAL_EARN_MIN_CAP=100;
+function _calMktCapB(s){
+  const m=String(s||'').match(/([\d.]+)\s*([TBMtbm])/);
+  if(!m)return null;
+  let v=parseFloat(m[1]);if(isNaN(v))return null;
+  const u=m[2].toUpperCase();
+  if(u==='T')v*=1000;else if(u==='M')v/=1000;
+  return v;  // 单位：十亿
+}
+function _calEarnBigEnough(e){const c=_calMktCapB(e.mktCap);return c!=null&&c>=CAL_EARN_MIN_CAP;}
 function _calCmp(actual,forecast){const a=_calNum(actual),f=_calNum(forecast);if(a==null||f==null)return'';
   if(a>f)return'<span class="cal-tag cal-tag-up">高于预期</span>';
   if(a<f)return'<span class="cal-tag cal-tag-dn">低于预期</span>';
@@ -1428,7 +1439,7 @@ function renderCalendar(){
   const watch=new Set((DATA.stocks||[]).map(s=>String(s.code||'').split('.')[0].toUpperCase()));
   document.getElementById('cal-body').innerHTML=
     (hasP?calBlock('未来两周 · 重要预告',c.previewRange,c.econPreview,c.earnPreview,false,watch):'')
-   +(hasR?calBlock('本周 · 数据回顾',c.reviewRange,c.econReview,c.earnReview,true,watch):'');
+   +(hasR?calBlock('近一周 · 数据回顾',c.reviewRange,c.econReview,c.earnReview,true,watch):'');
   document.getElementById('calendar').style.display='';
 }
 
@@ -1442,7 +1453,8 @@ function _calDayLabel(d){
 function calBlock(title,range,econ,earn,isReview,watch){
   const evs=[];
   (econ||[]).forEach(e=>evs.push(Object.assign({_type:'econ'},e)));
-  (earn||[]).forEach(e=>evs.push(Object.assign({_type:'earn'},e)));
+  // 财报只显示大市值公司（美股≥$100B / 港股≥HK$100B），滤掉小公司噪音
+  (earn||[]).filter(_calEarnBigEnough).forEach(e=>evs.push(Object.assign({_type:'earn'},e)));
   const head=`<div class="cal-sub"><span class="cal-sub-t">${_esc(title)}</span>${range?`<span class="cal-sub-r">${_esc(range)}</span>`:''}</div>`;
   if(!evs.length)return head+'<div class="cal-empty">本期暂无数据</div>';
   const byDate={};
