@@ -6,6 +6,10 @@
 <title>Olive Asset Management · 私行结构化产品平台</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  /* 尽早应用主题，避免刷新时闪现亮色（FOUC）。默认亮色，客户选择存 localStorage */
+  (function(){try{var t=localStorage.getItem('olive-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -19,11 +23,31 @@
     --red:#C0392B;
     --khaki:#E4DDC9; --khaki-ink:#5C5240; --khaki-soft:#F1ECDD;
     --overlay:rgba(15,18,20,0.55);
+    --on-accent:#FFFFFF;  /* 主按钮/激活态填充上的前景色（深底白字） */
     --font-cn:'PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','HarmonyOS Sans SC','Source Han Sans CN','Noto Sans SC',system-ui,sans-serif;
     --font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);
     --font-num:'DIN Next','DIN Pro','Roboto','Inter',sans-serif;
     --font-mono:'Roboto Mono','SF Mono',Menlo,monospace;
   }
+
+  /* ── 暗色主题（变量名与亮色一一对应；金/绿/红提亮以保证暗底可读性）── */
+  html[data-theme="dark"] {
+    color-scheme:dark;
+    --bg:#0E1113; --bg-2:#15191C; --bg-3:#1C2226;
+    --line:#252B30; --line-2:#3C454D;
+    --ink:#ECEEF0; --ink-2:#AEB6BD; --ink-3:#7E868D;
+    --gold:#C8A96A; --gold-2:#D9BE84;
+    --gold-soft:#2A2417;
+    --green:#00B050; --green-ink:#37C77A; --green-soft:#11271C;
+    --red:#E36A57;
+    --khaki:#4A4334; --khaki-ink:#C9BC9A; --khaki-soft:#211D14;
+    --overlay:rgba(0,0,0,0.66);
+    --on-accent:#0E1113;  /* 暗色下主按钮变浅底，前景翻为深色 */
+  }
+  /* 硬编码浅色徽章在暗色下的覆盖 */
+  html[data-theme="dark"] .cal-tag-dn{background:rgba(227,106,87,.16);color:var(--red);}
+  html[data-theme="dark"] .cal-imp-2{background:var(--gold-soft);color:var(--gold-2);border-color:transparent;}
+  html[data-theme="dark"] .cal-tag-up{background:var(--green-soft);color:var(--green-ink);}
   *{-webkit-font-smoothing:antialiased;box-sizing:border-box;}
   html,body{background:var(--bg);color:var(--ink);font-family:var(--font-en);margin:0;}
   .font-display{font-family:var(--font-en);font-weight:600;letter-spacing:-0.01em;}
@@ -37,12 +61,20 @@
   .border-line{border-color:var(--line);}
 
   /* ── Buttons（扁平 · 2px 圆角 · 无阴影）── */
-  .btn-gold{background:var(--ink);color:#FFFFFF;font-weight:600;padding:10px 22px;border-radius:2px;font-size:13px;transition:background .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;}
+  .btn-gold{background:var(--ink);color:var(--on-accent);font-weight:600;padding:10px 22px;border-radius:2px;font-size:13px;transition:background .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;}
   .btn-gold:hover{background:var(--ink-2);}
   .btn-outline{border:1px solid var(--line-2);color:var(--ink);padding:10px 22px;border-radius:2px;font-size:13px;background:transparent;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;}
   .btn-outline:hover{border-color:var(--ink);}
   .btn-ghost{color:var(--ink-2);padding:8px 14px;font-size:13px;transition:color .15s;background:transparent;border:none;cursor:pointer;display:inline-flex;align-items:center;}
   .btn-ghost:hover{color:var(--ink);}
+
+  /* ── 深浅色切换按钮 ── */
+  .theme-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:2px;background:transparent;color:var(--ink-2);cursor:pointer;transition:color .15s,border-color .15s;z-index:1;}
+  .theme-toggle:hover{color:var(--gold-2);border-color:var(--line-2);}
+  .theme-toggle svg,.theme-toggle i{width:17px;height:17px;}
+  .theme-toggle .ico-sun{display:none;}
+  html[data-theme="dark"] .theme-toggle .ico-moon{display:none;}
+  html[data-theme="dark"] .theme-toggle .ico-sun{display:inline-flex;}
   .btn-danger{background:transparent;color:var(--red);border:1px solid var(--line);padding:6px 12px;border-radius:2px;font-size:12px;transition:all .15s;cursor:pointer;}
   .btn-danger:hover{border-color:var(--red);}
 
@@ -71,7 +103,7 @@
 
   /* ── Check chips ── */
   .check-chip{padding:6px 14px;border:1px solid var(--line);border-radius:2px;font-size:12px;cursor:pointer;user-select:none;transition:all .15s;color:var(--ink-2);background:var(--bg);}
-  .check-chip.active{background:var(--ink);color:#FFFFFF;border-color:var(--ink);}
+  .check-chip.active{background:var(--ink);color:var(--on-accent);border-color:var(--ink);}
   .check-chip:not(.active):hover{border-color:var(--ink);color:var(--ink);}
 
   /* ── Inputs ── */
@@ -153,11 +185,11 @@
   /* ── Toast ── */
   #toast-container{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;min-width:0;}
   #toast-container>*{pointer-events:all;}
-  .toast-item{display:flex;align-items:center;gap:10px;background:var(--ink);color:#FFFFFF;border:1px solid var(--ink);padding:12px 16px;border-radius:2px;min-width:280px;max-width:400px;transition:all .25s;}
+  .toast-item{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--on-accent);border:1px solid var(--ink);padding:12px 16px;border-radius:2px;min-width:280px;max-width:400px;transition:all .25s;}
 
   /* ── Admin ── */
   .admin-label{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.05em;}
-  .admin-fab{position:fixed;bottom:24px;right:24px;z-index:50;padding:10px 18px;background:var(--ink);color:#FFFFFF;border-radius:2px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;border:none;}
+  .admin-fab{position:fixed;bottom:24px;right:24px;z-index:50;padding:10px 18px;background:var(--ink);color:var(--on-accent);border-radius:2px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;border:none;}
   .admin-fab:hover{background:var(--ink-2);}
 
   /* ── Grain（扁平规范：无纹理）── */
@@ -183,7 +215,7 @@
   .strategy-card .sc-bar{position:absolute;top:0;left:0;width:32px;height:3px;background:var(--strat-color,var(--green));}
   .type-tab{padding:9px 20px;border-radius:2px;font-size:13px;font-weight:500;color:var(--ink-2);border:1px solid var(--line);cursor:pointer;transition:all .15s;background:transparent;display:inline-flex;align-items:center;gap:7px;}
   .type-tab:hover{color:var(--ink);border-color:var(--line-2);}
-  .type-tab.active{color:#FFFFFF;background:var(--ink);border-color:var(--ink);font-weight:600;}
+  .type-tab.active{color:var(--on-accent);background:var(--ink);border-color:var(--ink);font-weight:600;}
 
   /* ── 顶部三大策略浮层 ── */
   .float-panel{border:1px solid var(--line);border-radius:2px;background:var(--bg);padding:22px 24px 14px;position:relative;display:flex;flex-direction:column;}
@@ -296,7 +328,7 @@
 <body>
 
 <!-- ═══════════════ NAV ═══════════════ -->
-<nav class="sticky top-0 z-40 bg-bg border-b border-line">
+<nav class="sticky top-0 z-40 bg-bg border-b border-line relative">
   <div class="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-3 items-center">
     <div class="flex items-center">
       <div class="cursor-pointer leading-none" onclick="navigate('screener')">
@@ -305,6 +337,10 @@
       </div>
     </div>
     <div class="flex items-center justify-end gap-3">
+      <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+        <i data-lucide="moon" class="ico-moon"></i>
+        <i data-lucide="sun" class="ico-sun"></i>
+      </button>
     </div>
   </div>
 </nav>
@@ -782,6 +818,7 @@ function payoffSVG(coupon,strike,ki,tenor,ko=100){
 // tokens.css 原文内联（body 选择器改为 .report-body 以适配 Shadow DOM）
 const REPORT_CSS=`
 :host,.report-body{--ink:#0F1214;--bg:#FFFFFF;--surface-1:#FAFAFA;--fg-1:#3A3F44;--fg-2:#6B7177;--fg-3:#9CA3AA;--line-1:#E5E7EB;--line-2:#F1F3F5;--khaki:#E4DDC9;--khaki-ink:#5C5240;--khaki-soft:#F1ECDD;--accent-green:#00B050;--accent-green-ink:#007A37;--accent-green-soft:#E8F6EE;--accent-gold:#C8A96A;--accent-gold-ink:#8C7235;--accent-gold-soft:#F4ECDB;--pos:var(--accent-green);--neg:#C0392B;--warn:var(--accent-gold);--font-cn:'PingFang SC','Microsoft YaHei UI','Hiragino Sans GB','HarmonyOS Sans SC','Source Han Sans CN','Noto Sans SC',system-ui,sans-serif;--font-en:'Inter','Helvetica Neue',Arial,var(--font-cn);--font-num:'DIN Next','DIN Pro','Roboto','Inter',sans-serif;--font-mono:'Roboto Mono','SF Mono',Menlo,monospace;}
+:host([data-theme="dark"]),.report-body[data-theme="dark"]{--ink:#ECEEF0;--bg:#0E1113;--surface-1:#15191C;--fg-1:#AEB6BD;--fg-2:#7E868D;--fg-3:#5A626A;--line-1:#252B30;--line-2:#1C2226;--khaki:#4A4334;--khaki-ink:#C9BC9A;--khaki-soft:#211D14;--accent-green:#00B050;--accent-green-ink:#37C77A;--accent-green-soft:#11271C;--accent-gold:#C8A96A;--accent-gold-ink:#D9BE84;--accent-gold-soft:#2A2417;--pos:var(--accent-green);--neg:#E36A57;--warn:var(--accent-gold);}
 *{box-sizing:border-box;margin:0;padding:0;}
 .report-body{background:transparent;color:var(--ink);font-family:var(--font-cn);line-height:1.55;padding:8px 0 24px;-webkit-font-smoothing:antialiased;}
 .wrap{max-width:980px;margin:0 auto;}
@@ -1808,6 +1845,8 @@ function renderDetail(code){
   const el=document.getElementById('detail-content');
   el.innerHTML='';
   const host=document.createElement('div');
+  host.className='report-host';
+  if(document.documentElement.getAttribute('data-theme')==='dark')host.setAttribute('data-theme','dark');
   el.appendChild(host);
   host.attachShadow({mode:'open'}).innerHTML=
     `<style>${REPORT_CSS}</style><div class="report-body"><div class="wrap">${buildReport(s)}</div></div>`;
@@ -2081,6 +2120,19 @@ function showLoadingSkeleton(){
         <div class="h-10 bg-bg-3 rounded w-20"></div>
       </div>
     </div>`).join('');
+}
+
+// ═══ 深浅色主题切换 ═══
+function toggleTheme(){
+  const root=document.documentElement;
+  const dark=root.getAttribute('data-theme')==='dark';
+  if(dark){root.removeAttribute('data-theme');}
+  else{root.setAttribute('data-theme','dark');}
+  try{localStorage.setItem('olive-theme',dark?'light':'dark');}catch(e){}
+  // 同步已打开的详情页（Shadow DOM host 通过属性触发暗色 token）
+  document.querySelectorAll('.report-host').forEach(h=>{
+    if(dark)h.removeAttribute('data-theme');else h.setAttribute('data-theme','dark');
+  });
 }
 
 // ═══ Init ═══
