@@ -75,6 +75,33 @@
   .theme-toggle .ico-sun{display:none;}
   html[data-theme="dark"] .theme-toggle .ico-moon{display:none;}
   html[data-theme="dark"] .theme-toggle .ico-sun{display:inline-flex;}
+
+  /* ── 顶部快速跳转：纯文字链接 + 动画下划线 + 滚动高亮 ── */
+  .jump-nav{display:flex;align-items:center;margin-left:34px;flex:1;min-width:0;
+    padding-right:52px;overflow-x:auto;scrollbar-width:none;}
+  .jump-nav::-webkit-scrollbar{display:none;}
+  .jump-link{position:relative;white-space:nowrap;cursor:pointer;
+    font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--ink-2);
+    padding:8px 16px;transition:color .18s ease;}
+  .jump-link::after{content:'';position:absolute;left:16px;right:16px;bottom:1px;height:2px;
+    background:var(--green);border-radius:2px;
+    transform:scaleX(0);transform-origin:center;transition:transform .24s cubic-bezier(.4,0,.2,1);}
+  .jump-link:hover{color:var(--ink);}
+  .jump-link.active{color:var(--ink);}
+  .jump-link:hover::after,.jump-link.active::after{transform:scaleX(1);}
+  @media(max-width:760px){.jump-nav{margin-left:16px;}.jump-link{padding:8px 11px;font-size:13px;}
+    .jump-link::after{left:11px;right:11px;}}
+
+  /* ── Section 折叠 ── */
+  .collapsible{scroll-margin-top:80px;}
+  .sec-bar{cursor:pointer;user-select:none;}
+  .sec-bar-inner{max-width:1400px;margin:0 auto;padding:15px 24px;display:flex;align-items:center;gap:12px;}
+  .sec-bar-t{font-family:var(--font-en);font-size:11px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase;font-weight:600;display:inline-flex;align-items:center;gap:10px;}
+  .sec-bar-t::before{content:'';display:block;width:24px;height:3px;background:var(--green);}
+  .sec-chev{margin-left:auto;width:18px;height:18px;color:var(--ink-3);transition:transform .25s ease,color .15s;flex-shrink:0;}
+  .sec-bar:hover .sec-bar-t,.sec-bar:hover .sec-chev{color:var(--ink);}
+  section.is-collapsed .sec-content{display:none;}
+  section.is-collapsed .sec-chev{transform:rotate(-90deg);}
   .btn-danger{background:transparent;color:var(--red);border:1px solid var(--line);padding:6px 12px;border-radius:2px;font-size:12px;transition:all .15s;cursor:pointer;}
   .btn-danger:hover{border-color:var(--red);}
 
@@ -329,19 +356,19 @@
 
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav class="sticky top-0 z-40 bg-bg border-b border-line relative">
-  <div class="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-3 items-center">
-    <div class="flex items-center">
+  <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center relative">
+    <div class="flex items-center shrink-0">
       <div class="cursor-pointer leading-none" onclick="navigate('screener')">
         <div class="text-[16px] font-semibold" style="color:var(--ink);line-height:1;">FCN 标的筛选平台</div>
         <div class="text-[10px] text-ink-3 mt-1.5 num" id="nav-sub">结构化产品组</div>
       </div>
     </div>
-    <div class="flex items-center justify-end gap-3">
-      <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
-        <i data-lucide="moon" class="ico-moon"></i>
-        <i data-lucide="sun" class="ico-sun"></i>
-      </button>
-    </div>
+    <!-- 快速跳转：Robinhood 式纯文字链接，紧贴 logo 右侧（按可见 section 动态生成）-->
+    <div id="jump-nav" class="jump-nav"></div>
+    <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+      <i data-lucide="moon" class="ico-moon"></i>
+      <i data-lucide="sun" class="ico-sun"></i>
+    </button>
   </div>
 </nav>
 
@@ -362,7 +389,7 @@
   </section>
 
   <!-- ── 本周热点分析（无数据时自动隐藏）── -->
-  <section id="market-hotspot" class="border-b border-line" style="display:none;">
+  <section id="market-hotspot" class="border-b border-line collapsible" data-sec="每日市场热点 · Daily Briefing" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
       <div class="section-label">每日市场热点 · Daily Market Briefing</div>
       <p class="text-ink-3 text-sm mt-3 mb-7" id="hotspot-range"></p>
@@ -374,7 +401,7 @@
   </section>
 
   <!-- ── 市场热点图：板块过去一周表现（无数据时自动隐藏）── -->
-  <section id="sector-heatmap" class="border-b border-line" style="display:none;">
+  <section id="sector-heatmap" class="border-b border-line collapsible" data-sec="市场热点图 · Sector Performance" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
       <div class="section-label">市场热点图 · Sector Performance</div>
       <p class="text-ink-3 text-sm mt-3 mb-7" id="heatmap-range"></p>
@@ -390,7 +417,7 @@
   </section>
 
   <!-- ── 财经日历：未来两周预告 + 本周回顾（无数据时自动隐藏）── -->
-  <section id="calendar" class="border-b border-line" style="display:none;">
+  <section id="calendar" class="border-b border-line collapsible" data-sec="财经日历 · Calendar" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-10">
       <div class="section-label">财经日历 · Economic &amp; Earnings Calendar</div>
       <p class="text-ink-3 text-sm mt-3 mb-3">未来两周重要财报与经济数据预告，及本周已公布数据回顾。财报仅显示市值 ≥ $100B（美股）/ HK$100B（港股）的大型公司。<span style="color:#C8A96A;">★</span> 为我们覆盖的标的。数据来源：Investing.com</p>
@@ -442,7 +469,7 @@
   </section>
 
   <!-- ── 策略类型入口（无类型数据时自动隐藏）── -->
-  <section id="strategy-section" class="border-b border-line" style="display:none;">
+  <section id="strategy-section" class="border-b border-line collapsible" data-sec="三种策略 · Strategies" style="display:none;">
     <div class="max-w-[1400px] mx-auto px-6 py-12">
       <div class="section-label mb-2">三种策略 · 按风格选标的</div>
       <p class="text-ink-3 text-sm mb-8">先选择适合客户的策略风格，再看具体标的——同一标的可能同时入选多个策略。</p>
@@ -451,6 +478,7 @@
   </section>
 
   <!-- Screener Body -->
+  <section id="screener-body" class="border-t border-line collapsible" data-sec="标的列表 · Watchlist">
   <div class="max-w-[1400px] mx-auto px-6 py-8">
 
     <!-- ── 策略类型 Tabs（无类型数据时自动隐藏）── -->
@@ -517,6 +545,7 @@
     <!-- 列表式标的呈现 -->
     <div id="screener-results"></div>
   </div>
+  </section>
 </div>
 
 <!-- ═══════════════ VIEW: FEATURED ═══════════════ -->
@@ -2135,6 +2164,82 @@ function toggleTheme(){
   });
 }
 
+// ═══ Section 折叠 ═══
+// 为每个 .collapsible section 注入可点击的标题栏（标题来自 data-sec），其余内容包进 .sec-content
+function setupSections(){
+  document.querySelectorAll('section.collapsible').forEach(sec=>{
+    if(sec.dataset.secReady)return; sec.dataset.secReady='1';
+    const inner=sec.firstElementChild;           // 原 .max-w 内容包裹层
+    if(!inner)return;
+    inner.classList.add('sec-content');
+    const lbl=sec.querySelector('.section-label');  // 隐藏内部重复标题
+    if(lbl)lbl.style.display='none';
+    const title=sec.dataset.sec||(lbl?lbl.textContent.trim():'');
+    const bar=document.createElement('div');
+    bar.className='sec-bar';
+    bar.innerHTML=`<div class="sec-bar-inner"><span class="sec-bar-t">${title}</span><i data-lucide="chevron-down" class="sec-chev"></i></div>`;
+    bar.addEventListener('click',()=>toggleSec(sec));
+    sec.insertBefore(bar,inner);
+    if(localStorage.getItem('olive-sec-'+sec.id)==='1')sec.classList.add('is-collapsed');
+  });
+  lucide.createIcons();
+}
+function toggleSec(sec){
+  sec.classList.toggle('is-collapsed');
+  try{localStorage.setItem('olive-sec-'+sec.id,sec.classList.contains('is-collapsed')?'1':'0');}catch(e){}
+}
+
+// ═══ 顶部快速跳转 ═══
+// 按当前可见的 section 动态生成跳转链接
+function renderJumpNav(){
+  const nav=document.getElementById('jump-nav');
+  if(!nav)return;
+  const defs=[
+    ['market-hotspot','市场热点'],
+    ['sector-heatmap','热点图'],
+    ['calendar','财经日历'],
+    ['strategy-section','策略'],
+    ['screener-body','标的列表'],
+  ];
+  const html=defs
+    .filter(([id])=>{const el=document.getElementById(id);return el&&getComputedStyle(el).display!=='none';})
+    .map(([id,label])=>`<a class="jump-link" onclick="jumpTo('${id}')">${label}</a>`).join('');
+  nav.innerHTML=html;
+  nav.style.display=html?'':'none';
+  setupScrollSpy();
+}
+// 滚动高亮：当前视口顶部所在的 section，对应跳转标签点亮
+let _spyObs=null;
+function setupScrollSpy(){
+  if(_spyObs){_spyObs.disconnect();_spyObs=null;}
+  if(!('IntersectionObserver'in window))return;
+  const map={};
+  document.querySelectorAll('#jump-nav .jump-link').forEach(a=>{
+    const m=(a.getAttribute('onclick')||'').match(/jumpTo\('([^']+)'\)/);
+    if(m)map[m[1]]=a;
+  });
+  const ids=Object.keys(map);
+  if(!ids.length)return;
+  _spyObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        Object.values(map).forEach(a=>a.classList.remove('active'));
+        map[e.target.id].classList.add('active');
+      }
+    });
+  },{rootMargin:'-72px 0px -72% 0px',threshold:0});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)_spyObs.observe(el);});
+}
+function jumpTo(id){
+  if(!document.getElementById('view-screener').classList.contains('active'))navigate('screener');
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(el.classList.contains('is-collapsed'))toggleSec(el);  // 折叠状态下跳转自动展开
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+  },70);
+}
+
 // ═══ Init ═══
 document.addEventListener('DOMContentLoaded', async ()=>{
   showLoadingSkeleton();
@@ -2155,6 +2260,8 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderCalendar();
   setupFilters();
   renderScreener();
+  setupSections();   // 注入各 section 的折叠标题栏
+  renderJumpNav();   // 按可见 section 生成顶部快速跳转
   lucide.createIcons();
   checkAdminMode();
 });
