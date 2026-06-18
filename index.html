@@ -1072,7 +1072,7 @@ function buildReport(s){
       <div class="navarrow">→</div>
       <div class="navstep"><span class="navtag">B</span><div class="nt">读懂公司</div><div class="nd">挂钩公司：做什么·行业·业绩·市场怎么看</div></div>
       <div class="navarrow">→</div>
-      <div class="navstep"><span class="navtag">C</span><div class="nt">我们的判断</div><div class="nd">值不值得接 × 这个价位接票划不划算</div></div>
+      <div class="navstep"><span class="navtag">C</span><div class="nt">市场观点</div><div class="nd">看多 / 看空依据客观汇总 × 接货价位体检</div></div>
       <div class="navarrow">→</div>
       <div class="navstep"><span class="navtag risk">!</span><div class="nt">风险提示</div><div class="nd">接货·集中·提前结束·发行商信用等须知</div></div>
     </div></div>`;
@@ -1126,8 +1126,8 @@ function buildReport(s){
   const healthConc=rep.health_conc||`接货价较期初打 ${fzhe} 折、敲入缓冲 ${kiBuf}%，结构性体检 ${nOk}/${health.length} 项达标${nOk<health.length?'，其余项请逐条留意':''}。`;
   const c4prose=rep.c4_prose||`现价 ${_rfmt(cur,sym)}${ddNow!==null?`，较一年高点回撤 ${Math.abs(ddNow).toFixed(1)}%`:''}${ma200!==null?`，${cur<ma200?'已落在':'位于'} 200 日均价 ${_rfmt(ma200,sym)} ${cur<ma200?'之下':'附近或上方'}`:''}。接货价 ${_rfmt(stkAbs,sym)} 相当于在此基础上再折让 ${stkBuf}%${lo1y!==null?`，与一年最低价 ${_rfmt(lo1y,sym)} 的相对位置见上方对照`:''}。以下体检格逐项核对该价位的结构性风险。`;
   const hcells=health.map(([name,val,st,read])=>`<div class="hcell ${st}"><div class="top"><span class="name">${name}</span><span class="hstat ${st}">${st==='ok'?'达标':'留意'}</span></div><div class="val">${val}</div><div class="read">${read}</div></div>`).join('');
-  const c4=`<div class="card"><h2><span class="idx">C·4</span>这个价位接票，划不划算 · 接货价位与结构性体检</h2>
-    <div class="sub">前面回答了"这家公司值不值得接成股东"；这一节看在什么价位接票才划算——先看接货价落在什么位置，再逐项体检其余风险。</div>
+  const c4=`<div class="card"><h2><span class="idx">C·3</span>这个价位接票，划不划算 · 接货价位与结构性体检</h2>
+    <div class="sub">上方为市场看多 / 看空依据的客观汇总；这一节回到产品本身——看在什么价位接票才划算，先看接货价落在什么位置，再逐项体检其余风险。</div>
     <p class="conc"><b>结论：${healthConc}</b></p>
     <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
       <div class="kpi"><div class="k">现价（${_esc(spDate)} 收盘）</div><div class="v">${_rfmt(cur,sym)}</div><div class="s">${ddNow!==null?`较一年高点回撤 ${Math.abs(ddNow).toFixed(1)}%`:''}</div></div>
@@ -1137,8 +1137,9 @@ function buildReport(s){
     <p style="margin-top:14px">${c4prose}</p>
     <div class="health">${hcells}</div></div>`;
   const partC=`<section class="part">
-    <div class="modlabel"><span class="t">Part C</span><span class="cn">我们的判断 · 值不值得接 × 这个价位接票划不划算</span><span class="rule"></span></div>
+    <div class="modlabel"><span class="t">Part C</span><span class="cn">市场观点 × 接货价位体检</span><span class="rule"></span></div>
     ${_rcards('C',rep.C)}
+    <p style="font-size:11px;color:var(--fg-3);line-height:1.6;margin:2px 0 18px;padding:11px 14px;border:1px solid var(--line-1);border-radius:2px;background:var(--surface-1)">ⓘ 本节看多 / 看空依据均为市场及第三方分析师观点与公开数据的客观汇总，不代表本机构立场，不构成投资建议或证券推荐。</p>
     ${c4}</section>`;
 
   // —— Part D ——
