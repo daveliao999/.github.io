@@ -408,6 +408,7 @@ SYSTEM_PROMPT = """\
 - Part C 是“第三方观点与客观事实的汇总”，不是我方推荐。只陈述可核实的事实与数据，并归因来源（如“分析师共识/公司财报/市场”）。
 - 严禁在 Part C 出现任何主观结论或买卖暗示词：我们认为、值得（接）、建议、应该、看好、看淡、推荐、买入、卖出、低估、高估（除非明确归因为某第三方观点）。
 - 看多依据与看空顾虑应数量相当、力度对称，避免一边倒；每条尽量带数字与来源。
+"""
 
 BATCH_PROMPT = """\
 请为以下 {n} 只股票生成投资分析内容。
@@ -791,7 +792,8 @@ def main():
         out = []
         for _, row in df.head(n).iterrows():
             region = str(row['区域']).strip()
-            raw    = str(row['代码']).strip().split('.')[0]
+            # 代码可能是 'LRCX US' / '6651 HK' / 'IREN.US' / 'IREN' / '9992' → 取纯代码
+            raw    = str(row['代码']).strip().split('.')[0].split()[0]
             if region.startswith('港'):
                 mkt, futu = 'HK', 'HK.' + raw.zfill(5)
             else:
