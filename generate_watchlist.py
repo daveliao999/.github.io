@@ -691,13 +691,18 @@ def _heatmap_one_market(ctx, mkt: str, mapping: dict) -> list:
                 turnover[row["code"]] = float(row.get("turnover") or 0)
     # 5 日涨跌幅（实时日 K，不消耗历史 K 线额度）
     ret5 = {}
+    win = None        # 实际 K 线窗口 (起始日, 结束日)，用于 weekRange 标签
     for c in codes:
         ret, df = ctx.get_cur_kline(c, 6, KLType.K_DAY, AuType.QFQ)
         if ret == RET_OK and df is not None and len(df) >= 2:
             cl = df["close"]
-            base = cl.iloc[-6] if len(df) >= 6 else cl.iloc[0]
+            base_idx = -6 if len(df) >= 6 else 0
+            base = cl.iloc[base_idx]
             if base:
                 ret5[c] = (cl.iloc[-1] / base - 1) * 100
+                if win is None and "time_key" in df.columns:
+                    win = (str(df["time_key"].iloc[base_idx])[:10],
+                           str(df["time_key"].iloc[-1])[:10])
     out = []
     for cn, en in _HEATMAP_SECTORS:
         num = den = 0.0; used = 0
@@ -710,7 +715,7 @@ def _heatmap_one_market(ctx, mkt: str, mapping: dict) -> list:
             out.append({"name": cn, "name_en": en,
                         "change": round(float(num / den), 2), "n": used})
     out.sort(key=lambda x: x["change"], reverse=True)
-    return out
+    return out, win
 
 def get_sector_heatmap(today):
     """美股 + 港股各 GICS 板块过去一周表现（富途行业板块）。失败返回 None。"""
@@ -720,9 +725,11 @@ def get_sector_heatmap(today):
         ctx = OpenQuoteContext(host="127.0.0.1", port=11111)
     except Exception as e:
         print(f"  ⚠  Futu 连接失败，跳过市场热点图: {e}"); return None
+    win = None
     try:
-        us = _heatmap_one_market(ctx, "US", _HEATMAP_US)
-        hk = _heatmap_one_market(ctx, "HK", _HEATMAP_HK)
+        us, us_win = _heatmap_one_market(ctx, "US", _HEATMAP_US)
+        hk, hk_win = _heatmap_one_market(ctx, "HK", _HEATMAP_HK)
+        win = us_win or hk_win
     except Exception as e:
         print(f"  ⚠  市场热点图获取失败: {e}"); us = hk = []
     finally:
@@ -730,12 +737,16 @@ def get_sector_heatmap(today):
         except Exception: pass
     if not us and not hk:
         print("  ⚠  美股、港股板块数据均为空，跳过市场热点图"); return None
-    mon = today - timedelta(days=today.weekday())
-    fri = mon + timedelta(days=4)
-    wk = lambda d: f"{d.year}/{d.month}/{d.day}"
-    print(f"  ✅  市场热点图：美股 {len(us)} 个 · 港股 {len(hk)} 个板块")
+    # weekRange 取自实际 K 线窗口（最近 5 个交易日），而非当周一~周五
+    if win:
+        _fmt = lambda s: "{}/{}/{}".format(s[:4], int(s[5:7]), int(s[8:10]))
+        week_range = f"{_fmt(win[0])}-{_fmt(win[1])}"
+    else:
+        mon = today - timedelta(days=today.weekday()); fri = mon + timedelta(days=4)
+        wk = lambda d: f"{d.year}/{d.month}/{d.day}"; week_range = f"{wk(mon)}-{wk(fri)}"
+    print(f"  ✅  市场热点图：美股 {len(us)} 个 · 港股 {len(hk)} 个板块  ({week_range})")
     return {"generatedAt": today.strftime("%Y-%m-%d"),
-            "weekRange": f"{wk(mon)}-{wk(fri)}", "us": us, "hk": hk}
+            "weekRange": week_range, "us": us, "hk": hk}
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
