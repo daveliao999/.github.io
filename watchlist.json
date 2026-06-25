@@ -20,35 +20,39 @@
       "LRCX.US"
     ],
     "marketHotspot": {
-      "generatedAt": "2026-06-18",
-      "date": "2026/6/18",
+      "generatedAt": "2026-06-25",
+      "date": "2026/6/25",
       "us": {
         "items": [
           {
-            "headline": "美联储维持利率但点阵图转鹰，美股全线回落",
-            "facts": "6/17 FOMC 维持利率 3.50%-3.75% 不变，但点阵图中值升至 3.8%（3 月为 3.4%），18 位官员中 9 位预期年内至少加息一次；政策声明精简至约 130 字、删去宽松倾向措辞，市场转向押注最早 10 月加息。",
-            "stance": "bearish",
-            "impact": "鹰派转向推升美债收益率与折现率预期，高估值成长股与利率敏感板块承压；银行净息差预期或受提振，但整体风险偏好回落。",
+            "headline": "美光业绩炸裂，AI 内存超级周期获验证",
+            "stance": "bullish",
+            "facts": "6/24 盘后美光(MU) FQ3 营收 415 亿美元、同比 +346%，毛利率 84.9% 创历史新高，调整后 EPS 25.11 美元（预期 20.60）；Q4 营收指引约 500 亿美元 ±10 亿、远超市场预期的 429 亿，并披露 16 份合计约 1,000 亿美元最低合约收入；股价盘后大涨 13.1% 至约 1,186 美元。",
+            "impact": "HBM/AI 内存的需求与定价强度获强力背书，公司指引供给紧张延续至 2027 年后，提振整个半导体与 AI 算力链情绪，扭转前两日科技股回调。",
             "sources": [
               {
-                "title": "CNBC · 美联储 6/17 利率决议",
-                "url": "https://www.cnbc.com/2026/06/17/fed-interest-rate-decision-june-2026.html"
+                "title": "Investing.com · 美光 FQ3 业绩",
+                "url": "https://www.investing.com/news/transcripts/earnings-call-transcript-micron-tops-q3-2026-estimates-shares-jump-131-93CH-4759237"
               },
               {
-                "title": "TheStreet · 6/17 美股收盘",
-                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-17-2026"
+                "title": "CNBC · Micron Q3 2026",
+                "url": "https://www.cnbc.com/2026/06/24/micron-mu-earnings-report-q3-2026.html"
               }
             ]
           },
           {
-            "headline": "科技领跌，纳指挫 1.34%，半导体获利了结",
-            "facts": "6/17 纳指收跌 1.34%、标普 500 跌 1.21%、道指跌 0.97%，尾盘触及日内低点；前期大涨的半导体集体回吐，英伟达、博通、美光、AMD、英特尔齐挫。",
-            "stance": "bearish",
-            "impact": "半导体强势反弹后估值偏高，叠加鹰派美联储，资金获利了结；AI 算力链短期波动放大，对科技权重指数构成拖累。",
+            "headline": "美股财报前观望，标普纳指小幅回落",
+            "stance": "neutral",
+            "facts": "6/24 标普 500 收跌 0.10% 至 7,358.22、纳指跌 0.43% 至 25,476.64、道指涨 0.35% 至 51,848.90；能源、通讯与科技走弱，市场在美光财报与核心 PCE 通胀数据公布前保持谨慎，叠加季末月末组合再平衡。",
+            "impact": "指数高位横盘整理，等待通胀数据指引利率路径；道指与小盘股相对抗跌，显示资金向价值与顺周期轮动。",
             "sources": [
               {
-                "title": "TheStreet · 6/17 美股收盘",
-                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-17-2026"
+                "title": "TheStreet · 6/24 美股收盘",
+                "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-june-24-2026"
+              },
+              {
+                "title": "Yahoo Finance · 6/24 市场",
+                "url": "https://finance.yahoo.com/markets/live/stock-market-today-dow-rises-sp-500-and-nasdaq-slip-as-ai-jitters-return-ahead-of-micron-earnings-230105138.html"
               }
             ]
           }
@@ -57,30 +61,34 @@
       "hk": {
         "items": [
           {
-            "headline": "恒指获利回吐收跌 0.74%，科技股领跌",
-            "facts": "6/17 恒指收报 24,312 点、跌 0.74%，回吐前一交易日约 24,494 的反弹；权重科技股交还本周稍早因美伊初步和平协议带来的涨幅，市场观望美联储决议。",
+            "headline": "恒指 6/25 反弹 0.3%，恒生科技领涨",
             "stance": "neutral",
-            "impact": "科技与平台股在地缘缓和驱动的快速反弹后进入自然盘整，对港股科技板块短期形成压力；更偏休整而非趋势反转。",
+            "facts": "6/24 恒指因 AI 芯片回调与地缘担忧重挫 1.8% 至 23,336；6/25 企稳反弹 0.3% 至 23,412，恒生科技指数涨 1.8%、沪深 300 涨 0.5%，隔夜美光利好外溢提振科技股。",
+            "impact": "外围 AI 利好与超跌修复推动情绪回暖，但港股仍受外部波动与资金面牵制，更偏震荡修复而非趋势反转。",
             "sources": [
               {
-                "title": "BBN Times · 港股 6/17 收评",
-                "url": "https://www.bbntimes.com/global-economy/hang-seng-index-is-down-0-74-as-tech-weakness-and-mixed-sentiment-weigh-on-hong-kong-equities"
+                "title": "BBN Times · 港股收评",
+                "url": "https://www.bbntimes.com/financial/hong-kong-stock-exchange-hang-seng-index-hsi-falls-0-65-to-24-249-as-ai-chip-rout-and-iran-war-fears-pressure-hong-kong-equities"
               },
               {
-                "title": "Trading Economics · 香港股市",
-                "url": "https://tradingeconomics.com/hong-kong/stock-market"
+                "title": "SCMP · 港股",
+                "url": "https://www.scmp.com/business/china-business/article/3358123/hong-kong-stocks-rebound-contrast-overnight-sell-offs-us"
               }
             ]
           },
           {
-            "headline": "央行暗示基准利率改革，反制裁立法添谨慎",
-            "facts": "陆家嘴论坛上人民银行暗示将主要政策基准利率转向隔夜利率，被视为更透明、更接轨国际的框架；副总理何立峰提及拟推反制裁立法以应对外部限制，为部分国际投资者带来地缘谨慎情绪。",
-            "stance": "neutral",
-            "impact": "货币政策框架透明化中长期利好内地与香港利率定价及外资可读性；但反制裁立法的地缘不确定性，可能令部分外资对港股中资股保持观望。",
+            "headline": "中资科技 AI 商业化提速，支撑估值修复",
+            "stance": "bullish",
+            "facts": "阿里云最新季度营收同比 +38%、为九个季度新高，管理层预计 AI 年化经常性收入年底突破 300 亿元人民币；腾讯一季度资本开支 319 亿元、同比 +16%，主投 AI 基建并指引下半年继续加码。",
+            "impact": "AI 变现进展与资本开支扩张支撑恒生科技龙头估值修复，平台与云计算板块获中长期资金关注。",
             "sources": [
               {
-                "title": "BBN Times · 港股 6/17 收评",
-                "url": "https://www.bbntimes.com/global-economy/hang-seng-index-is-down-0-74-as-tech-weakness-and-mixed-sentiment-weigh-on-hong-kong-equities"
+                "title": "AInvest · 恒生科技",
+                "url": "https://www.ainvest.com/news/hang-seng-tech-index-surges-3-tech-giants-lead-rebound-china-growth-targets-spark-optimism-2605/"
+              },
+              {
+                "title": "Futunn · 港股科技",
+                "url": "https://news.futunn.com/en/post/73979731/tencent-meituan-and-alibaba-all-rose-driving-the-hang-seng"
               }
             ]
           }
@@ -228,77 +236,9 @@
       ]
     },
     "calendar": {
-      "generatedAt": "2026-06-16",
-      "previewRange": "6/16 - 6/30",
-      "reviewRange": "6/10",
-      "econPreview": [
-        {
-          "date": "2026-06-16",
-          "country": "US",
-          "event": "新屋开工 (5月)",
-          "importance": 2,
-          "forecast": "1.420M",
-          "previous": "1.465M"
-        },
-        {
-          "date": "2026-06-16",
-          "country": "US",
-          "event": "营建许可 (5月)",
-          "importance": 2,
-          "forecast": "1.420M",
-          "previous": "1.423M"
-        },
-        {
-          "date": "2026-06-17",
-          "country": "US",
-          "event": "FOMC 利率决议",
-          "importance": 3,
-          "forecast": "维持 3.50%-3.75%",
-          "previous": "3.50%-3.75%",
-          "note": "Kevin Warsh 任主席首会，市场预期按兵不动"
-        },
-        {
-          "date": "2026-06-18",
-          "country": "US",
-          "event": "初请失业金人数",
-          "importance": 2,
-          "forecast": "—",
-          "previous": "—"
-        },
-        {
-          "date": "2026-06-25",
-          "country": "US",
-          "event": "Q1 GDP 终值 QoQ",
-          "importance": 2,
-          "forecast": "—",
-          "previous": "—"
-        },
-        {
-          "date": "2026-06-25",
-          "country": "US",
-          "event": "耐用品订单 MoM (5月)",
-          "importance": 2,
-          "forecast": "—",
-          "previous": "—"
-        },
-        {
-          "date": "2026-06-25",
-          "country": "US",
-          "event": "PCE 物价指数 YoY (5月)",
-          "importance": 3,
-          "forecast": "—",
-          "previous": "2.4%",
-          "note": "美联储最关注的通胀指标"
-        },
-        {
-          "date": "2026-06-26",
-          "country": "US",
-          "event": "密歇根大学消费者信心 (6月终值)",
-          "importance": 2,
-          "forecast": "—",
-          "previous": "—"
-        }
-      ],
+      "generatedAt": "2026-06-25",
+      "previewRange": "6/25 - 7/3",
+      "reviewRange": "6/10 - 6/24",
       "econReview": [
         {
           "date": "2026-06-10",
@@ -311,36 +251,115 @@
           "note": "三连升，2023年4月来最高"
         },
         {
-          "date": "2026-06-10",
+          "date": "2026-06-17",
           "country": "US",
-          "event": "核心 CPI YoY (5月)",
+          "event": "FOMC 利率决议",
           "importance": 3,
-          "actual": "2.9%",
-          "forecast": "2.9%",
-          "previous": "2.8%"
+          "actual": "维持 3.50%-3.75%",
+          "forecast": "维持",
+          "previous": "3.50%-3.75%",
+          "note": "点阵图转鹰，中值升至 3.8%"
+        }
+      ],
+      "econPreview": [
+        {
+          "date": "2026-06-25",
+          "country": "US",
+          "event": "核心 PCE 物价 YoY (5月)",
+          "importance": 3,
+          "forecast": "2.6%",
+          "previous": "—",
+          "note": "美联储首选通胀指标"
+        },
+        {
+          "date": "2026-06-25",
+          "country": "US",
+          "event": "Q1 GDP 终值 QoQ",
+          "importance": 2,
+          "forecast": "1.6%",
+          "previous": "1.6%"
+        },
+        {
+          "date": "2026-06-25",
+          "country": "US",
+          "event": "初请失业金人数",
+          "importance": 2,
+          "forecast": "225K",
+          "previous": "—"
+        },
+        {
+          "date": "2026-06-25",
+          "country": "US",
+          "event": "耐用品订单 MoM (5月)",
+          "importance": 2,
+          "forecast": "+0.2%",
+          "previous": "—"
+        },
+        {
+          "date": "2026-06-26",
+          "country": "US",
+          "event": "密歇根消费者信心 终值 (6月)",
+          "importance": 2,
+          "forecast": "—",
+          "previous": "—",
+          "note": "6 月终值修订"
+        },
+        {
+          "date": "2026-06-30",
+          "country": "CN",
+          "event": "官方制造业 PMI (6月)",
+          "importance": 2,
+          "forecast": "—",
+          "previous": "—"
+        },
+        {
+          "date": "2026-07-01",
+          "country": "CN",
+          "event": "财新制造业 PMI (6月)",
+          "importance": 2,
+          "forecast": "—",
+          "previous": "—"
+        },
+        {
+          "date": "2026-07-03",
+          "country": "US",
+          "event": "非农就业 (6月)",
+          "importance": 3,
+          "forecast": "—",
+          "previous": "—",
+          "note": "独立日假期前一日公布"
         }
       ],
       "earnPreview": [
         {
-          "date": "2026-06-18",
-          "ticker": "ACN",
-          "name": "Accenture",
+          "date": "2026-06-30",
+          "ticker": "NKE",
+          "name": "耐克",
           "market": "US",
-          "epsEst": "3.72",
-          "revEst": "18.78B",
-          "mktCap": "104.5B"
+          "epsEst": "—",
+          "revEst": "—",
+          "mktCap": "—"
         },
+        {
+          "date": "2026-06-30",
+          "ticker": "STZ",
+          "name": "星座品牌",
+          "market": "US",
+          "epsEst": "—",
+          "revEst": "—",
+          "mktCap": "—"
+        }
+      ],
+      "earnReview": [
         {
           "date": "2026-06-24",
           "ticker": "MU",
-          "name": "美光科技",
+          "name": "美光",
           "market": "US",
-          "epsEst": "1.57",
-          "revEst": "8.81B",
-          "mktCap": "1.23T"
+          "epsActual": "25.11",
+          "epsEst": "20.60"
         }
-      ],
-      "earnReview": []
+      ]
     }
   },
   "stocks": [
